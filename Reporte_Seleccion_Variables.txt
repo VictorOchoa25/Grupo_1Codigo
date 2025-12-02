@@ -1,0 +1,81 @@
+contenido_reporte = """==============================================================================
+REPORTE FINAL: SELECCIÓN DE VARIABLES - PREDICCIÓN RENDIMIENTO ESTUDIANTIL
+==============================================================================
+
+OBJETIVO:
+El objetivo de este análisis fue identificar los factores más influyentes para
+predecir la nota final (G3), excluyendo explícitamente las notas parciales
+previas (G1 y G2) para permitir una intervención temprana al inicio del curso.
+
+RESUMEN DE HALLAZGOS:
+Tras aplicar tres técnicas distintas de selección de características (Correlación
+Lineal, Importancia por Random Forest y Algoritmo Boruta), hemos aislado un
+subconjunto de 6 variables clave que dirigen el rendimiento estudiantil.
+
+------------------------------------------------------------------------------
+LAS "TOP 6" VARIABLES PREDICTORAS Y SU JUSTIFICACIÓN
+------------------------------------------------------------------------------
+
+1. FAILURES (Clases Reprobadas anteriormente)
+   - Por qué importa: Es el predictor individual más fuerte del éxito futuro.
+   - Evidencia:
+     * Ranking #1 en Correlación Lineal (aprox -0.35).
+     * Confirmado como "Importante" por Boruta.
+   - Insight: Un historial de lucha académica es el indicador más fiable de
+     riesgo futuro. La relación es negativa: más fallos = notas más bajas.
+
+2. ABSENCES (Ausencias Escolares)
+   - Por qué importa: Representa disciplina y compromiso del estudiante.
+   - Evidencia:
+     * IGNORADO por Correlación Lineal (Ranking muy bajo).
+     * DETECTADO por Random Forest y Boruta (Alta Importancia).
+   - Insight: Esta variable tiene un impacto no lineal. Unas pocas faltas no
+     afectan mucho, pero el ausentismo crónico derrumba el rendimiento. La
+     correlación simple no vio esto, pero los algoritmos avanzados sí.
+
+3. MEDU (Educación de la Madre)
+   - Por qué importa: Proxy del entorno educativo y apoyo en casa.
+   - Evidencia:
+     * Ranking #2 en Correlación Lineal.
+   - Insight: Los estudiantes cuyas madres tienen niveles educativos altos
+     tienden a rendir significativamente mejor. Demostró ser más predictivo
+     que la educación del padre (Fedu).
+
+4. AGE (Edad del Estudiante)
+   - Por qué importa: En este contexto, la edad es un proxy de "repetidor".
+   - Evidencia:
+     * Ranking #3 en Correlación Lineal.
+   - Insight: Los estudiantes mayores dentro del mismo grado probablemente han
+     repetido curso anteriormente. Existe una clara tendencia negativa: a mayor
+     edad en el mismo curso, el rendimiento tiende a disminuir.
+
+5. MJOB (Trabajo de la Madre)
+   - Por qué importa: Indicador de estatus socioeconómico.
+   - Evidencia:
+     * Confirmado por el Algoritmo Boruta.
+   - Insight: Categorías laborales específicas (ej. 'salud', 'profesora') se
+     correlacionan con mejor rendimiento, probablemente debido a disponibilidad
+     de recursos o estilo de involucramiento parental.
+
+6. GOOUT (Salir con amigos)
+   - Por qué importa: Estilo de vida y gestión del tiempo.
+   - Evidencia:
+     * Confirmado por el Algoritmo Boruta.
+   - Insight: Altas frecuencias de "salir" compiten directamente con el tiempo
+     de estudio. El algoritmo marcó esto como un drenaje estadísticamente
+     significativo en las notas.
+
+------------------------------------------------------------------------------
+CONCLUSIÓN
+------------------------------------------------------------------------------
+Al reducir el set de datos de 30+ variables a estas 6, eliminamos el ruido
+(como género, acceso a internet o elección de escuela) que no mostraron
+relevancia estadística en nuestras pruebas. Este modelo compacto permite un
+"Sistema de Alerta Temprana" enfocado y eficiente para estudiantes en riesgo.
+"""
+
+# Guardar el archivo
+with open('Reporte_Seleccion_Variables.txt', 'w', encoding='utf-8') as f:
+    f.write(contenido_reporte)
+
+print("Archivo 'Reporte_Seleccion_Variables.txt' creado exitosamente.")

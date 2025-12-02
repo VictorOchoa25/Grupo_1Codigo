@@ -1,0 +1,17 @@
+Variable	Mean	Median	SD	Min	Max
+Dalc	1.5	1	0.94	1	5
+Fedu	2.55	2.5	1.07	1	4
+G1	10.97	11	3.31	3	19
+G2	10.71	11	3.75	0	19
+G3	10.43	11	4.55	0	20
+Medu	2.7	3	1.1	0	4
+Walc	2.35	2	1.33	1	5
+absences	5.53	4	7.75	0	75
+age	16.71	17	1.29	15	22
+failures	0.32	0	0.73	0	3
+famrel	3.95	4	0.89	1	5
+freetime	3.28	3	0.99	1	5
+goout	3.08	3	1.12	1	5
+health	3.56	4	1.39	1	5
+studytime	2.04	2	0.82	1	4
+traveltime	1.46	1	0.72	1	4
