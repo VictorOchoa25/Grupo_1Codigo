@@ -1,0 +1,60 @@
+[1] "--- STARTING FULL PIPELINE ANALYSIS ---"
+[1] "Target Variable 'Status' Created. Distributio "T
+
+Fail Pass 
+ 130  265 
+[1] "Train Set: 297 rows | Valid Set: 98 rows"
+[1] "--- PHASE 4: RUNNING EDA ---"
+[1] "EDA Plots Saved."
+[1] "--- PHASE 5: RUNNING FEATURE SELECTION ---"
+[1] ">> Running Chi-Squared Tests..."
+[1] "Chi-Squared Results Saved."
+[1] ">> Running Boruta Algorithm (This may take a  ">> Runnin
+Boruta performed 99 iterations in 7.243459 secsBor 7 attributes confirmed important: absences, ag 7 attributes confirmed important: absences 21 attributes confirmed unimportant: activitie 21 attributes confirmed unimportant: activities, 2 tentative attributes left: Fjob, internet;
+null device 
+          1 
+[1] ">> Running RFE Algorithm..."
+
+Recursive feature selection
+
+Outer resampling method: Cross-Validated (5 fold) 
+
+Resampling performance over subset size:
+
+ Variables Accuracy  Kappa AccuracySD KappaSD Selected
+         1   0.7375 0.3490    0.02892 0.05705         
+         2   0.7274 0.2870    0.02594 0.08059         
+         3   0.7375 0.3173    0.02718 0.06940         
+         4   0.7207 0.2984    0.03690 0.05626         
+         5   0.7376 0.3534    0.03290 0.04966        *
+         6   0.7208 0.3159    0.06840 0.14729         
+         7   0.7276 0.3286    0.05434 0.10437         
+         8   0.7104 0.2660    0.01918 0.06655         
+         9   0.7206 0.3050    0.02948 0.05266         
+        10   0.7105 0.2729    0.02921 0.06488         
+        11   0.7040 0.2716    0.05052 0.09251         
+        12   0.7006 0.2479    0.04479 0.09006         
+        13   0.7037 0.2502    0.03087 0.08618         
+        14   0.6969 0.2377    0.03394 0.10313         
+        15   0.7005 0.2343    0.05245 0.11623         
+        30   0.7039 0.2343    0.06647 0.13819         
+
+The top 5 variables (out of 5):
+   failures, absences, goout, Medu, schoolsup
+
+null device 
+          1 
+[1] "--- PHASE 6: FINAL VARIABLE SELECTION ---"
+[1] "Variables selected for Modeling:"
+[1] "failures" "absences" "higher"   "age"      "Medu"     "goout"    "guardian"
+[8] "Status"  
+[1] "--- PHASE 7: TRAINING MODELS ---"
+[1] ">> Training Logistic Regression..."
+[1] ">> Training Random Forest..."
+[1] ">> Training SVM Radial..."
+[1] ">> Training Gradient Boosting..."
+[1] "--- PHASE 8: EVALUATION ---"
+null device 
+          1 
+[1] "--- FULL PIPELINE COMPLETE. ALL RESULTS IN 'R "--- FULL PIPELINE COMPLETE
+ALL RESULTS IN 'Results_Classification/' ---"

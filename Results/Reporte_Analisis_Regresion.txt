@@ -1,0 +1,58 @@
+==============================================================================
+ANÁLISIS DE RENDIMIENTO DEL MODELO DE REGRESIÓN: NOTAS DE ESTUDIANTES (G3)
+==============================================================================
+
+OBJETIVO:
+Evaluar la viabilidad de predecir la nota final exacta de un estudiante 
+(escala 0-20) basándose en factores demográficos y de estilo de vida, 
+sin utilizar las notas de exámenes previos.
+
+1. RESUMEN DE RENDIMIENTO
+------------------------------------------------------------------------------
+Los modelos de regresión demostraron un poder predictivo limitado. Los resultados
+indican que las variables demográficas y conductuales por sí solas son 
+insuficientes para una predicción precisa de la nota numérica.
+
+| Modelo            | RMSE (Error) | R-Cuadrado (R2)| MAE (Error Promedio) |
+|-------------------|--------------|----------------|----------------------|
+| Random Forest     | 4.03         | 0.27           | 3.15                 |
+| Regresión Lineal  | 4.18         | 0.21           | 3.22                 |
+| Árbol de Decisión | 4.22         | 0.20           | 3.22                 |
+
+2. INTERPRETACIÓN DE MÉTRICAS
+------------------------------------------------------------------------------
+A. RMSE (Raíz del Error Cuadrático Medio): ~4.0 puntos
+   - Significado: En promedio, la predicción del modelo falla por +/- 4 puntos.
+   - Contexto: En una escala de 0-20, un margen de 4 puntos es sustancial 
+     (representa el 20% de la escala total).
+   - Implicación Real: Si la nota real de un estudiante es 14 (Bien), el modelo
+     podría predecir cualquier valor entre 10 (Suficiente) y 18 (Sobresaliente).
+     Este margen es demasiado amplio para una consejería académica fiable.
+
+B. R-Cuadrado (R2): ~0.27
+   - Significado: Solo el 27% de la varianza en las notas de los estudiantes 
+     se explica por las variables seleccionadas (Reprobaciones, Ausencias, etc.).
+   - Contexto: El 73% de la razón por la cual un estudiante obtiene una nota 
+     específica permanece sin explicación. Esta "información faltante" 
+     probablemente está contenida en las variables omitidas (notas G1 y G2) 
+     o factores no medidos (inteligencia, esfuerzo diario).
+
+3. HALLAZGOS CLAVE
+------------------------------------------------------------------------------
+1. La "Señal" es débil: Aunque factores como reprobaciones pasadas y ausencias 
+   definitivamente impactan las notas, no dictan el número *exacto*.
+2. Superioridad de Random Forest: El Random Forest superó a la Regresión Lineal
+   (R2 0.27 vs 0.21), confirmando que las relaciones entre el estilo de vida 
+   y las notas no son lineales (ej. el impacto de las ausencias no es una 
+   línea recta).
+3. Pivote Estratégico: Dado el alto margen de error para números específicos, 
+   el análisis apoya firmemente cambiar a un enfoque de CLASIFICACIÓN 
+   (Aprobado/Reprobado). Determinar si un estudiante está "En Riesgo" (<10) 
+   es una meta más alcanzable y accionable que predecir si sacará un 12 o un 13.
+
+4. RECOMENDACIÓN
+------------------------------------------------------------------------------
+Abandonar el objetivo de regresión. Proceder inmediatamente con el Flujo de 
+Trabajo de Clasificación para predecir el estatus "Aprobado/Reprobado", 
+donde la tolerancia al ruido es mayor y es probable que las variables muestren 
+un poder de separación más fuerte.
