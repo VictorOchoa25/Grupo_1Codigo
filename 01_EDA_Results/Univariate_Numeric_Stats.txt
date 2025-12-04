@@ -1,0 +1,14 @@
+Variable	Mean	Median	Std_Dev	Min	Max	Skewness
+Dalc	1.48	1	0.89	1	5	2.17
+Fedu	2.52	2	1.09	0	4	-0.03
+Medu	2.75	3	1.09	0	4	-0.32
+Walc	2.29	2	1.29	1	5	0.61
+absences	5.71	4	8	0	75	3.64
+age	16.7	17	1.28	15	22	0.46
+failures	0.33	0	0.74	0	3	2.37
+famrel	3.94	4	0.9	1	5	-0.94
+freetime	3.24	3	1	1	5	-0.16
+goout	3.11	3	1.11	1	5	0.12
+health	3.55	4	1.39	1	5	-0.49
+studytime	2.04	2	0.84	1	4	0.63
+traveltime	1.45	1	0.7	1	4	1.59

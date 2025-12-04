@@ -1,0 +1,16 @@
+[1] "MODEL: knn"
+[1] "AUC: 0.5573"
+[1] "Confusion Matrix:"
+          Reference
+Prediction Fail Pass
+      Fail   17   27
+      Pass   15   39
+[1] "Detailed Metrics:"
+         Sensitivity          Specificity       Pos Pred Value 
+           0.5312500            0.5909091            0.3863636 
+      Neg Pred Value            Precision               Recall 
+           0.7222222            0.3863636            0.5312500 
+                  F1           Prevalence       Detection Rate 
+           0.4473684            0.3265306            0.1734694 
+Detection Prevalence    Balanced Accuracy 
+           0.4489796            0.5610795 

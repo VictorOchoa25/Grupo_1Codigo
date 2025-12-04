@@ -1,0 +1,54 @@
+[1] "--- STARTING EDA ---"
+[1] "Data Loaded. Target Distri "Data L
+
+Fail Pass 
+ 130  265 
+[1] "--- GENERATING UNIVARIATE  "--- GENE
+[1] "--- GENERATING BIVARIATE P "--- GENERATING BIVA
+[1] "--- EDA COMPLETE. RESULTS  "--- EDA COMPLETE. RESULTS SA
+D IN '01_EDA_Results' ---"
+[1] "--- STARTING FEATURE SELECTION ---"
+[1] ">> Running Chi-Squared Tests..."
+    Variable    P_Value
+15    higher 0.00385021
+17  romantic 0.06740352
+10 schoolsup 0.06799817
+9   guardian 0.07000507
+12      paid 0.08287639
+2        sex 0.19488312
+[1] ">> Running Boruta Algorithm..."
+null device 
+          1 
+[1] ">> Running RFE Algorithm (Random Forest Wrapper)..."
+null device 
+          1 
+
+Recursive feature selection
+
+Outer resampling method: Cross-Validated (5 fold) 
+
+Resampling performance over subset size:
+
+ Variables Accuracy  Kappa AccuracySD KappaSD Selected
+         1   0.7089 0.2538   0.020014 0.04492         
+         2   0.7190 0.2491   0.033966 0.10178         
+         3   0.7241 0.2667   0.042363 0.11696         
+         4   0.7241 0.3026   0.052497 0.13181         
+         5   0.7089 0.2444   0.048201 0.11868         
+         6   0.6937 0.2214   0.049351 0.11995         
+         7   0.6835 0.2063   0.031006 0.07218         
+         8   0.7089 0.2587   0.015503 0.06500         
+         9   0.7291 0.3290   0.027733 0.06346        *
+        10   0.7038 0.2808   0.006933 0.04320         
+        11   0.6937 0.2501   0.031519 0.05136         
+        12   0.7089 0.2842   0.026852 0.02434         
+        13   0.7114 0.2828   0.027442 0.03580         
+        14   0.6861 0.2104   0.024349 0.06557         
+        15   0.6937 0.2235   0.027442 0.04056         
+        30   0.7241 0.2710   0.022644 0.04116         
+
+The top 5 variables (out of 9):
+   failures, absences, goout, schoolsup, higher
+
+[1] "Optimal Variables: failures, absences, goout, schoolsup, higher, age, studytime, sex, famsize"
+[1] "--- SELECTION COMPLETE. RESULTS SAVED IN '02_Selection_Results' ---"

@@ -1,0 +1,323 @@
+[1] "--- STARTING CLASSIFICATION ANALYSIS (TARGET: PASS/FAIL) ---"
+[1] "Target Variable 'Status' created. Distribution:"
+
+Fail Pass 
+ 130  265 
+[1] "Train Set: 297 rows | Valid Set: 98 rows"
+[1] "--- 4. EXPLORATION: VARIABLE IMPACT ON PASS/FAIL RATES ---"
+[1] "--- 5. FEATURE SELECTION (CLASSIFICATION) ---"
+[1] ">> Chi-Squared Tests (Categorical Variables):"
+    Variable    P_Value
+15    higher 0.02384907
+9   guardian 0.03277100
+12      paid 0.05645318
+17  romantic 0.09125054
+6       Mjob 0.09993807
+16  internet 0.10624458
+10 schoolsup 0.13045834
+7       Fjob 0.14174388
+4    famsize 0.24786723
+8     reason 0.26868505
+[1] ">> Running Boruta (Classification Mode)..."
+Boruta performed 99 iterations in 6.825652 secs.
+ 7 attributes confirmed important: absences, age, failures, goout,
+guardian and 2 more;
+ 21 attributes confirmed unimportant: activities, address, Dalc,
+famrel, famsize and 16 more;
+ 2 tentative attributes left: Fjob, internet;
+null device 
+          1 
+[1] ">> Running RFE (Recursive Feature Elimination)..."
+
+Recursive feature selection
+
+Outer resampling method: Cross-Validated (5 fold) 
+
+Resampling performance over subset size:
+
+ Variables Accuracy  Kappa AccuracySD KappaSD Selected
+         1   0.7375 0.3490    0.02892 0.05705         
+         2   0.7274 0.2870    0.02594 0.08059         
+         3   0.7375 0.3173    0.02718 0.06940         
+         4   0.7207 0.2984    0.03690 0.05626         
+         5   0.7376 0.3534    0.03290 0.04966        *
+         6   0.7208 0.3159    0.06840 0.14729         
+         7   0.7276 0.3286    0.05434 0.10437         
+         8   0.7104 0.2660    0.01918 0.06655         
+         9   0.7206 0.3050    0.02948 0.05266         
+        10   0.7105 0.2729    0.02921 0.06488         
+        11   0.7040 0.2716    0.05052 0.09251         
+        12   0.7006 0.2479    0.04479 0.09006         
+        13   0.7037 0.2502    0.03087 0.08618         
+        14   0.6969 0.2377    0.03394 0.10313         
+        15   0.7005 0.2343    0.05245 0.11623         
+        30   0.7039 0.2343    0.06647 0.13819         
+
+The top 5 variables (out of 5):
+   failures, absences, goout, Medu, schoolsup
+
+null device 
+          1 
+[1] "Variables Selected by RFE for Modeling:"
+[1] "failures"  "absences"  "goout"     "Medu"      "schoolsup"
+[1] "--- FINAL VARIABLES SELECTED ---"
+[1] "failures" "absences" "higher"   "age"      "Medu"     "goout"    "guardian"
+[8] "Status"  
+[1] ">> Training Model 1: Logistic Regression..."
+[1] ">> Training Model 2: Random Forest..."
+[1] "--- EVALUATION RESULTS ---"
+[1] "--- 2. DATA IMBALANCE CHECK (BEFORE FIX) ---"
+
+Fail Pass 
+  98  199 
+[1] ">> Applying Up-Sampling to balance classes..."
+[1] "--- 3. DATA BALANCE CHECK (AFTER FIX) ---"
+
+Fail Pass 
+ 199  199 
+[1] ">> Training Model 1: Logistic Regression..."
+[1] ">> Training Model 2: Random Forest..."
+[1] "--- EVALUATION RESULTS (ON VALIDATION SET) ---"
+[1] "--- 2. IMBALANCE CHECK ---"
+
+Fail Pass 
+  98  199 
+[1] ">> Training Model 1: Logistic Regression (Balanced)..."
+[1] ">> Training Model 2: Random Forest (Balanced)..."
+[1] "--- EVALUATION RESULTS (ON VALIDATION SET) ---"
+[1] "--- 2. IMBALANCE CHECK ---"
+
+Fail Pass 
+  98  199 
+[1] ">> Training Model 1: Logistic Regression (Balanced)..."
+[1] ">> Training Model 2: Random Forest (Balanced)..."
+[1] "--- EVALUATION RESULTS (ON VALIDATION SET) ---"
+[1] ">>> MODEL: Logistic Regression"
+[1] "Accuracy: 0.6122"
+[1] "Sensitivity: 0.4688"
+[1] "Specificity: 0.6818"
+[1] "AUC: 0.6278"
+[1] "Precision: 0.4167"
+[1] "Recall: 0.4688"
+[1] "F1: 0.4412"
+[1] "----------------------------------------"
+[1] ">>> MODEL: Random Forest"
+[1] "Accuracy: 0.6633"
+[1] "Sensitivity: 0.4062"
+[1] "Specificity: 0.7879"
+[1] "AUC: 0.6475"
+[1] "Precision: 0.4815"
+[1] "Recall: 0.4062"
+[1] "F1: 0.4407"
+[1] "----------------------------------------"
+[1] "--- MODEL COMPARISON ---"
+[1] "Logistic Regression AUC: 0.6278"
+[1] "Random Forest AUC: 0.6475"
+[1] "Best model: Random Forest"
+null device 
+          1 
+[1] "ROC plot saved to Results_Classification/FINAL_ROC_Balanced_Corrected.png"
+[1] "Best model ( Random Forest ) saved to Results_Classification/best_model.rds"
+[1] "Performance summary saved to Results_Classification/model_performance_summary.csv"
+[1] "--- LOGISTIC REGRESSION CONFUSION MATRIX ---"
+          Reference
+Prediction Fail Pass
+      Fail   15   21
+      Pass   17   45
+         Sensitivity          Specificity       Pos Pred Value 
+           0.4687500            0.6818182            0.4166667 
+      Neg Pred Value            Precision               Recall 
+           0.7258065            0.4166667            0.4687500 
+                  F1           Prevalence       Detection Rate 
+           0.4411765            0.3265306            0.1530612 
+Detection Prevalence    Balanced Accuracy 
+           0.3673469            0.5752841 
+[1] "--- RANDOM FOREST CONFUSION MATRIX ---"
+          Reference
+Prediction Fail Pass
+      Fail   13   14
+      Pass   19   52
+         Sensitivity          Specificity       Pos Pred Value 
+           0.4062500            0.7878788            0.4814815 
+      Neg Pred Value            Precision               Recall 
+           0.7323944            0.4814815            0.4062500 
+                  F1           Prevalence       Detection Rate 
+           0.4406780            0.3265306            0.1326531 
+Detection Prevalence    Balanced Accuracy 
+           0.2755102            0.5970644 
+[1] "=== CLASSIFICATION MODEL TRAINING COMPLETED ==="
+[1] "--- 2. IMBALANCE CHECK ---"
+
+Fail Pass 
+  98  199 
+[1] ">> Training Model 1: Logistic Regression..."
+[1] ">> Training Model 2: Random Forest..."
+[1] "--- EVALUATING MODELS ---"
+[1] "Saved results for Logistic Regression to Results_Classification/Result_Logistic_Regression.txt"
+[1] "Saved results for Random Forest to Results_Classification/Result_Random_Forest.txt"
+[1] "Saved Final Comparison Summary to TXT."
+null device 
+          1 
+[1] "Saved ROC Plot."
+[1] "=== PROCESS COMPLETE ==="
+[1] "Train Set: 297 rows | Valid Set: 98 rows"
+[1] "--- IMBALANCE CHECK (BEFORE TRAINING) ---"
+
+Fail Pass 
+  98  199 
+[1] ">> Training Model 1: Logistic Regression..."
+[1] ">> Training Model 2: Random Forest..."
+[1] ">> Training Model 3: SVM (Radial Basis)..."
+[1] ">> Training Model 4: Gradient Boosting Machine..."
+[1] "--- EVALUATING ALL MODELS ---"
+[1] "Saved results for Logistic Regression"
+[1] "Saved results for Random Forest"
+[1] "Saved results for SVM Radial"
+[1] "Saved results for Gradient Boosting"
+[1] "Leaderboard saved to 'Final_Model_Leaderboard.txt'"
+null device 
+          1 
+[1] "Final Comparison Plot saved."
+[1] "=== ANALYSIS COMPLETE ==="
+[1] "--- STARTING FULL PIPELINE ANALYSIS ---"
+[1] "--- STARTING FULL PIPELINE ANALYSIS ---"
+[1] "Target Variable 'Status' Created. Distribution:"
+
+Fail Pass 
+ 130  265 
+[1] "Train Set: 297 rows | Valid Set: 98 rows"
+[1] "--- PHASE 4: RUNNING EDA ---"
+[1] "EDA Plots Saved."
+[1] "--- PHASE 5: RUNNING FEATURE SELECTION ---"
+[1] ">> Running Chi-Squared Tests..."
+[1] "Chi-Squared Results Saved."
+[1] ">> Running Boruta Algorithm (This may take a moment)..."
+Boruta performed 99 iterations in 7.243459 secs.
+ 7 attributes confirmed important: absences, age, failures, goout,
+guardian and 2 more;
+ 21 attributes confirmed unimportant: activities, address, Dalc,
+famrel, famsize and 16 more;
+ 2 tentative attributes left: Fjob, internet;
+null device 
+          1 
+[1] ">> Running RFE Algorithm..."
+
+Recursive feature selection
+
+Outer resampling method: Cross-Validated (5 fold) 
+
+Resampling performance over subset size:
+
+ Variables Accuracy  Kappa AccuracySD KappaSD Selected
+         1   0.7375 0.3490    0.02892 0.05705         
+         2   0.7274 0.2870    0.02594 0.08059         
+         3   0.7375 0.3173    0.02718 0.06940         
+         4   0.7207 0.2984    0.03690 0.05626         
+         5   0.7376 0.3534    0.03290 0.04966        *
+         6   0.7208 0.3159    0.06840 0.14729         
+         7   0.7276 0.3286    0.05434 0.10437         
+         8   0.7104 0.2660    0.01918 0.06655         
+         9   0.7206 0.3050    0.02948 0.05266         
+        10   0.7105 0.2729    0.02921 0.06488         
+        11   0.7040 0.2716    0.05052 0.09251         
+        12   0.7006 0.2479    0.04479 0.09006         
+        13   0.7037 0.2502    0.03087 0.08618         
+        14   0.6969 0.2377    0.03394 0.10313         
+        15   0.7005 0.2343    0.05245 0.11623         
+        30   0.7039 0.2343    0.06647 0.13819         
+
+The top 5 variables (out of 5):
+   failures, absences, goout, Medu, schoolsup
+
+null device 
+          1 
+[1] "--- PHASE 6: FINAL VARIABLE SELECTION ---"
+[1] "Variables selected for Modeling:"
+[1] "failures" "absences" "higher"   "age"      "Medu"     "goout"    "guardian"
+[8] "Status"  
+[1] "--- PHASE 7: TRAINING MODELS ---"
+[1] ">> Training Logistic Regression..."
+[1] ">> Training Random Forest..."
+[1] ">> Training SVM Radial..."
+[1] ">> Training Gradient Boosting..."
+[1] "--- PHASE 8: EVALUATION ---"
+null device 
+          1 
+[1] "--- FULL PIPELINE COMPLETE. ALL RESULTS IN 'Results_Classification/' ---"
+[1] "--- STARTING ANALYSIS ---"
+[1] "Date: 2025-12-03 14:03:52.8992"
+[1] "Data Loaded Successfully."
+[1] "Train Set: 298 rows | Validation Set: 97 rows"
+[1] "--- 5. GENERATING DESCRIPTIVE STATISTICS ---"
+     Variable  Mean Median   SD Min Max
+1        Dalc  1.50    1.0 0.94   1   5
+2        Fedu  2.55    2.5 1.07   1   4
+3          G1 10.97   11.0 3.31   3  19
+4          G2 10.71   11.0 3.75   0  19
+5          G3 10.43   11.0 4.55   0  20
+6        Medu  2.70    3.0 1.10   0   4
+7        Walc  2.35    2.0 1.33   1   5
+8    absences  5.53    4.0 7.75   0  75
+9         age 16.71   17.0 1.29  15  22
+10   failures  0.32    0.0 0.73   0   3
+11     famrel  3.95    4.0 0.89   1   5
+12   freetime  3.28    3.0 0.99   1   5
+13      goout  3.08    3.0 1.12   1   5
+14     health  3.56    4.0 1.39   1   5
+15  studytime  2.04    2.0 0.82   1   4
+16 traveltime  1.46    1.0 0.72   1   4
+[1] "Saved: Results/00_Descriptive_Stats.txt"
+[1] "--- 6. GENERATING DISTRIBUTION PLOTS ---"
+[1] "Saved univariate plots."
+[1] "--- 7. GENERATING RELATIONAL PLOTS (VS G3) ---"
+[1] "Saved bivariate plots."
+[1] "--- 8. FEATURE SELECTION ANALYSIS ---"
+[1] ">> [1/4] Calculating Correlations..."
+  failures       Medu        age       Fedu traveltime     health  studytime 
+0.35370159 0.18977154 0.17572019 0.10521060 0.09117608 0.07815914 0.07529724 
+     goout       Dalc     famrel 
+0.06620264 0.06056378 0.05377487 
+[1] ">> [2/4] Random Forest Importance..."
+null device 
+          1 
+[1] ">> [3/4] Running Boruta Algorithm..."
+Boruta performed 99 iterations in 7.341391 secs.
+ 8 attributes confirmed important: absences, age, failures, guardian,
+higher and 3 more;
+ 19 attributes confirmed unimportant: activities, address, famrel,
+famsize, famsup and 14 more;
+ 3 tentative attributes left: Dalc, Mjob, paid;
+null device 
+          1 
+[1] ">> [4/4] Running RFE..."
+
+Recursive feature selection
+
+Outer resampling method: Cross-Validated (5 fold) 
+
+Resampling performance over subset size:
+
+ Variables  RMSE Rsquared   MAE RMSESD RsquaredSD  MAESD Selected
+         1 4.255   0.1407 3.253 0.4416    0.10748 0.3180         
+         2 3.932   0.2588 3.094 0.3970    0.09895 0.2927         
+         3 3.961   0.2657 3.099 0.3826    0.09653 0.2565         
+         4 3.969   0.2705 3.092 0.3647    0.07777 0.2550         
+         5 3.960   0.2862 3.063 0.3493    0.08745 0.2357         
+         6 3.897   0.2746 2.997 0.4334    0.09947 0.3020         
+         7 3.863   0.2844 3.016 0.4459    0.09828 0.3041         
+         8 3.882   0.2799 3.037 0.3961    0.07194 0.2562         
+         9 3.866   0.2875 3.001 0.4895    0.09645 0.3204         
+        10 3.892   0.2796 2.983 0.4960    0.10137 0.3273         
+        11 3.860   0.2920 2.958 0.5283    0.12182 0.3311         
+        12 3.880   0.2812 2.965 0.5368    0.12390 0.3294         
+        13 3.919   0.2676 3.001 0.5648    0.13056 0.3473         
+        14 3.901   0.2731 2.988 0.5036    0.10770 0.3191         
+        15 3.889   0.2780 2.957 0.5050    0.10779 0.3208         
+        30 3.856   0.3103 2.959 0.4756    0.11973 0.3105        *
+
+The top 5 variables (out of 30):
+   failures, absences, guardian, age, schoolsup
+
+null device 
+          1 
+[1] "--- ANALYSIS COMPLETE. ALL RESULTS SAVED IN 'Results/' FOLDER ---"

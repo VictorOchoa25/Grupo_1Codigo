@@ -1,0 +1,14 @@
+[1] "=== RESULTS FOR: Gradient Boosting ==="
+[1] "AUC Score: 0.6283"
+          Reference
+Prediction Fail Pass
+      Fail   17   22
+      Pass   15   44
+         Sensitivity          Specificity       Pos Pred Value 
+           0.5312500            0.6666667            0.4358974 
+      Neg Pred Value            Precision               Recall 
+           0.7457627            0.4358974            0.5312500 
+                  F1           Prevalence       Detection Rate 
+           0.4788732            0.3265306            0.1734694 
+Detection Prevalence    Balanced Accuracy 
+           0.3979592            0.5989583 

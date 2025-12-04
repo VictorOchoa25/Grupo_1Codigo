@@ -1,0 +1,32 @@
+[1] "MODEL: knn"
+[1] "AUC: 0.5386"
+Confusion Matrix and Statistics
+
+          Reference
+Prediction Fail Pass
+      Fail    8   12
+      Pass   24   54
+                                          
+               Accuracy : 0.6327          
+                 95% CI : (0.5293, 0.7278)
+    No Information Rate : 0.6735          
+    P-Value [Acc > NIR] : 0.83404         
+                                          
+                  Kappa : 0.0755          
+                                          
+ Mcnemar's Test P-Value : 0.06675         
+                                          
+            Sensitivity : 0.25000         
+            Specificity : 0.81818         
+         Pos Pred Value : 0.40000         
+         Neg Pred Value : 0.69231         
+              Precision : 0.40000         
+                 Recall : 0.25000         
+                     F1 : 0.30769         
+             Prevalence : 0.32653         
+         Detection Rate : 0.08163         
+   Detection Prevalence : 0.20408         
+      Balanced Accuracy : 0.53409         
+                                          
+       'Positive' Class : Fail            
+                                          

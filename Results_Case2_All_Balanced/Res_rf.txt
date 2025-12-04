@@ -1,0 +1,16 @@
+[1] "MODEL: rf"
+[1] "AUC: 0.612"
+[1] "Confusion Matrix:"
+          Reference
+Prediction Fail Pass
+      Fail   13   14
+      Pass   19   52
+[1] "Detailed Metrics:"
+         Sensitivity          Specificity       Pos Pred Value 
+           0.4062500            0.7878788            0.4814815 
+      Neg Pred Value            Precision               Recall 
+           0.7323944            0.4814815            0.4062500 
+                  F1           Prevalence       Detection Rate 
+           0.4406780            0.3265306            0.1326531 
+Detection Prevalence    Balanced Accuracy 
+           0.2755102            0.5970644 

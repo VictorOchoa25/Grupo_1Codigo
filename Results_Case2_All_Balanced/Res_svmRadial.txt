@@ -1,0 +1,16 @@
+[1] "MODEL: svmRadial"
+[1] "AUC: 0.6009"
+[1] "Confusion Matrix:"
+          Reference
+Prediction Fail Pass
+      Fail   12   20
+      Pass   20   46
+[1] "Detailed Metrics:"
+         Sensitivity          Specificity       Pos Pred Value 
+           0.3750000            0.6969697            0.3750000 
+      Neg Pred Value            Precision               Recall 
+           0.6969697            0.3750000            0.3750000 
+                  F1           Prevalence       Detection Rate 
+           0.3750000            0.3265306            0.1224490 
+Detection Prevalence    Balanced Accuracy 
+           0.3265306            0.5359848 

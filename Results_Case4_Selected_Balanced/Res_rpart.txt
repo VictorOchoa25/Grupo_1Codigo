@@ -1,0 +1,16 @@
+[1] "MODEL: rpart"
+[1] "AUC: 0.5743"
+[1] "Confusion Matrix:"
+          Reference
+Prediction Fail Pass
+      Fail   10   16
+      Pass   22   50
+[1] "Detailed Metrics:"
+         Sensitivity          Specificity       Pos Pred Value 
+           0.3125000            0.7575758            0.3846154 
+      Neg Pred Value            Precision               Recall 
+           0.6944444            0.3846154            0.3125000 
+                  F1           Prevalence       Detection Rate 
+           0.3448276            0.3265306            0.1020408 
+Detection Prevalence    Balanced Accuracy 
+           0.2653061            0.5350379 

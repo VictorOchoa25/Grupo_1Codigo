@@ -1,0 +1,26 @@
+"Case","Model","AUC","Accuracy","Sensitivity","Specificity"
+"Case1: All Vars, No Balance","gbm",0.6425,0.6327,0.25,0.8182
+"Case1: All Vars, No Balance","glm",0.6335,0.6122,0.3125,0.7576
+"Case1: All Vars, No Balance","rf",0.6127,0.7143,0.4062,0.8636
+"Case1: All Vars, No Balance","rpart",0.6125,0.6429,0.375,0.7727
+"Case1: All Vars, No Balance","svmRadial",0.5909,0.7041,0.3125,0.8939
+"Case1: All Vars, No Balance","naive_bayes",0.5421,0.5918,0.3125,0.7273
+"Case1: All Vars, No Balance","knn",0.5386,0.6327,0.25,0.8182
+"Case2: All Vars, Balanced","glm",0.6316,0.6122,0.5,0.6667
+"Case2: All Vars, Balanced","gbm",0.6259,0.6327,0.4062,0.7424
+"Case2: All Vars, Balanced","rf",0.612,0.6633,0.4062,0.7879
+"Case2: All Vars, Balanced","svmRadial",0.6009,0.5918,0.375,0.697
+"Case2: All Vars, Balanced","rpart",0.5881,0.6837,0.3125,0.8636
+"Case2: All Vars, Balanced","knn",0.5573,0.5714,0.5312,0.5909
+"Case3: Selected Vars, No Balance","glm",0.6461,0.6939,0.2812,0.8939
+"Case3: Selected Vars, No Balance","gbm",0.6409,0.6837,0.2812,0.8788
+"Case3: Selected Vars, No Balance","rf",0.6274,0.6837,0.3125,0.8636
+"Case3: Selected Vars, No Balance","knn",0.6054,0.7245,0.3438,0.9091
+"Case3: Selected Vars, No Balance","svmRadial",0.6016,0.6837,0.3125,0.8636
+"Case3: Selected Vars, No Balance","rpart",0.5881,0.6837,0.3125,0.8636
+"Case4: Selected Vars, Balanced","knn",0.6536,0.6327,0.6562,0.6212
+"Case4: Selected Vars, Balanced","rf",0.6383,0.6531,0.375,0.7879
+"Case4: Selected Vars, Balanced","svmRadial",0.6316,0.6939,0.4688,0.803
+"Case4: Selected Vars, Balanced","gbm",0.6283,0.6224,0.5312,0.6667
+"Case4: Selected Vars, Balanced","glm",0.6278,0.6122,0.4688,0.6818
+"Case4: Selected Vars, Balanced","rpart",0.5743,0.6122,0.3125,0.7576

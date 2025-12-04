@@ -1,0 +1,16 @@
+[1] "MODEL: glm"
+[1] "AUC: 0.6461"
+[1] "Confusion Matrix:"
+          Reference
+Prediction Fail Pass
+      Fail    9    7
+      Pass   23   59
+[1] "Detailed Metrics:"
+         Sensitivity          Specificity       Pos Pred Value 
+          0.28125000           0.89393939           0.56250000 
+      Neg Pred Value            Precision               Recall 
+          0.71951220           0.56250000           0.28125000 
+                  F1           Prevalence       Detection Rate 
+          0.37500000           0.32653061           0.09183673 
+Detection Prevalence    Balanced Accuracy 
+          0.16326531           0.58759470 
