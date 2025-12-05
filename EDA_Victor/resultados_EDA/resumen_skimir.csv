@@ -1,0 +1,36 @@
+"skim_type","skim_variable","n_missing","complete_rate","character.min","character.max","character.empty","character.n_unique","character.whitespace","factor.ordered","factor.n_unique","factor.top_counts","numeric.mean","numeric.sd","numeric.p0","numeric.p25","numeric.p50","numeric.p75","numeric.p100","numeric.hist"
+"character","school",0,1,2,2,0,2,0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"character","sex",0,1,1,1,0,2,0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"character","address",0,1,1,1,0,2,0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"character","famsize",0,1,3,3,0,2,0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"character","Pstatus",0,1,1,1,0,2,0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"character","Mjob",0,1,5,8,0,5,0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"character","Fjob",0,1,5,8,0,5,0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"character","reason",0,1,4,10,0,4,0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"character","guardian",0,1,5,6,0,3,0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"character","schoolsup",0,1,2,3,0,2,0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"character","famsup",0,1,2,3,0,2,0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"character","paid",0,1,2,3,0,2,0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"character","activities",0,1,2,3,0,2,0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"character","nursery",0,1,2,3,0,2,0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"character","higher",0,1,2,3,0,2,0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"character","internet",0,1,2,3,0,2,0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"character","romantic",0,1,2,3,0,2,0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"factor","reprobado_factor",0,1,NA,NA,NA,NA,NA,FALSE,2,"Apr: 265, Rep: 130",NA,NA,NA,NA,NA,NA,NA,NA
+"factor","nivel_rendimiento",0,1,NA,NA,NA,NA,NA,FALSE,4,"Suf: 165, Rep: 130, Bue: 82, Exc: 18",NA,NA,NA,NA,NA,NA,NA,NA
+"numeric","age",0,1,NA,NA,NA,NA,NA,NA,NA,NA,16.6962025316456,1.27604272460563,15,16,17,18,22,"▇▅▅▁▁"
+"numeric","Medu",0,1,NA,NA,NA,NA,NA,NA,NA,NA,2.74936708860759,1.09473514142854,0,2,3,4,4,"▁▃▆▆▇"
+"numeric","Fedu",0,1,NA,NA,NA,NA,NA,NA,NA,NA,2.52151898734177,1.08820054582694,0,2,2,3,4,"▁▆▇▇▇"
+"numeric","traveltime",0,1,NA,NA,NA,NA,NA,NA,NA,NA,1.44810126582278,0.697504754908682,1,1,1,2,4,"▇▃▁▁▁"
+"numeric","studytime",0,1,NA,NA,NA,NA,NA,NA,NA,NA,2.03544303797468,0.839240346418556,1,1,2,2,4,"▅▇▁▂▁"
+"numeric","failures",0,1,NA,NA,NA,NA,NA,NA,NA,NA,0.334177215189873,0.743650973606251,0,0,0,0,3,"▇▁▁▁▁"
+"numeric","famrel",0,1,NA,NA,NA,NA,NA,NA,NA,NA,3.94430379746835,0.896658607688505,1,4,4,5,5,"▁▁▃▇▅"
+"numeric","freetime",0,1,NA,NA,NA,NA,NA,NA,NA,NA,3.23544303797468,0.998862039665721,1,3,3,4,5,"▁▃▇▆▂"
+"numeric","goout",0,1,NA,NA,NA,NA,NA,NA,NA,NA,3.10886075949367,1.11327817401834,1,2,3,4,5,"▂▆▇▅▃"
+"numeric","Dalc",0,1,NA,NA,NA,NA,NA,NA,NA,NA,1.48101265822785,0.890741428090967,1,1,1,2,5,"▇▂▁▁▁"
+"numeric","Walc",0,1,NA,NA,NA,NA,NA,NA,NA,NA,2.29113924050633,1.28789659245109,1,1,2,3,5,"▇▅▅▃▂"
+"numeric","health",0,1,NA,NA,NA,NA,NA,NA,NA,NA,3.55443037974684,1.39030339130958,1,3,4,5,5,"▂▂▅▃▇"
+"numeric","absences",0,1,NA,NA,NA,NA,NA,NA,NA,NA,5.70886075949367,8.00309568710818,0,0,4,8,75,"▇▁▁▁▁"
+"numeric","G3",0,1,NA,NA,NA,NA,NA,NA,NA,NA,10.4151898734177,4.58144261099784,0,8,11,14,20,"▂▃▇▅▁"
+"numeric","G3_original",0,1,NA,NA,NA,NA,NA,NA,NA,NA,10.4151898734177,4.58144261099784,0,8,11,14,20,"▂▃▇▅▁"
+"numeric","reprobado",0,1,NA,NA,NA,NA,NA,NA,NA,NA,0.329113924050633,0.470487353637196,0,0,0,1,1,"▇▁▁▁▃"

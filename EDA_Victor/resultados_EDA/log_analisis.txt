@@ -1,0 +1,453 @@
+=====================================================================
+ANÁLISIS EXPLORATORIO - RENDIMIENTO ESTUDIANTIL EN MATEMÁTICAS
+Fecha: 20427 
+Objetivo: Predecir riesgo de reprobar (G3) sin usar G1 y G2
+=====================================================================
+
+Cargando librerías...
+Cargando datos...
+Cargando datos...
+indexing studentmat.csv [=======================================================================] 598.77MB/s, eta:  0s                                                                                                                      
+2. TRANSFORMACIÓN DE LA VARIABLE OBJETIVO
+=========================================
+Variable objetivo creada: 'reprobado' (1 = Reprobado, 0 = Aprobado)
+G1 y G2 removidas del conjunto de predictores
+
+Distribución de la variable objetivo:
+
+ Aprobado Reprobado 
+      265       130 
+
+Proporciones:
+
+ Aprobado Reprobado 
+0.6708861 0.3291139 
+
+
+3. ANÁLISIS DE ESTRUCTURA Y CALIDAD
+=====================================
+Dimensiones del dataset original: 395 37 
+Dimensiones sin G1 y G2: 395 35 
+
+Tipos de variables:
+tibble [395 × 35] (S3: tbl_df/tbl/data.frame)
+ $ school           : chr [1:395] "GP" "GP" "GP" "GP" ...
+ $ sex              : chr [1:395] "F" "F" "F" "F" ...
+ $ age              : num [1:395] 18 17 15 15 16 16 16 17 15 15 ...
+ $ address          : chr [1:395] "U" "U" "U" "U" ...
+ $ famsize          : chr [1:395] "GT3" "GT3" "LE3" "GT3" ...
+ $ Pstatus          : chr [1:395] "A" "T" "T" "T" ...
+ $ Medu             : num [1:395] 4 1 1 4 3 4 2 4 3 3 ...
+ $ Fedu             : num [1:395] 4 1 1 2 3 3 2 4 2 4 ...
+ $ Mjob             : chr [1:395] "at_home" "at_home" "at_home" "health" ...
+ $ Fjob             : chr [1:395] "teacher" "other" "other" "services" ...
+ $ reason           : chr [1:395] "course" "course" "other" "home" ...
+ $ guardian         : chr [1:395] "mother" "father" "mother" "mother" ...
+ $ traveltime       : num [1:395] 2 1 1 1 1 1 1 2 1 1 ...
+ $ studytime        : num [1:395] 2 2 2 3 2 2 2 2 2 2 ...
+ $ failures         : num [1:395] 0 0 3 0 0 0 0 0 0 0 ...
+ $ schoolsup        : chr [1:395] "yes" "no" "yes" "no" ...
+ $ famsup           : chr [1:395] "no" "yes" "no" "yes" ...
+ $ paid             : chr [1:395] "no" "no" "yes" "yes" ...
+ $ activities       : chr [1:395] "no" "no" "no" "yes" ...
+ $ nursery          : chr [1:395] "yes" "no" "yes" "yes" ...
+ $ higher           : chr [1:395] "yes" "yes" "yes" "yes" ...
+ $ internet         : chr [1:395] "no" "yes" "yes" "yes" ...
+ $ romantic         : chr [1:395] "no" "no" "no" "yes" ...
+ $ famrel           : num [1:395] 4 5 4 3 4 5 4 4 4 5 ...
+ $ freetime         : num [1:395] 3 3 3 2 3 4 4 1 2 5 ...
+ $ goout            : num [1:395] 4 3 2 2 2 2 4 4 2 1 ...
+ $ Dalc             : num [1:395] 1 1 2 1 1 1 1 1 1 1 ...
+ $ Walc             : num [1:395] 1 1 3 1 2 2 1 1 1 1 ...
+ $ health           : num [1:395] 3 3 3 5 5 5 3 1 1 5 ...
+ $ absences         : num [1:395] 6 4 10 2 4 10 0 6 0 0 ...
+ $ G3               : num [1:395] 6 6 10 15 10 15 11 6 19 15 ...
+ $ G3_original      : num [1:395] 6 6 10 15 10 15 11 6 19 15 ...
+ $ reprobado        : num [1:395] 1 1 0 0 0 0 0 1 0 0 ...
+ $ reprobado_factor : Factor w/ 2 levels "Aprobado","Reprobado": 2 2 1 1 1 1 1 2 1 1 ...
+ $ nivel_rendimiento: Factor w/ 4 levels "Reprobado","Suficiente",..: 1 1 2 3 2 3 2 1 4 3 ...
+
+Resumen estadístico (skimir):
+── Data Summary ────────────────────────
+                           Values        
+Name                       datos_sin_g1g2
+Number of rows             395           
+Number of columns          35            
+_______________________                  
+Column type frequency:                   
+  character                17            
+  factor                   2             
+  numeric                  16            
+________________________                 
+Group variables            None          
+
+── Variable type: character ──────────────────────────────────────────────────────────────────────────────────────────
+   skim_variable n_missing complete_rate min max empty n_unique whitespace
+ 1 school                0             1   2   2     0        2          0
+ 2 sex                   0             1   1   1     0        2          0
+ 3 address               0             1   1   1     0        2          0
+ 4 famsize               0             1   3   3     0        2          0
+ 5 Pstatus               0             1   1   1     0        2          0
+ 6 Mjob                  0             1   5   8     0        5          0
+ 7 Fjob                  0             1   5   8     0        5          0
+ 8 reason                0             1   4  10     0        4          0
+ 9 guardian              0             1   5   6     0        3          0
+10 schoolsup             0             1   2   3     0        2          0
+11 famsup                0             1   2   3     0        2          0
+12 paid                  0             1   2   3     0        2          0
+13 activities            0             1   2   3     0        2          0
+14 nursery               0             1   2   3     0        2          0
+15 higher                0             1   2   3     0        2          0
+16 internet              0             1   2   3     0        2          0
+17 romantic              0             1   2   3     0        2          0
+
+── Variable type: factor ─────────────────────────────────────────────────────────────────────────────────────────────
+  skim_variable     n_missing complete_rate ordered n_unique top_counts                          
+1 reprobado_factor          0             1 FALSE          2 Apr: 265, Rep: 130                  
+2 nivel_rendimiento         0             1 FALSE          4 Suf: 165, Rep: 130, Bue: 82, Exc: 18
+
+── Variable type: numeric ────────────────────────────────────────────────────────────────────────────────────────────
+   skim_variable n_missing complete_rate   mean    sd p0 p25 p50 p75 p100 hist 
+ 1 age                   0             1 16.7   1.28  15  16  17  18   22 ▇▅▅▁▁
+ 2 Medu                  0             1  2.75  1.09   0   2   3   4    4 ▁▃▆▆▇
+ 3 Fedu                  0             1  2.52  1.09   0   2   2   3    4 ▁▆▇▇▇
+ 4 traveltime            0             1  1.45  0.698  1   1   1   2    4 ▇▃▁▁▁
+ 5 studytime             0             1  2.04  0.839  1   1   2   2    4 ▅▇▁▂▁
+ 6 failures              0             1  0.334 0.744  0   0   0   0    3 ▇▁▁▁▁
+ 7 famrel                0             1  3.94  0.897  1   4   4   5    5 ▁▁▃▇▅
+ 8 freetime              0             1  3.24  0.999  1   3   3   4    5 ▁▃▇▆▂
+ 9 goout                 0             1  3.11  1.11   1   2   3   4    5 ▂▆▇▅▃
+10 Dalc                  0             1  1.48  0.891  1   1   1   2    5 ▇▂▁▁▁
+11 Walc                  0             1  2.29  1.29   1   1   2   3    5 ▇▅▅▃▂
+12 health                0             1  3.55  1.39   1   3   4   5    5 ▂▂▅▃▇
+13 absences              0             1  5.71  8.00   0   0   4   8   75 ▇▁▁▁▁
+14 G3                    0             1 10.4   4.58   0   8  11  14   20 ▂▃▇▅▁
+15 G3_original           0             1 10.4   4.58   0   8  11  14   20 ▂▃▇▅▁
+16 reprobado             0             1  0.329 0.470  0   0   0   1    1 ▇▁▁▁▃
+
+Valores faltantes por variable:
+named numeric(0)
+¡No hay valores faltantes en el dataset!
+null device 
+          1 
+
+
+4. ANÁLISIS UNIVARIADO DE PREDICTORES
+======================================
+Variables numéricas: 13 
+Variables categóricas: 17 
+
+Distribución de variables numéricas clave:
+null device 
+          1 
+null device 
+          1 
+
+Distribución de variables categóricas:
+
+=== sex ===
+
+  F   M 
+208 187 
+Proporciones:
+
+        F         M 
+0.5265823 0.4734177 
+
+=== address ===
+
+  R   U 
+ 88 307 
+Proporciones:
+
+        R         U 
+0.2227848 0.7772152 
+
+=== famsize ===
+
+GT3 LE3 
+281 114 
+Proporciones:
+
+      GT3       LE3 
+0.7113924 0.2886076 
+
+=== Pstatus ===
+
+  A   T 
+ 41 354 
+Proporciones:
+
+        A         T 
+0.1037975 0.8962025 
+
+=== Mjob ===
+
+ at_home   health    other services  teacher 
+      59       34      141      103       58 
+Proporciones:
+
+   at_home     health      other   services    teacher 
+0.14936709 0.08607595 0.35696203 0.26075949 0.14683544 
+
+=== Fjob ===
+
+ at_home   health    other services  teacher 
+      20       18      217      111       29 
+Proporciones:
+
+   at_home     health      other   services    teacher 
+0.05063291 0.04556962 0.54936709 0.28101266 0.07341772 
+
+=== schoolsup ===
+
+ no yes 
+344  51 
+Proporciones:
+
+       no       yes 
+0.8708861 0.1291139 
+
+=== famsup ===
+
+ no yes 
+153 242 
+Proporciones:
+
+       no       yes 
+0.3873418 0.6126582 
+
+=== paid ===
+
+ no yes 
+214 181 
+Proporciones:
+
+       no       yes 
+0.5417722 0.4582278 
+
+=== higher ===
+
+ no yes 
+ 20 375 
+Proporciones:
+
+        no        yes 
+0.05063291 0.94936709 
+
+=== internet ===
+
+ no yes 
+ 66 329 
+Proporciones:
+
+       no       yes 
+0.1670886 0.8329114 
+
+=== romantic ===
+
+ no yes 
+263 132 
+Proporciones:
+
+       no       yes 
+0.6658228 0.3341772 
+null device 
+          1 
+
+
+5. ANÁLISIS BIVARIADO CON VARIABLE OBJETIVO
+=============================================
+
+Relación entre variables numéricas y riesgo de reprobar:
+null device 
+          1 
+
+Relación entre variables categóricas y riesgo de reprobar:
+
+=== Tasa de reprobación por sex ===
+# A tibble: 2 × 4
+  sex       n reprobados tasa_reprobacion
+  <chr> <int>      <dbl>            <dbl>
+1 F       208         75             36.1
+2 M       187         55             29.4
+
+=== Tasa de reprobación por address ===
+# A tibble: 2 × 4
+  address     n reprobados tasa_reprobacion
+  <chr>   <int>      <dbl>            <dbl>
+1 R          88         33             37.5
+2 U         307         97             31.6
+
+=== Tasa de reprobación por famsize ===
+# A tibble: 2 × 4
+  famsize     n reprobados tasa_reprobacion
+  <chr>   <int>      <dbl>            <dbl>
+1 GT3       281         96             34.2
+2 LE3       114         34             29.8
+
+=== Tasa de reprobación por Pstatus ===
+# A tibble: 2 × 4
+  Pstatus     n reprobados tasa_reprobacion
+  <chr>   <int>      <dbl>            <dbl>
+1 T         354        119             33.6
+2 A          41         11             26.8
+
+=== Tasa de reprobación por Mjob ===
+# A tibble: 5 × 4
+  Mjob         n reprobados tasa_reprobacion
+  <chr>    <int>      <dbl>            <dbl>
+1 other      141         53             37.6
+2 at_home     59         22             37.3
+3 teacher     58         19             32.8
+4 services   103         29             28.2
+5 health      34          7             20.6
+
+=== Tasa de reprobación por Fjob ===
+# A tibble: 5 × 4
+  Fjob         n reprobados tasa_reprobacion
+  <chr>    <int>      <dbl>            <dbl>
+1 at_home     20          8             40  
+2 services   111         40             36.0
+3 health      18          6             33.3
+4 other      217         69             31.8
+5 teacher     29          7             24.1
+
+=== Tasa de reprobación por schoolsup ===
+# A tibble: 2 × 4
+  schoolsup     n reprobados tasa_reprobacion
+  <chr>     <int>      <dbl>            <dbl>
+1 yes          51         23             45.1
+2 no          344        107             31.1
+
+=== Tasa de reprobación por famsup ===
+# A tibble: 2 × 4
+  famsup     n reprobados tasa_reprobacion
+  <chr>  <int>      <dbl>            <dbl>
+1 yes      242         85             35.1
+2 no       153         45             29.4
+
+=== Tasa de reprobación por paid ===
+# A tibble: 2 × 4
+  paid      n reprobados tasa_reprobacion
+  <chr> <int>      <dbl>            <dbl>
+1 no      214         79             36.9
+2 yes     181         51             28.2
+
+=== Tasa de reprobación por higher ===
+# A tibble: 2 × 4
+  higher     n reprobados tasa_reprobacion
+  <chr>  <int>      <dbl>            <dbl>
+1 no        20         13             65  
+2 yes      375        117             31.2
+
+=== Tasa de reprobación por internet ===
+# A tibble: 2 × 4
+  internet     n reprobados tasa_reprobacion
+  <chr>    <int>      <dbl>            <dbl>
+1 no          66         26             39.4
+2 yes        329        104             31.6
+
+=== Tasa de reprobación por romantic ===
+# A tibble: 2 × 4
+  romantic     n reprobados tasa_reprobacion
+  <chr>    <int>      <dbl>            <dbl>
+1 yes        132         52             39.4
+2 no         263         78             29.7
+null device 
+          1 
+
+Matriz de correlación entre variables numéricas:
+                   age         Medu         Fedu    studytime    failures    absences       famrel    freetime
+age        1.000000000 -0.163658419 -0.163438069 -0.004140037  0.24366538  0.17523008  0.053940096  0.01643439
+Medu      -0.163658419  1.000000000  0.623455112  0.064944137 -0.23667996  0.10028482 -0.003914458  0.03089087
+Fedu      -0.163438069  0.623455112  1.000000000 -0.009174639 -0.25040844  0.02447289 -0.001369727 -0.01284553
+studytime -0.004140037  0.064944137 -0.009174639  1.000000000 -0.17356303 -0.06270018  0.039730704 -0.14319841
+failures   0.243665377 -0.236679963 -0.250408444 -0.173563031  1.00000000  0.06372583 -0.044336626  0.09198747
+absences   0.175230079  0.100284818  0.024472887 -0.062700175  0.06372583  1.00000000 -0.044354095 -0.05807792
+famrel     0.053940096 -0.003914458 -0.001369727  0.039730704 -0.04433663 -0.04435409  1.000000000  0.15070144
+freetime   0.016434389  0.030890867 -0.012845528 -0.143198407  0.09198747 -0.05807792  0.150701444  1.00000000
+goout      0.126963880  0.064094438  0.043104668 -0.063903675  0.12456092  0.04430222  0.064568411  0.28501871
+Dalc       0.131124605  0.019834099  0.002386429 -0.196019263  0.13604693  0.11190803 -0.077594357  0.20900085
+Walc       0.117276052 -0.047123460 -0.012631018 -0.253784731  0.14196203  0.13629110 -0.113397308  0.14782181
+health    -0.062187369 -0.046877829  0.014741537 -0.075615863  0.06582728 -0.02993671  0.094055728  0.07573336
+reprobado  0.179644886 -0.115396172 -0.108057009 -0.074612521  0.33773130  0.09224367 -0.046683358  0.01832137
+                 goout         Dalc        Walc       health   reprobado
+age        0.126963880  0.131124605  0.11727605 -0.062187369  0.17964489
+Medu       0.064094438  0.019834099 -0.04712346 -0.046877829 -0.11539617
+Fedu       0.043104668  0.002386429 -0.01263102  0.014741537 -0.10805701
+studytime -0.063903675 -0.196019263 -0.25378473 -0.075615863 -0.07461252
+failures   0.124560922  0.136046931  0.14196203  0.065827282  0.33773130
+absences   0.044302220  0.111908026  0.13629110 -0.029936711  0.09224367
+famrel     0.064568411 -0.077594357 -0.11339731  0.094055728 -0.04668336
+freetime   0.285018715  0.209000848  0.14782181  0.075733357  0.01832137
+goout      1.000000000  0.266993848  0.42038575 -0.009577254  0.18339869
+Dalc       0.266993848  1.000000000  0.64754423  0.077179582  0.05734277
+Walc       0.420385745  0.647544230  1.00000000  0.092476317  0.02995685
+health    -0.009577254  0.077179582  0.09247632  1.000000000  0.06566751
+reprobado  0.183398689  0.057342771  0.02995685  0.065667511  1.00000000
+null device 
+          1 
+null device 
+          1 
+
+
+6. ANÁLISIS DE INTERACCIONES
+=============================
+null device 
+          1 
+null device 
+          1 
+
+
+7. ANÁLISIS DE OUTLIERS
+======================
+
+Outliers en variables numéricas clave:
+age: 1 outliers (0.3%)
+Medu: 0 outliers (0%)
+Fedu: 2 outliers (0.5%)
+studytime: 27 outliers (6.8%)
+failures: 83 outliers (21%)
+absences: 15 outliers (3.8%)
+famrel: 26 outliers (6.6%)
+freetime: 19 outliers (4.8%)
+goout: 0 outliers (0%)
+Dalc: 18 outliers (4.6%)
+Walc: 0 outliers (0%)
+health: 0 outliers (0%)
+
+
+8. CONCLUSIONES Y HALLAZGOS CLAVE
+==================================
+
+RESUMEN EJECUTIVO:
+-----------------
+Total estudiantes: 395 
+Tasa de reprobación general: 32.9 %
+Estudiantes que reprueban: 130 
+Estudiantes que aprueban: 265 
+
+VARIABLES MÁS RELACIONADAS CON REPROBAR (correlación absoluta):
+1. failures: 0.338 (correlación)
+2. goout: 0.183 (correlación)
+3. age: 0.18 (correlación)
+4. Medu: -0.115 (correlación)
+5. Fedu: -0.108 (correlación)
+
+HALLAZGOS CLAVE DEL ANÁLISIS EXPLORATORIO:
+1. Variables con mayor impacto en reprobación:
+   - failures: Número de asignaturas reprobadas anteriormente
+   - absences: Número de ausencias
+   - studytime: Tiempo de estudio semanal
+   - higher: Deseo de educación superior
+
+2. Interacciones importantes:
+   - Estudiantes con más fallos previos y menos tiempo de estudio
+     tienen mayor riesgo
+   - Ausencias combinadas con falta de internet aumentan riesgo
+
+3. Recomendaciones para modelado:
+   - Considerar crear variables de interacción
+   - Evaluar tratamiento de outliers en 'absences'
+   - Codificar variables categóricas con target encoding

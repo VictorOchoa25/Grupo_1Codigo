@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.32">
+<meta name="generator" content="quarto-1.8.26">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Salvador y Víctor">
-<meta name="dcterms.date" content="2025-11-27">
+<meta name="dcterms.date" content="2025-12-04">
 
 <title>Student Performance</title>
 <style>
@@ -63,14 +63,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="01_Documento_files/libs/clipboard/clipboard.min.js"></script>
 <script src="01_Documento_files/libs/quarto-html/quarto.js" type="module"></script>
 <script src="01_Documento_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="01_Documento_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="01_Documento_files/libs/quarto-html/popper.min.js"></script>
 <script src="01_Documento_files/libs/quarto-html/tippy.umd.min.js"></script>
 <script src="01_Documento_files/libs/quarto-html/anchor.min.js"></script>
 <link href="01_Documento_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="01_Documento_files/libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="01_Documento_files/libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="01_Documento_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="01_Documento_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="01_Documento_files/libs/bootstrap/bootstrap-6e5ff12f349f7d7ee99023e5a7f49be9.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="01_Documento_files/libs/bootstrap/bootstrap-0b716d6fe31096b8dc5b1cb48462c79f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -86,7 +87,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -146,7 +147,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">November 27, 2025</p>
+      <p class="date">December 4, 2025</p>
     </div>
   </div>
   
@@ -174,7 +175,7 @@ window.Quarto = {
 <p><span class="math display">\[
 \texttt{Pass} =\begin{cases}\text{yes}, &amp; \text{si } \texttt{G3} \geq 10 \\\text{no}, &amp; \text{si } \texttt{G3} &lt; 10\end{cases}
 \]</span></p>
-<p>Este umbral (10 sobre 20) corresponde al criterio tradicional de aprobación en el sistema educativo portugués . Importante destacar que, para preservar la validez de la predicción temprana, las calificaciones intermedias (G1 y G2) se excluyen del conjunto de predictores, evitando así cualquier fuga de información (<em>data leakage</em>) y asegurando que el modelo se base únicamente en factores observables antes del cierre del curso.</p>
+<p>Este umbral (10 sobre 20) corresponde al criterio tradicional de aprobación en el sistema educativo portugués . Importante destacar que, para preservar la validez de la predicción temprana, las calificaciones intermedias (G1 y G2) se excluyen del conjunto de predictores, evitando así cualquier fuga de información y asegurando que el modelo se base únicamente en factores observables antes del cierre del curso.</p>
 </section>
 <section id="business-understanding" class="level1">
 <h1>Business understanding</h1>
@@ -190,10 +191,10 @@ window.Quarto = {
 <h1>Data understanding</h1>
 <p>A continuación leemos los datos y vemos el tipo de variables.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># lectura de datos en csv</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># lectura de datos en csv</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SeoulBikeData &lt;- read.csv("datos/SeoulBikeData.csv")</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">#ntotal &lt;- dim(SeoulBikeData)[1] # numero de observaciones</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">#ptotal &lt;- dim(SeoulBikeData)[2] # numero de columnas</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">#ptotal &lt;- dim(SeoulBikeData)[2] # numero de columnas</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="análisis-exploratorio-de-datos" class="level1">
@@ -262,13 +263,14 @@ window.Quarto = {
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

@@ -43,7 +43,7 @@ $$
 \texttt{Pass} =\begin{cases}\text{yes}, & \text{si } \texttt{G3} \geq 10 \\\text{no}, & \text{si } \texttt{G3} < 10\end{cases}
 $$
 
-Este umbral (10 sobre 20) corresponde al criterio tradicional de aprobación en el sistema educativo portugués . Importante destacar que, para preservar la validez de la predicción temprana, las calificaciones intermedias (G1 y G2) se excluyen del conjunto de predictores, evitando así cualquier fuga de información (*data leakage*) y asegurando que el modelo se base únicamente en factores observables antes del cierre del curso.
+Este umbral (10 sobre 20) corresponde al criterio tradicional de aprobación en el sistema educativo portugués . Importante destacar que, para preservar la validez de la predicción temprana, las calificaciones intermedias (G1 y G2) se excluyen del conjunto de predictores, evitando así cualquier fuga de información y asegurando que el modelo se base únicamente en factores observables antes del cierre del curso.
 
 # Business understanding
 
@@ -57,6 +57,7 @@ Planteamos algunas preguntas sobre nuestros datos:
 # Data understanding
 
 A continuación leemos los datos y vemos el tipo de variables.
+
 
 ```{r lectura, warning=FALSE}
 # lectura de datos en csv
