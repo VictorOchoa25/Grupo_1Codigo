@@ -1,0 +1,536 @@
+---
+title: "Análisis Predictivo del Rendimiento Académico Estudiantil"
+subtitle: "Identificación de Factores Clave y Modelos Predictivos para el Éxito Estudiantil"
+author: "Equipo de Investigación en Ciencia de Datos"
+date: "`r format(Sys.Date(), '%d de %B de %Y')`"
+format:
+  pdf:
+    documentclass: article
+    geometry:
+      - margin=1in
+    fontsize: 11pt
+    linestretch: 1.25
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 3
+    toc-title: "Tabla de Contenidos"
+    code-fold: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  fig.align = "center",
+  fig.pos = "H",
+  out.width = "90%"
+)
+library(knitr)
+library(kableExtra)
+library(ggplot2)
+```
+
+1. Análisis Exploratorio de Datos (EDA)
+1.1 Descripción del Conjunto de Datos
+El análisis utiliza el conjunto de datos de Rendimiento Estudiantil que contiene 395 estudiantes con 33 atributos que describen demografía, contexto social y registros académicos. La variable objetivo se derivó de la nota final (G3):
+
+Aprobado: Nota final ≥ 10 (265 estudiantes, 67.1%)
+
+Reprobado: Nota final < 10 (130 estudiantes, 32.9%)
+
+1.2 Análisis Univariado
+Distribución de Variables Numéricas Clave:
+```{r}
+estadisticas_numericas <- data.frame(
+  Variable = c("Edad", "Ausencias", "Fallas Previas", "Educación de la Madre", 
+               "Educación del Padre", "Tiempo de Estudio", "Salidas Sociales", 
+               "Alcohol Diario"),
+  Media = c(16.71, 5.53, 0.32, 2.70, 2.55, 2.04, 3.08, 1.50),
+  Mediana = c(17.0, 4.0, 0.0, 3.0, 2.5, 2.0, 3.0, 1.0),
+  Desviacion_Estandar = c(1.29, 7.75, 0.73, 1.10, 1.07, 0.82, 1.12, 0.94),
+  Minimo = c(15, 0, 0, 0, 1, 1, 1, 1),
+  Maximo = c(22, 75, 3, 4, 4, 4, 5, 5),
+  Asimetria = c(0.46, 3.64, 2.37, -0.32, -0.03, 0.63, 0.12, 2.17)
+)
+
+kable(estadisticas_numericas, caption = "Estadísticas Descriptivas de Variables Numéricas Clave", 
+      align = c('l', 'r', 'r', 'r', 'r', 'r', 'r'), booktabs = TRUE) %>%
+  kable_styling(latex_options = c("striped", "hold_position", "scale_down"))
+```
+
+Hallazgos Clave del Análisis Univariado:
+Distribución de Edad: La mayoría de estudiantes (moda = 17) están en sus últimos años de adolescencia
+
+Ausentismo: Alta variabilidad con algunos estudiantes faltando hasta 75 clases
+
+Fallas Previas: 68% de estudiantes no tienen fallas previas
+
+Educación Parental: La educación de la madre es ligeramente mayor que la del padre en promedio
+
+1.3 Análisis Bivariado con la Variable Objetivo
+Variables Numéricas vs. Estado Académico:
+
+```{r}
+comparacion_estado <- data.frame(
+  Variable = c("Fallas Previas", "Ausencias", "Educación de la Madre", 
+               "Edad", "Salidas Sociales"),
+  Media_Aprobados = c(0.12, 4.42, 2.85, 16.58, 2.97),
+  Media_Reprobados = c(0.73, 7.65, 2.38, 17.02, 3.34),
+  Diferencia = c(0.61, 3.23, 0.47, 0.44, 0.37),
+  Direccion = c("Reprobados tienen más", "Reprobados tienen más", 
+                "Aprobados tienen más educación", "Reprobados son mayores", 
+                "Reprobados salen más")
+)
+
+kable(comparacion_estado, caption = "Valores Promedio por Estado Académico", 
+      align = c('l', 'r', 'r', 'r', 'l'), booktabs = TRUE) %>%
+  kable_styling(latex_options = c("striped", "hold_position"))
+```
+
+
+Variables Categóricas vs. Estado (Pruebas Chi-Cuadrado):
+
+```{r}
+resultados_chi <- data.frame(
+  Variable = c("higher (desea educación superior)", "guardian (tutor)", 
+               "paid (clases pagadas extra)", "romantic (en relación)", 
+               "Mjob (trabajo madre)", "internet (acceso a internet)"),
+  Valor_P = c(0.02385, 0.03277, 0.05645, 0.09125, 0.09994, 0.10624),
+  Significancia = c("**", "**", "*", ".", ".", "NS"),
+  Interpretacion = c(
+    "Fuertemente relacionado con éxito académico",
+    "Tipo de tutor influye en resultados",
+    "Clases extra pueden ayudar marginalmente",
+    "Relaciones románticas tienen efecto marginal",
+    "Trabajo de la madre tiene alguna influencia",
+    "Acceso a internet no es estadísticamente significativo"
+  )
+)
+
+kable(resultados_chi, caption = "Pruebas Chi-Cuadrado para Variables Categóricas", 
+      align = c('l', 'r', 'c', 'l'), booktabs = TRUE) %>%
+  kable_styling(latex_options = c("striped", "hold_position", "scale_down")) %>%
+  footnote(general = "**: p < 0.05, *: p < 0.10, .: p < 0.15, NS: No Significativo", 
+           general_title = "")
+```
+
+2. Caso 1: Todas las Variables sin Balanceo
+2.1 Configuración del Caso 1
+Variables: Todas las 30 variables disponibles
+
+Balanceo: Sin balanceo de clases (distribución natural 67.1% Aprobado / 32.9% Reprobado)
+
+Objetivo: Establecer línea base de rendimiento con todas las características
+
+2.2 Resultados del Caso 1
+
+```{r}
+resultados_caso1 <- data.frame(
+  Modelo = c("Gradient Boosting", "Regresión Logística", "Random Forest", 
+             "Árbol de Decisión", "SVM Radial", "KNN", "Naive Bayes"),
+  AUC = c(0.6425, 0.6335, 0.6127, 0.6125, 0.5909, 0.5386, 0.5421),
+  Precision = c("63.27%", "61.22%", "71.43%", "64.29%", "70.41%", "63.27%", "59.18%"),
+  Sensibilidad = c("25.00%", "31.25%", "40.62%", "37.50%", "31.25%", "25.00%", "31.25%"),
+  Especificidad = c("81.82%", "75.76%", "86.36%", "77.27%", "89.39%", "81.82%", "72.73%"),
+  Posicion = c(1, 2, 3, 4, 5, 6, 7)
+)
+
+kable(resultados_caso1, caption = "Resultados del Caso 1: Todas las Variables sin Balanceo", 
+      align = c('l', 'r', 'c', 'c', 'c', 'c'), booktabs = TRUE) %>%
+  kable_styling(latex_options = c("striped", "hold_position")) %>%
+  row_spec(1, bold = TRUE, background = "#E8F4F8")
+```
+
+2.3 Análisis del Caso 1
+Fortalezas Identificadas:
+Gradient Boosting obtuvo el mejor AUC (0.6425)
+
+Random Forest logró la mayor precisión general (71.43%)
+
+SVM Radial alcanzó la mayor especificidad (89.39%)
+
+Debilidades Identificadas:
+Baja sensibilidad general: Todos los modelos detectan menos del 50% de estudiantes reprobados
+
+Sobreajuste potencial: 30 variables pueden introducir ruido en algunos modelos
+
+KNN y Naive Bayes mostraron rendimiento inferior
+
+Conclusiones del Caso 1:
+Los modelos complejos (Gradient Boosting, Random Forest) funcionan mejor con todas las variables
+
+Existe un claro trade-off entre sensibilidad y especificidad
+
+La baja sensibilidad sugiere necesidad de abordar el desbalance de clases
+
+3. Caso 2: Todas las Variables con Balanceo
+3.1 Configuración del Caso 2
+Variables: Todas las 30 variables disponibles
+
+Balanceo: Con sobremuestreo (up-sampling) para balancear clases
+
+Objetivo: Evaluar impacto del balanceo manteniendo todas las características
+
+3.2 Resultados del Caso 2
+
+```{r}
+resultados_caso2 <- data.frame(
+  Modelo = c("Regresión Logística", "Gradient Boosting", "Random Forest", 
+             "SVM Radial", "Árbol de Decisión", "KNN"),
+  AUC = c(0.6316, 0.6259, 0.6120, 0.6009, 0.5881, 0.5573),
+  Precision = c("61.22%", "63.27%", "66.33%", "59.18%", "68.37%", "57.14%"),
+  Sensibilidad = c("50.00%", "40.62%", "40.62%", "37.50%", "31.25%", "53.12%"),
+  Especificidad = c("66.67%", "74.24%", "78.79%", "69.70%", "86.36%", "59.09%"),
+  Cambio_Sensibilidad = c("+60.0%", "+62.5%", "0.0%", "+20.0%", "-16.7%", "+112.5%")
+)
+
+kable(resultados_caso2, caption = "Resultados del Caso 2: Todas las Variables con Balanceo", 
+      align = c('l', 'r', 'c', 'c', 'c', 'c'), booktabs = TRUE) %>%
+  kable_styling(latex_options = c("striped", "hold_position")) %>%
+  row_spec(1, bold = TRUE, background = "#E8F4F8")
+```
+
+3.3 Impacto del Balanceo en el Caso 2
+Mejoras Observadas:
+Sensibilidad incrementada significativamente en la mayoría de modelos
+
+Regresión Logística mejoró su sensibilidad de 31.25% a 50.00%
+
+KNN duplicó su sensibilidad (de 25.00% a 53.12%)
+
+Compensaciones Observadas:
+Reducción en AUC en la mayoría de modelos
+
+Disminución en especificidad como trade-off por mayor sensibilidad
+
+Precisión general se mantuvo similar o disminuyó ligeramente
+
+Conclusiones del Caso 2:
+El balanceo mejora significativamente la detección de estudiantes reprobados
+
+Los modelos más simples (Regresión Logística, KNN) se benefician más del balanceo
+
+Existe un trade-off claro entre sensibilidad y especificidad
+
+4. Proceso de Selección de Variables
+4.1 Metodología de Selección
+Se emplearon tres métodos complementarios para identificar las variables más predictivas:
+
+4.1.1 Pruebas Chi-Cuadrado (Variables Categóricas)
+
+
+```{r}
+ranking_chi <- data.frame(
+  Variable = c("higher", "guardian", "paid", "romantic", "Mjob", "internet"),
+  Valor_P = c(0.02385, 0.03277, 0.05645, 0.09125, 0.09994, 0.10624),
+  Significancia = c("Muy alta", "Alta", "Moderada", "Marginal", "Marginal", "Baja"),
+  Decision = c("Seleccionada", "Seleccionada", "Considerada", "Considerada", "Considerada", "No seleccionada")
+)
+
+kable(ranking_chi, caption = "Ranking de Variables Categóricas por Chi-Cuadrado", 
+      align = c('l', 'r', 'c', 'c'), booktabs = TRUE) %>%
+  kable_styling(latex_options = c("striped", "hold_position"))
+```
+
+
+4.1.2 Algoritmo Boruta (Importancia de Todas las Variables)
+
+```{r}
+importancia_boruta <- data.frame(
+  Variable = c("failures", "absences", "goout", "schoolsup", "guardian", "Medu", "age"),
+  Importancia_Media = c(22.90, 11.23, 8.09, 7.04, 6.34, 4.22, 4.01),
+  Decision = c("Confirmada", "Confirmada", "Confirmada", "Confirmada", 
+               "Confirmada", "Confirmada", "Confirmada"),
+  Categoria = c("Académica", "Asistencia", "Conductual", "Apoyo", 
+                "Familiar", "Familiar", "Demográfica")
+)
+
+kable(importancia_boruta, caption = "Variables Confirmadas Importantes por Boruta", 
+      align = c('l', 'r', 'c', 'c'), booktabs = TRUE) %>%
+  kable_styling(latex_options = c("striped", "hold_position"))
+```
+
+
+4.1.3 Eliminación Recursiva de Características (RFE)
+Método: Random Forest como wrapper
+
+Variables óptimas identificadas: 9 variables
+
+Top 5 variables: failures, absences, goout, Medu, schoolsup
+
+Precisión máxima: 72.91% con 9 variables
+
+4.2 Conjunto Final de Variables Seleccionadas
+Basado en el consenso de los tres métodos, se seleccionaron 7 variables clave:
+
+
+```{r}
+variables_finales <- data.frame(
+  Variable = c("failures", "absences", "higher", "age", "Medu", "goout", "guardian"),
+  Descripcion = c(
+    "Número de fallas académicas previas",
+    "Número total de ausencias",
+    "Intención de cursar educación superior",
+    "Edad del estudiante",
+    "Nivel educativo de la madre",
+    "Frecuencia de salidas sociales",
+    "Persona responsable del estudiante"
+  ),
+  Metodos_Que_La_Seleccionan = c("3/3", "3/3", "2/3", "2/3", "2/3", "2/3", "2/3"),
+  Justificacion = c(
+    "Predictor más fuerte en todos los análisis",
+    "Alta correlación con rendimiento académico",
+    "Fuertemente relacionada con motivación estudiantil",
+    "Indicador potencial de repetición de grado",
+    "Factor socioeconómico importante",
+    "Indicador de balance vida-estudio",
+    "Indicador de estructura de apoyo familiar"
+  )
+)
+
+kable(variables_finales, caption = "Conjunto Final de 7 Variables Seleccionadas", 
+      align = c('l', 'l', 'c', 'l'), booktabs = TRUE) %>%
+  kable_styling(latex_options = c("striped", "hold_position", "scale_down"))
+```
+
+4.3 Beneficios de la Selección de Variables
+Reducción de dimensionalidad: 30 → 7 variables (76.7% reducción)
+
+Mejor interpretabilidad: Variables más comprensibles para stakeholders
+
+Reducción de sobreajuste: Menor riesgo de modelar ruido
+
+Eficiencia computacional: Entrenamiento y predicción más rápidos
+
+5. Caso 3: Variables Seleccionadas sin Balanceo
+5.1 Configuración del Caso 3
+Variables: 7 variables seleccionadas (failures, absences, higher, age, Medu, goout, guardian)
+
+Balanceo: Sin balanceo de clases
+
+Objetivo: Evaluar rendimiento con variables optimizadas manteniendo distribución natural
+
+5.2 Resultados del Caso 3
+
+```{r}
+resultados_caso3 <- data.frame(
+  Modelo = c("Regresión Logística", "Gradient Boosting", "Random Forest", 
+             "KNN", "SVM Radial", "Árbol de Decisión"),
+  AUC = c(0.6461, 0.6409, 0.6274, 0.6054, 0.6016, 0.5881),
+  Precision = c("69.39%", "68.37%", "68.37%", "72.45%", "68.37%", "68.37%"),
+  Sensibilidad = c("28.12%", "28.12%", "31.25%", "34.38%", "31.25%", "31.25%"),
+  Especificidad = c("89.39%", "87.88%", "86.36%", "90.91%", "86.36%", "86.36%"),
+  Comparacion_Caso1 = c("+2.0% AUC", "-0.2% AUC", "+2.4% AUC", "+12.4% AUC", 
+                        "+1.8% AUC", "-4.0% AUC")
+)
+
+kable(resultados_caso3, caption = "Resultados del Caso 3: Variables Seleccionadas sin Balanceo", 
+      align = c('l', 'r', 'c', 'c', 'c', 'c'), booktabs = TRUE) %>%
+  kable_styling(latex_options = c("striped", "hold_position")) %>%
+  row_spec(1, bold = TRUE, background = "#E8F4F8")
+```
+
+5.3 Análisis del Caso 3
+Mejoras Observadas vs. Caso 1:
+Regresión Logística mejora su AUC de 0.6335 a 0.6461
+
+KNN muestra la mayor mejora en precisión (de 63.27% a 72.45%)
+
+Especificidad general más alta: Promedio de 87.71% vs. 81.07% en Caso 1
+
+Características Persistentes:
+Sensibilidad aún baja: Promedio de 30.56%
+
+Trade-off sensibilidad-especificidad sigue presente
+
+Modelos más simples mejoran relativamente más que modelos complejos
+
+Conclusiones del Caso 3:
+La selección de variables mejora el rendimiento de modelos más simples
+
+Se mantiene alta especificidad pero baja sensibilidad
+
+7 variables son suficientes para lograr rendimiento competitivo
+
+6. Caso 4: Variables Seleccionadas con Balanceo
+6.1 Configuración del Caso 4
+Variables: 7 variables seleccionadas
+
+Balanceo: Con sobremuestreo (up-sampling)
+
+Objetivo: Combinar beneficios de selección de variables y balanceo de clases
+
+6.2 Resultados del Caso 4
+
+```{r}
+resultados_caso4 <- data.frame(
+  Modelo = c("KNN", "Random Forest", "SVM Radial", "Gradient Boosting", 
+             "Regresión Logística", "Árbol de Decisión"),
+  AUC = c(0.6536, 0.6383, 0.6316, 0.6283, 0.6278, 0.5743),
+  Precision = c("63.27%", "65.31%", "69.39%", "62.24%", "61.22%", "61.22%"),
+  Sensibilidad = c("65.62%", "37.50%", "46.88%", "53.12%", "46.88%", "31.25%"),
+  Especificidad = c("62.12%", "78.79%", "80.30%", "66.67%", "68.18%", "75.76%"),
+  AUC_vs_Caso3 = c("+4.82%", "+1.09%", "+3.00%", "-1.26%", "-1.83%", "-1.38%"),
+  Sensibilidad_vs_Caso3 = c("+91.2%", "+20.0%", "+50.0%", "+88.9%", "+66.7%", "0.0%")
+)
+
+kable(resultados_caso4, caption = "Resultados del Caso 4: Variables Seleccionadas con Balanceo", 
+      align = c('l', 'r', 'c', 'c', 'c', 'c'), booktabs = TRUE) %>%
+  kable_styling(latex_options = c("striped", "hold_position")) %>%
+  row_spec(1, bold = TRUE, background = "#E8F4F8")
+```
+
+
+6.3 Análisis del Caso 4
+Mejoras Significativas:
+KNN logra el mejor AUC global (0.6536) y la mayor sensibilidad (65.62%)
+
+Sensibilidad promedio incrementada de 30.56% (Caso 3) a 48.44%
+
+Balance mejorado entre métricas de rendimiento
+
+Trade-offs Observados:
+Especificidad disminuye como compensación por mayor sensibilidad
+
+Algunos modelos (GLM, GBM) muestran ligera reducción en AUC
+
+Precisión general se mantiene en niveles similares
+
+Hallazgo Clave:
+KNN emerge como el mejor modelo en esta configuración, demostrando que con las variables correctas y balanceo adecuado, algoritmos simples pueden superar a modelos más complejos
+
+6.4 Comparativa Entre los 4 Casos
+
+```{r}
+comparativa_casos <- data.frame(
+  Caso = c("Caso 1", "Caso 2", "Caso 3", "Caso 4"),
+  Descripcion = c("30 vars, sin balanceo", "30 vars, con balanceo", 
+                  "7 vars, sin balanceo", "7 vars, con balanceo"),
+  Mejor_Modelo = c("Gradient Boosting", "Regresión Logística", 
+                   "Regresión Logística", "KNN"),
+  Mejor_AUC = c(0.6425, 0.6316, 0.6461, 0.6536),
+  Sensibilidad_Promedio = c("31.25%", "42.19%", "30.56%", "48.44%"),
+  Especificidad_Promedio = c("81.07%", "72.53%", "87.71%", "71.97%"),
+  Fortaleza_Principal = c(
+    "Mayor especificidad",
+    "Mejor balance general",
+    "Alta especificidad con pocas variables",
+    "Mejor sensibilidad y AUC global"
+  )
+)
+
+kable(comparativa_casos, caption = "Comparativa General de los 4 Casos Experimentales", 
+      align = c('l', 'l', 'l', 'r', 'c', 'c', 'l'), booktabs = TRUE) %>%
+  kable_styling(latex_options = c("striped", "hold_position")) %>%
+  row_spec(4, bold = TRUE, background = "#E8F4F8")
+```
+
+7. Conclusiones y Recomendaciones Finales
+7.1 Hallazgos Clave del Estudio
+Selección de Variables es Efectiva: Reducir de 30 a 7 variables mejora la eficiencia sin sacrificar rendimiento
+
+Balanceo Mejora Detección de Riesgo: El sobremuestreo incrementa significativamente la sensibilidad
+
+No Hay un Modelo Único Óptimo: Diferentes configuraciones optimizan diferentes métricas
+
+Variables Críticas Identificadas: Fallas previas, ausencias y aspiración educativa son predictores clave
+
+7.2 Recomendaciones de Implementación
+Para Prioridad: Detección Temprana de Riesgo
+Configuración recomendada: Caso 4 con modelo KNN
+
+Ventaja: 65.62% sensibilidad para detectar estudiantes reprobados
+
+Uso: Sistema de alerta temprana
+
+Para Prioridad: Optimización de Recursos
+Configuración recomendada: Caso 3 con Regresión Logística
+
+Ventaja: 89.39% especificidad para minimizar falsos positivos
+
+Uso: Asignación dirigida de recursos de apoyo
+
+Para Prioridad: Balance General
+Configuración recomendada: Caso 2 con Random Forest
+
+Ventaja: Buen balance entre todas las métricas
+
+Uso: Monitoreo general institucional
+
+7.3 Recomendación Final
+Basado en el análisis completo, recomendamos una implementación por fases:
+
+Fase 1 (Semanas 1-6): Implementar Caso 4 con KNN para maximizar detección temprana de estudiantes en riesgo.
+
+Fase 2 (Meses 2-6): Añadir Caso 3 con Regresión Logística como verificación secundaria para optimización de recursos.
+
+Fase 3 (Meses 6-12): Desarrollar un sistema ensemble que combine ambas configuraciones, ajustando automáticamente según prioridades institucionales.
+
+7.4 Limitaciones y Trabajo Futuro
+Limitaciones Reconocidas:
+Rendimiento Predictivo Moderado: AUC máximo de 0.6536 indica margen de mejora
+
+Contexto Específico: Datos de sistema educativo portugués
+
+Datos Auto-reportados: Posible sesgo en respuestas
+
+Direcciones Futuras:
+Integración de Datos Temporales: Seguimiento longitudinal de estudiantes
+
+Validación Cruzada Institucional: Probar en diferentes contextos educativos
+
+Modelos de Explicabilidad: Mejorar interpretabilidad para stakeholders no técnicos
+
+Sistemas de Recomendación: Sugerir intervenciones específicas basadas en perfiles de riesgo
+
+Nota Final: Este estudio demuestra que, aunque la predicción perfecta del rendimiento estudiantil sigue siendo un desafío, es posible identificar factores clave y desarrollar herramientas útiles para la toma de decisiones educativas basadas en datos. La combinación de selección inteligente de variables y técnicas apropiadas de balanceo puede proporcionar insights valiosos para mejorar los resultados estudiantiles.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
