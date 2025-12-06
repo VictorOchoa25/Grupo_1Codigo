@@ -2,12 +2,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.32">
+<meta name="generator" content="quarto-1.8.26">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Salvador y Víctor">
+<meta name="dcterms.date" content="2025-12-06">
 
-<title>Reporte_Proyecto</title>
+<title>Análisis Predictivo del Rendimiento Académico Estudiantil</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -26,34 +28,123 @@ ul.task-list li input[type="checkbox"] {
 <script src="Reporte_Proyecto_files/libs/clipboard/clipboard.min.js"></script>
 <script src="Reporte_Proyecto_files/libs/quarto-html/quarto.js" type="module"></script>
 <script src="Reporte_Proyecto_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="Reporte_Proyecto_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="Reporte_Proyecto_files/libs/quarto-html/popper.min.js"></script>
 <script src="Reporte_Proyecto_files/libs/quarto-html/tippy.umd.min.js"></script>
 <script src="Reporte_Proyecto_files/libs/quarto-html/anchor.min.js"></script>
 <link href="Reporte_Proyecto_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="Reporte_Proyecto_files/libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="Reporte_Proyecto_files/libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="Reporte_Proyecto_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="Reporte_Proyecto_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="Reporte_Proyecto_files/libs/bootstrap/bootstrap-bb462d781dde1847d9e3ccf7736099dd.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="Reporte_Proyecto_files/libs/bootstrap/bootstrap-0b716d6fe31096b8dc5b1cb48462c79f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="Reporte_Proyecto_files/libs/kePrint-0.0.1/kePrint.js"></script>
 
+<link href="Reporte_Proyecto_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
-<body class="fullcontent quarto-light">
+<body class="quarto-light">
 
-<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
-
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introducción" id="toc-introducción" class="nav-link active" data-scroll-target="#introducción">Introducción</a></li>
+  <li><a href="#business-understanding" id="toc-business-understanding" class="nav-link" data-scroll-target="#business-understanding">Business understanding</a></li>
+  <li><a href="#análisis-exploratorio-de-datos-eda" id="toc-análisis-exploratorio-de-datos-eda" class="nav-link" data-scroll-target="#análisis-exploratorio-de-datos-eda">Análisis Exploratorio de Datos (EDA)</a>
+  <ul class="collapse">
+  <li><a href="#descripción-del-conjunto-de-datos" id="toc-descripción-del-conjunto-de-datos" class="nav-link" data-scroll-target="#descripción-del-conjunto-de-datos">Descripción del Conjunto de Datos</a></li>
+  <li><a href="#análisis-univariado" id="toc-análisis-univariado" class="nav-link" data-scroll-target="#análisis-univariado">Análisis Univariado</a></li>
+  <li><a href="#análisis-bivariado-con-la-variable-objetivo" id="toc-análisis-bivariado-con-la-variable-objetivo" class="nav-link" data-scroll-target="#análisis-bivariado-con-la-variable-objetivo">Análisis Bivariado con la Variable Objetivo</a></li>
+  </ul></li>
+  <li><a href="#modelado-y-evaluación" id="toc-modelado-y-evaluación" class="nav-link" data-scroll-target="#modelado-y-evaluación">Modelado y Evaluación</a>
+  <ul class="collapse">
+  <li><a href="#caso-1-todas-las-variables-sin-balanceo" id="toc-caso-1-todas-las-variables-sin-balanceo" class="nav-link" data-scroll-target="#caso-1-todas-las-variables-sin-balanceo">Caso 1: Todas las Variables sin Balanceo</a></li>
+  <li><a href="#análisis-del-caso-1" id="toc-análisis-del-caso-1" class="nav-link" data-scroll-target="#análisis-del-caso-1">Análisis del Caso 1</a></li>
+  <li><a href="#caso-2-todas-las-variables-con-balanceo" id="toc-caso-2-todas-las-variables-con-balanceo" class="nav-link" data-scroll-target="#caso-2-todas-las-variables-con-balanceo">Caso 2: Todas las Variables con Balanceo</a></li>
+  <li><a href="#impacto-del-balanceo-en-el-caso-2" id="toc-impacto-del-balanceo-en-el-caso-2" class="nav-link" data-scroll-target="#impacto-del-balanceo-en-el-caso-2">Impacto del Balanceo en el Caso 2</a></li>
+  <li><a href="#proceso-de-selección-de-variables" id="toc-proceso-de-selección-de-variables" class="nav-link" data-scroll-target="#proceso-de-selección-de-variables">Proceso de Selección de Variables</a></li>
+  <li><a href="#caso-3-variables-seleccionadas-sin-balanceo" id="toc-caso-3-variables-seleccionadas-sin-balanceo" class="nav-link" data-scroll-target="#caso-3-variables-seleccionadas-sin-balanceo">Caso 3: Variables Seleccionadas sin Balanceo</a>
+  <ul class="collapse">
+  <li><a href="#configuración-del-caso-3" id="toc-configuración-del-caso-3" class="nav-link" data-scroll-target="#configuración-del-caso-3">Configuración del Caso 3</a></li>
+  <li><a href="#resultados-del-caso-3" id="toc-resultados-del-caso-3" class="nav-link" data-scroll-target="#resultados-del-caso-3">Resultados del Caso 3</a></li>
+  <li><a href="#análisis-del-caso-3" id="toc-análisis-del-caso-3" class="nav-link" data-scroll-target="#análisis-del-caso-3">Análisis del Caso 3</a></li>
+  </ul></li>
+  <li><a href="#caso-4-variables-seleccionadas-con-balanceo" id="toc-caso-4-variables-seleccionadas-con-balanceo" class="nav-link" data-scroll-target="#caso-4-variables-seleccionadas-con-balanceo">Caso 4: Variables Seleccionadas con Balanceo</a>
+  <ul class="collapse">
+  <li><a href="#análisis-del-caso-4" id="toc-análisis-del-caso-4" class="nav-link" data-scroll-target="#análisis-del-caso-4">Análisis del Caso 4</a></li>
+  <li><a href="#comparativa-entre-los-4-casos" id="toc-comparativa-entre-los-4-casos" class="nav-link" data-scroll-target="#comparativa-entre-los-4-casos">Comparativa Entre los 4 Casos</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#conclusiones-y-recomendaciones-finales" id="toc-conclusiones-y-recomendaciones-finales" class="nav-link" data-scroll-target="#conclusiones-y-recomendaciones-finales">Conclusiones y Recomendaciones Finales</a>
+  <ul class="collapse">
+  <li><a href="#recomendaciones-de-implementación" id="toc-recomendaciones-de-implementación" class="nav-link" data-scroll-target="#recomendaciones-de-implementación">Recomendaciones de Implementación</a></li>
+  <li><a href="#recomendación-final" id="toc-recomendación-final" class="nav-link" data-scroll-target="#recomendación-final">Recomendación Final</a></li>
+  <li><a href="#limitaciones-y-trabajo-futuro" id="toc-limitaciones-y-trabajo-futuro" class="nav-link" data-scroll-target="#limitaciones-y-trabajo-futuro">Limitaciones y Trabajo Futuro</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+</div>
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Reporte_Proyecto</h1>
+<h1 class="title">Análisis Predictivo del Rendimiento Académico Estudiantil</h1>
+<p class="subtitle lead">Identificación de Factores Clave y Modelos Predictivos para el Éxito Estudiantil</p>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Salvador y Víctor </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">December 6, 2025</p>
+    </div>
+  </div>
   
     
   </div>
@@ -63,19 +154,933 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>title: “Predicción del Rendimiento Estudiantil: Análisis de Clasificación” author: “Analista de Datos” date: “r Sys.Date()” format: html: toc: true code-fold: true theme: cosmo lang: es</p>
 <section id="introducción" class="level1">
-<h1>1.Introducción</h1>
-<p>El objetivo de este proyecto es predecir el fracaso estudiantil (Nota Final G3 &lt; 10) utilizando variables demográficas y de estilo de vida, excluyendo explícitamente las notas intermedias previas (G1 y G2) para simular un Sistema de Alerta Temprana.</p>
-<p>Realizamos un análisis comparativo (Estudio de Ablación) a través de cuatro escenarios:</p>
-<p>Caso 1: Todas las Variables (Sin Balanceo)</p>
-<p>Caso 2: Todas las Variables (Con Sobremuestreo/Up-Sampling)</p>
-<p>Caso 3: Variables Seleccionadas (Sin Balanceo)</p>
-<p>Caso 4: Variables Seleccionadas (Con Sobremuestreo/Up-Sampling)</p>
+<h1>Introducción</h1>
+<p>El conjunto de datos <a href="https://doi.org/10.24432/C5TG7T"><em>Student Performance</em></a> contiene información detallada sobre el rendimiento académico de estudiantes de secundaria en la asignatura de Matemáticas, junto con una amplia gama de variables demográficas, sociales, familiares y conductuales. Los datos fueron recopilados mediante encuestas en dos escuelas secundarias públicas de Portugal y están disponibles en el repositorio UCI Machine Learning.</p>
+<p>Basados en la descripción del respositorio, el rendimiento académico de los estudiantes no depende únicamente de su capacidad cognitiva, sino que está fuertemente influenciado por factores contextuales como el entorno familiar, los hábitos de estudio, el apoyo escolar, las relaciones sociales y las condiciones socioeconómicas. En este contexto, identificar tempranamente a los estudiantes en riesgo de reprobación permite a las instituciones educativas implementar estrategias de intervención oportuna, optimizando recursos y promoviendo la equidad en el aprendizaje. Por ello, es crucial desarrollar modelos predictivos que, a partir de variables observables al inicio del curso, puedan anticipar el resultado académico final.</p>
+<p>El conjunto de datos incluye 395 observaciones y 33 variables, entre las que se encuentran:</p>
+<ul>
+<li><p><strong>Demográficas</strong>: edad, género, tipo de residencia (urbana o rural).</p></li>
+<li><p><strong>Familiares</strong>: nivel educativo de los padres, ocupación, tipo de tutor, calidad de las relaciones familiares.</p></li>
+<li><p><strong>Académicas</strong>: número de ausencias, fracasos previos, apoyo escolar extra, acceso a internet.</p></li>
+<li><p><strong>De comportamiento</strong>: tiempo de estudio, frecuencia de salidas con amigos, consumo de alcohol, tiempo libre.</p></li>
+<li><p><strong>De desempeño</strong>: calificaciones en el primer (G1), segundo (G2) y tercer período (G3).</p></li>
+</ul>
+<p>En este proyecto de <strong>clasificación binaria</strong>; el objetivo es detectar si un estudiante aprobará o reprobará, transformando la variable objetivo continua (G3) en una variable categórica binaria. Así, en lugar de predecir la calificación exacta, se define la variable respuesta <strong>Pass</strong> como:</p>
+<p><span class="math display">\[
+\texttt{Pass} =\begin{cases}\text{yes}, &amp; \text{si } \texttt{G3} \geq 10 \\\text{no}, &amp; \text{si } \texttt{G3} &lt; 10\end{cases}
+\]</span></p>
+<p>Este umbral (10 sobre 20) corresponde al criterio tradicional de aprobación en el sistema educativo portugués . Es importante destacar que, para preservar la validez de la predicción temprana, las calificaciones intermedias (G1 y G2) se excluyen del conjunto de predictores, evitando así cualquier fuga de información y asegurando que el modelo se base únicamente en factores observables antes del cierre del curso.</p>
 </section>
-<section id="preparación-de-datos" class="level1">
-<h1>2. Preparación de Datos</h1>
-<p>Cargamos el conjunto de datos y preparamos la variable objetivo Status (Aprobado/Reprobado). Las variables G1, G2 y G3 se eliminan para evitar la filtración de datos.</p>
+<section id="business-understanding" class="level1">
+<h1>Business understanding</h1>
+<p>Planteamos algunas preguntas sobre nuestros datos:</p>
+<ul>
+<li>¿Un mayor nivel educativo de los padres se asocia con una mayor probabilidad de aprobación?</li>
+<li>¿El número de fracasos previos es el predictor más fuerte de reprobación?</li>
+<li>¿El apoyo escolar extra mejora significativamente las probabilidades de aprobación?</li>
+<li>¿Una mayor frecuencia de salidas con amigos se asocia con menor rendimiento?</li>
+</ul>
+</section>
+<section id="análisis-exploratorio-de-datos-eda" class="level1">
+<h1>Análisis Exploratorio de Datos (EDA)</h1>
+<section id="descripción-del-conjunto-de-datos" class="level2">
+<h2 class="anchored" data-anchor-id="descripción-del-conjunto-de-datos">Descripción del Conjunto de Datos</h2>
+<p>El análisis utiliza el conjunto de datos de Rendimiento Estudiantil que contiene 395 estudiantes con 33 atributos que describen demografía, contexto social y registros académicos. La variable objetivo se derivó de la nota final (G3):</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Reporte_Proyecto_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%" data-fig-pos="H"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Aprobado: Nota final ≥ 10 (265 estudiantes, 67.1%)</p>
+<p>Reprobado: Nota final &lt; 10 (130 estudiantes, 32.9%)</p>
+</section>
+<section id="análisis-univariado" class="level2">
+<h2 class="anchored" data-anchor-id="análisis-univariado">Análisis Univariado</h2>
+<p>Distribución de Variables Numéricas Clave:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small">
+<caption>Estadísticas Descriptivas de Variables Numéricas Clave</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Variable</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Media</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Mediana</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Desviacion_Estandar</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Minimo</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Maximo</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Asimetria</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Edad</td>
+<td style="text-align: right;">16.71</td>
+<td style="text-align: right;">17.0</td>
+<td style="text-align: right;">1.29</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">0.46</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ausencias</td>
+<td style="text-align: right;">5.53</td>
+<td style="text-align: right;">4.0</td>
+<td style="text-align: right;">7.75</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">3.64</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Fallas Previas</td>
+<td style="text-align: right;">0.32</td>
+<td style="text-align: right;">0.0</td>
+<td style="text-align: right;">0.73</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">2.37</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Educación de la Madre</td>
+<td style="text-align: right;">2.70</td>
+<td style="text-align: right;">3.0</td>
+<td style="text-align: right;">1.10</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">-0.32</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Educación del Padre</td>
+<td style="text-align: right;">2.55</td>
+<td style="text-align: right;">2.5</td>
+<td style="text-align: right;">1.07</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">-0.03</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Tiempo de Estudio</td>
+<td style="text-align: right;">2.04</td>
+<td style="text-align: right;">2.0</td>
+<td style="text-align: right;">0.82</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0.63</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Salidas Sociales</td>
+<td style="text-align: right;">3.08</td>
+<td style="text-align: right;">3.0</td>
+<td style="text-align: right;">1.12</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0.12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Alcohol Diario</td>
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">1.0</td>
+<td style="text-align: right;">0.94</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2.17</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Hallazgos Clave del Análisis Univariado: Distribución de Edad: La mayoría de estudiantes (moda = 17) están en sus últimos años de adolescencia</p>
+<p>Ausentismo: Alta variabilidad con algunos estudiantes faltando hasta 75 clases</p>
+<p>Fallas Previas: 68% de estudiantes no tienen fallas previas</p>
+<p>Educación Parental: La educación de la madre es ligeramente mayor que la del padre en promedio</p>
+</section>
+<section id="análisis-bivariado-con-la-variable-objetivo" class="level2">
+<h2 class="anchored" data-anchor-id="análisis-bivariado-con-la-variable-objetivo">Análisis Bivariado con la Variable Objetivo</h2>
+<p>Variables Numéricas vs.&nbsp;Estado Académico:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small">
+<caption>Valores Promedio por Estado Académico</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Variable</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Media_Aprobados</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Media_Reprobados</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Diferencia</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Direccion</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Fallas Previas</td>
+<td style="text-align: right;">0.12</td>
+<td style="text-align: right;">0.73</td>
+<td style="text-align: right;">0.61</td>
+<td style="text-align: left;">Reprobados tienen más</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ausencias</td>
+<td style="text-align: right;">4.42</td>
+<td style="text-align: right;">7.65</td>
+<td style="text-align: right;">3.23</td>
+<td style="text-align: left;">Reprobados tienen más</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Educación de la Madre</td>
+<td style="text-align: right;">2.85</td>
+<td style="text-align: right;">2.38</td>
+<td style="text-align: right;">0.47</td>
+<td style="text-align: left;">Aprobados tienen más educación</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Edad</td>
+<td style="text-align: right;">16.58</td>
+<td style="text-align: right;">17.02</td>
+<td style="text-align: right;">0.44</td>
+<td style="text-align: left;">Reprobados son mayores</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Salidas Sociales</td>
+<td style="text-align: right;">2.97</td>
+<td style="text-align: right;">3.34</td>
+<td style="text-align: right;">0.37</td>
+<td style="text-align: left;">Reprobados salen más</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Variables Categóricas vs.&nbsp;Estado (Pruebas Chi-Cuadrado):</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small">
+<caption>Pruebas Chi-Cuadrado para Variables Categóricas</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Variable</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Valor_P</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Significancia</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Interpretacion</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">higher (desea educación superior)</td>
+<td style="text-align: right;">0.02385</td>
+<td style="text-align: center;">**</td>
+<td style="text-align: left;">Fuertemente relacionado con éxito académico</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">guardian (tutor)</td>
+<td style="text-align: right;">0.03277</td>
+<td style="text-align: center;">**</td>
+<td style="text-align: left;">Tipo de tutor influye en resultados</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">paid (clases pagadas extra)</td>
+<td style="text-align: right;">0.05645</td>
+<td style="text-align: center;">*</td>
+<td style="text-align: left;">Clases extra pueden ayudar marginalmente</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">romantic (en relación)</td>
+<td style="text-align: right;">0.09125</td>
+<td style="text-align: center;">.</td>
+<td style="text-align: left;">Relaciones románticas tienen efecto marginal</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Mjob (trabajo madre)</td>
+<td style="text-align: right;">0.09994</td>
+<td style="text-align: center;">.</td>
+<td style="text-align: left;">Trabajo de la madre tiene alguna influencia</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">internet (acceso a internet)</td>
+<td style="text-align: right;">0.10624</td>
+<td style="text-align: center;">NS</td>
+<td style="text-align: left;">Acceso a internet no es estadísticamente significativo</td>
+</tr>
+</tbody><tfoot>
+<tr class="odd">
+<td style="text-align: left; padding: 0;"><sup></sup> **: p &lt; 0.05, *: p &lt; 0.10, .: p &lt; 0.15, NS: No Significativo</td>
+<td style="text-align: right;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: left;"></td>
+</tr>
+</tfoot>
+
+</table>
+</div>
+</div>
+</section>
+</section>
+<section id="modelado-y-evaluación" class="level1">
+<h1>Modelado y Evaluación</h1>
+<section id="caso-1-todas-las-variables-sin-balanceo" class="level2">
+<h2 class="anchored" data-anchor-id="caso-1-todas-las-variables-sin-balanceo">Caso 1: Todas las Variables sin Balanceo</h2>
+<p>2.1 Configuración del Caso 1 Variables: Todas las 30 variables disponibles</p>
+<p>Balanceo: Sin balanceo de clases (distribución natural 67.1% Aprobado / 32.9% Reprobado)</p>
+<p>Objetivo: Establecer línea base de rendimiento con todas las características</p>
+<p>2.2 Resultados del Caso 1</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small">
+<caption>Resultados del Caso 1: Todas las Variables sin Balanceo</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Modelo</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">AUC</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Precision</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Sensibilidad</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Especificidad</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Posicion</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">Gradient Boosting</td>
+<td style="text-align: right; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">0.6425</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">63.27%</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">25.00%</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">81.82%</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Regresión Logística</td>
+<td style="text-align: right;">0.6335</td>
+<td style="text-align: center;">61.22%</td>
+<td style="text-align: center;">31.25%</td>
+<td style="text-align: center;">75.76%</td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Random Forest</td>
+<td style="text-align: right;">0.6127</td>
+<td style="text-align: center;">71.43%</td>
+<td style="text-align: center;">40.62%</td>
+<td style="text-align: center;">86.36%</td>
+<td style="text-align: center;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Árbol de Decisión</td>
+<td style="text-align: right;">0.6125</td>
+<td style="text-align: center;">64.29%</td>
+<td style="text-align: center;">37.50%</td>
+<td style="text-align: center;">77.27%</td>
+<td style="text-align: center;">4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SVM Radial</td>
+<td style="text-align: right;">0.5909</td>
+<td style="text-align: center;">70.41%</td>
+<td style="text-align: center;">31.25%</td>
+<td style="text-align: center;">89.39%</td>
+<td style="text-align: center;">5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">KNN</td>
+<td style="text-align: right;">0.5386</td>
+<td style="text-align: center;">63.27%</td>
+<td style="text-align: center;">25.00%</td>
+<td style="text-align: center;">81.82%</td>
+<td style="text-align: center;">6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Naive Bayes</td>
+<td style="text-align: right;">0.5421</td>
+<td style="text-align: center;">59.18%</td>
+<td style="text-align: center;">31.25%</td>
+<td style="text-align: center;">72.73%</td>
+<td style="text-align: center;">7</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="análisis-del-caso-1" class="level2">
+<h2 class="anchored" data-anchor-id="análisis-del-caso-1">Análisis del Caso 1</h2>
+<p>Fortalezas Identificadas: Gradient Boosting obtuvo el mejor AUC (0.6425)</p>
+<p>Random Forest logró la mayor precisión general (71.43%)</p>
+<p>SVM Radial alcanzó la mayor especificidad (89.39%)</p>
+<p>Debilidades Identificadas: Baja sensibilidad general: Todos los modelos detectan menos del 50% de estudiantes reprobados</p>
+<p>Sobreajuste potencial: 30 variables pueden introducir ruido en algunos modelos</p>
+<p>KNN y Naive Bayes mostraron rendimiento inferior</p>
+<p>Conclusiones del Caso 1: Los modelos complejos (Gradient Boosting, Random Forest) funcionan mejor con todas las variables</p>
+<p>Existe un claro trade-off entre sensibilidad y especificidad</p>
+<p>La baja sensibilidad sugiere necesidad de abordar el desbalance de clases</p>
+</section>
+<section id="caso-2-todas-las-variables-con-balanceo" class="level2">
+<h2 class="anchored" data-anchor-id="caso-2-todas-las-variables-con-balanceo">Caso 2: Todas las Variables con Balanceo</h2>
+<p>3.1 Configuración del Caso 2 Variables: Todas las 30 variables disponibles</p>
+<p>Balanceo: Con sobremuestreo (up-sampling) para balancear clases</p>
+<p>Objetivo: Evaluar impacto del balanceo manteniendo todas las características</p>
+<p>3.2 Resultados del Caso 2</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small">
+<caption>Resultados del Caso 2: Todas las Variables con Balanceo</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Modelo</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">AUC</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Precision</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Sensibilidad</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Especificidad</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Cambio_Sensibilidad</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">Regresión Logística</td>
+<td style="text-align: right; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">0.6316</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">61.22%</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">50.00%</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">66.67%</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">+60.0%</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Gradient Boosting</td>
+<td style="text-align: right;">0.6259</td>
+<td style="text-align: center;">63.27%</td>
+<td style="text-align: center;">40.62%</td>
+<td style="text-align: center;">74.24%</td>
+<td style="text-align: center;">+62.5%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Random Forest</td>
+<td style="text-align: right;">0.6120</td>
+<td style="text-align: center;">66.33%</td>
+<td style="text-align: center;">40.62%</td>
+<td style="text-align: center;">78.79%</td>
+<td style="text-align: center;">0.0%</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SVM Radial</td>
+<td style="text-align: right;">0.6009</td>
+<td style="text-align: center;">59.18%</td>
+<td style="text-align: center;">37.50%</td>
+<td style="text-align: center;">69.70%</td>
+<td style="text-align: center;">+20.0%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Árbol de Decisión</td>
+<td style="text-align: right;">0.5881</td>
+<td style="text-align: center;">68.37%</td>
+<td style="text-align: center;">31.25%</td>
+<td style="text-align: center;">86.36%</td>
+<td style="text-align: center;">-16.7%</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">KNN</td>
+<td style="text-align: right;">0.5573</td>
+<td style="text-align: center;">57.14%</td>
+<td style="text-align: center;">53.12%</td>
+<td style="text-align: center;">59.09%</td>
+<td style="text-align: center;">+112.5%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="impacto-del-balanceo-en-el-caso-2" class="level2">
+<h2 class="anchored" data-anchor-id="impacto-del-balanceo-en-el-caso-2">Impacto del Balanceo en el Caso 2</h2>
+<p>Mejoras Observadas: Sensibilidad incrementada significativamente en la mayoría de modelos</p>
+<p>Regresión Logística mejoró su sensibilidad de 31.25% a 50.00%</p>
+<p>KNN duplicó su sensibilidad (de 25.00% a 53.12%)</p>
+<p>Compensaciones Observadas: Reducción en AUC en la mayoría de modelos</p>
+<p>Disminución en especificidad como trade-off por mayor sensibilidad</p>
+<p>Precisión general se mantuvo similar o disminuyó ligeramente</p>
+<p>Conclusiones del Caso 2: El balanceo mejora significativamente la detección de estudiantes reprobados</p>
+<p>Los modelos más simples (Regresión Logística, KNN) se benefician más del balanceo</p>
+<p>Existe un trade-off claro entre sensibilidad y especificidad</p>
+</section>
+<section id="proceso-de-selección-de-variables" class="level2">
+<h2 class="anchored" data-anchor-id="proceso-de-selección-de-variables">Proceso de Selección de Variables</h2>
+<section id="metodología-de-selección" class="level4">
+<h4 class="anchored" data-anchor-id="metodología-de-selección">Metodología de Selección</h4>
+<p>Se emplearon tres métodos complementarios para identificar las variables más predictivas:</p>
+</section>
+<section id="pruebas-chi-cuadrado-variables-categóricas" class="level4">
+<h4 class="anchored" data-anchor-id="pruebas-chi-cuadrado-variables-categóricas">Pruebas Chi-Cuadrado (Variables Categóricas)</h4>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small">
+<caption>Ranking de Variables Categóricas por Chi-Cuadrado</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Variable</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Valor_P</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Significancia</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Decision</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">higher</td>
+<td style="text-align: right;">0.02385</td>
+<td style="text-align: center;">Muy alta</td>
+<td style="text-align: center;">Seleccionada</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">guardian</td>
+<td style="text-align: right;">0.03277</td>
+<td style="text-align: center;">Alta</td>
+<td style="text-align: center;">Seleccionada</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">paid</td>
+<td style="text-align: right;">0.05645</td>
+<td style="text-align: center;">Moderada</td>
+<td style="text-align: center;">Considerada</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">romantic</td>
+<td style="text-align: right;">0.09125</td>
+<td style="text-align: center;">Marginal</td>
+<td style="text-align: center;">Considerada</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Mjob</td>
+<td style="text-align: right;">0.09994</td>
+<td style="text-align: center;">Marginal</td>
+<td style="text-align: center;">Considerada</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">internet</td>
+<td style="text-align: right;">0.10624</td>
+<td style="text-align: center;">Baja</td>
+<td style="text-align: center;">No seleccionada</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="algoritmo-boruta-importancia-de-todas-las-variables" class="level4">
+<h4 class="anchored" data-anchor-id="algoritmo-boruta-importancia-de-todas-las-variables">Algoritmo Boruta (Importancia de Todas las Variables)</h4>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small">
+<caption>Variables Confirmadas Importantes por Boruta</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Variable</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Importancia_Media</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Decision</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Categoria</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">failures</td>
+<td style="text-align: right;">22.90</td>
+<td style="text-align: center;">Confirmada</td>
+<td style="text-align: center;">Académica</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">absences</td>
+<td style="text-align: right;">11.23</td>
+<td style="text-align: center;">Confirmada</td>
+<td style="text-align: center;">Asistencia</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">goout</td>
+<td style="text-align: right;">8.09</td>
+<td style="text-align: center;">Confirmada</td>
+<td style="text-align: center;">Conductual</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">schoolsup</td>
+<td style="text-align: right;">7.04</td>
+<td style="text-align: center;">Confirmada</td>
+<td style="text-align: center;">Apoyo</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">guardian</td>
+<td style="text-align: right;">6.34</td>
+<td style="text-align: center;">Confirmada</td>
+<td style="text-align: center;">Familiar</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Medu</td>
+<td style="text-align: right;">4.22</td>
+<td style="text-align: center;">Confirmada</td>
+<td style="text-align: center;">Familiar</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">age</td>
+<td style="text-align: right;">4.01</td>
+<td style="text-align: center;">Confirmada</td>
+<td style="text-align: center;">Demográfica</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="eliminación-recursiva-de-características-rfe" class="level4">
+<h4 class="anchored" data-anchor-id="eliminación-recursiva-de-características-rfe">Eliminación Recursiva de Características (RFE)</h4>
+<p>Método: Random Forest como wrapper</p>
+<p>Variables óptimas identificadas: 9 variables</p>
+<p>Top 5 variables: failures, absences, goout, Medu, schoolsup</p>
+<p>Precisión máxima: 72.91% con 9 variables</p>
+</section>
+<section id="conjunto-final-de-variables-seleccionadas" class="level4">
+<h4 class="anchored" data-anchor-id="conjunto-final-de-variables-seleccionadas">Conjunto Final de Variables Seleccionadas</h4>
+<p>Basado en el consenso de los tres métodos, se seleccionaron 7 variables clave:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small">
+<caption>Conjunto Final de 7 Variables Seleccionadas</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Variable</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Descripcion</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Metodos_Que_La_Seleccionan</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Justificacion</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">failures</td>
+<td style="text-align: left;">Número de fallas académicas previas</td>
+<td style="text-align: center;">3/3</td>
+<td style="text-align: left;">Predictor más fuerte en todos los análisis</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">absences</td>
+<td style="text-align: left;">Número total de ausencias</td>
+<td style="text-align: center;">3/3</td>
+<td style="text-align: left;">Alta correlación con rendimiento académico</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">higher</td>
+<td style="text-align: left;">Intención de cursar educación superior</td>
+<td style="text-align: center;">2/3</td>
+<td style="text-align: left;">Fuertemente relacionada con motivación estudiantil</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">age</td>
+<td style="text-align: left;">Edad del estudiante</td>
+<td style="text-align: center;">2/3</td>
+<td style="text-align: left;">Indicador potencial de repetición de grado</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Medu</td>
+<td style="text-align: left;">Nivel educativo de la madre</td>
+<td style="text-align: center;">2/3</td>
+<td style="text-align: left;">Factor socioeconómico importante</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">goout</td>
+<td style="text-align: left;">Frecuencia de salidas sociales</td>
+<td style="text-align: center;">2/3</td>
+<td style="text-align: left;">Indicador de balance vida-estudio</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">guardian</td>
+<td style="text-align: left;">Persona responsable del estudiante</td>
+<td style="text-align: center;">2/3</td>
+<td style="text-align: left;">Indicador de estructura de apoyo familiar</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="beneficios-de-la-selección-de-variables" class="level4">
+<h4 class="anchored" data-anchor-id="beneficios-de-la-selección-de-variables">Beneficios de la Selección de Variables</h4>
+<p>Reducción de dimensionalidad: 30 → 7 variables (76.7% reducción)</p>
+<p>Mejor interpretabilidad: Variables más comprensibles para stakeholders</p>
+<p>Reducción de sobreajuste: Menor riesgo de modelar ruido</p>
+<p>Eficiencia computacional: Entrenamiento y predicción más rápidos</p>
+</section>
+</section>
+<section id="caso-3-variables-seleccionadas-sin-balanceo" class="level2">
+<h2 class="anchored" data-anchor-id="caso-3-variables-seleccionadas-sin-balanceo">Caso 3: Variables Seleccionadas sin Balanceo</h2>
+<section id="configuración-del-caso-3" class="level3">
+<h3 class="anchored" data-anchor-id="configuración-del-caso-3">Configuración del Caso 3</h3>
+<p>Variables: 7 variables seleccionadas (failures, absences, higher, age, Medu, goout, guardian)</p>
+<p>Balanceo: Sin balanceo de clases</p>
+<p>Objetivo: Evaluar rendimiento con variables optimizadas manteniendo distribución natural</p>
+</section>
+<section id="resultados-del-caso-3" class="level3">
+<h3 class="anchored" data-anchor-id="resultados-del-caso-3">Resultados del Caso 3</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small">
+<caption>Resultados del Caso 3: Variables Seleccionadas sin Balanceo</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Modelo</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">AUC</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Precision</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Sensibilidad</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Especificidad</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Comparacion_Caso1</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">Regresión Logística</td>
+<td style="text-align: right; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">0.6461</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">69.39%</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">28.12%</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">89.39%</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">+2.0% AUC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Gradient Boosting</td>
+<td style="text-align: right;">0.6409</td>
+<td style="text-align: center;">68.37%</td>
+<td style="text-align: center;">28.12%</td>
+<td style="text-align: center;">87.88%</td>
+<td style="text-align: center;">-0.2% AUC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Random Forest</td>
+<td style="text-align: right;">0.6274</td>
+<td style="text-align: center;">68.37%</td>
+<td style="text-align: center;">31.25%</td>
+<td style="text-align: center;">86.36%</td>
+<td style="text-align: center;">+2.4% AUC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">KNN</td>
+<td style="text-align: right;">0.6054</td>
+<td style="text-align: center;">72.45%</td>
+<td style="text-align: center;">34.38%</td>
+<td style="text-align: center;">90.91%</td>
+<td style="text-align: center;">+12.4% AUC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SVM Radial</td>
+<td style="text-align: right;">0.6016</td>
+<td style="text-align: center;">68.37%</td>
+<td style="text-align: center;">31.25%</td>
+<td style="text-align: center;">86.36%</td>
+<td style="text-align: center;">+1.8% AUC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Árbol de Decisión</td>
+<td style="text-align: right;">0.5881</td>
+<td style="text-align: center;">68.37%</td>
+<td style="text-align: center;">31.25%</td>
+<td style="text-align: center;">86.36%</td>
+<td style="text-align: center;">-4.0% AUC</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="análisis-del-caso-3" class="level3">
+<h3 class="anchored" data-anchor-id="análisis-del-caso-3">Análisis del Caso 3</h3>
+<p>Mejoras Observadas vs.&nbsp;Caso 1: Regresión Logística mejora su AUC de 0.6335 a 0.6461</p>
+<p>KNN muestra la mayor mejora en precisión (de 63.27% a 72.45%)</p>
+<p>Especificidad general más alta: Promedio de 87.71% vs.&nbsp;81.07% en Caso 1</p>
+<p>Características Persistentes: Sensibilidad aún baja: Promedio de 30.56%</p>
+<p>Trade-off sensibilidad-especificidad sigue presente</p>
+<p>Modelos más simples mejoran relativamente más que modelos complejos</p>
+<p>Conclusiones del Caso 3: La selección de variables mejora el rendimiento de modelos más simples</p>
+<p>Se mantiene alta especificidad pero baja sensibilidad</p>
+<p>7 variables son suficientes para lograr rendimiento competitivo</p>
+</section>
+</section>
+<section id="caso-4-variables-seleccionadas-con-balanceo" class="level2">
+<h2 class="anchored" data-anchor-id="caso-4-variables-seleccionadas-con-balanceo">Caso 4: Variables Seleccionadas con Balanceo</h2>
+<p>6.1 Configuración del Caso 4 Variables: 7 variables seleccionadas</p>
+<p>Balanceo: Con sobremuestreo (up-sampling)</p>
+<p>Objetivo: Combinar beneficios de selección de variables y balanceo de clases</p>
+<p>6.2 Resultados del Caso 4</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small">
+<caption>Resultados del Caso 4: Variables Seleccionadas con Balanceo</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Modelo</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">AUC</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Precision</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Sensibilidad</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Especificidad</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">AUC_vs_Caso3</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Sensibilidad_vs_Caso3</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">KNN</td>
+<td style="text-align: right; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">0.6536</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">63.27%</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">65.62%</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">62.12%</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">+4.82%</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">+91.2%</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Random Forest</td>
+<td style="text-align: right;">0.6383</td>
+<td style="text-align: center;">65.31%</td>
+<td style="text-align: center;">37.50%</td>
+<td style="text-align: center;">78.79%</td>
+<td style="text-align: center;">+1.09%</td>
+<td style="text-align: left;">+20.0%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SVM Radial</td>
+<td style="text-align: right;">0.6316</td>
+<td style="text-align: center;">69.39%</td>
+<td style="text-align: center;">46.88%</td>
+<td style="text-align: center;">80.30%</td>
+<td style="text-align: center;">+3.00%</td>
+<td style="text-align: left;">+50.0%</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Gradient Boosting</td>
+<td style="text-align: right;">0.6283</td>
+<td style="text-align: center;">62.24%</td>
+<td style="text-align: center;">53.12%</td>
+<td style="text-align: center;">66.67%</td>
+<td style="text-align: center;">-1.26%</td>
+<td style="text-align: left;">+88.9%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Regresión Logística</td>
+<td style="text-align: right;">0.6278</td>
+<td style="text-align: center;">61.22%</td>
+<td style="text-align: center;">46.88%</td>
+<td style="text-align: center;">68.18%</td>
+<td style="text-align: center;">-1.83%</td>
+<td style="text-align: left;">+66.7%</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Árbol de Decisión</td>
+<td style="text-align: right;">0.5743</td>
+<td style="text-align: center;">61.22%</td>
+<td style="text-align: center;">31.25%</td>
+<td style="text-align: center;">75.76%</td>
+<td style="text-align: center;">-1.38%</td>
+<td style="text-align: left;">0.0%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<section id="análisis-del-caso-4" class="level3">
+<h3 class="anchored" data-anchor-id="análisis-del-caso-4">Análisis del Caso 4</h3>
+<p>Mejoras Significativas: KNN logra el mejor AUC global (0.6536) y la mayor sensibilidad (65.62%)</p>
+<p>Sensibilidad promedio incrementada de 30.56% (Caso 3) a 48.44%</p>
+<p>Balance mejorado entre métricas de rendimiento</p>
+<p>Trade-offs Observados: Especificidad disminuye como compensación por mayor sensibilidad</p>
+<p>Algunos modelos (GLM, GBM) muestran ligera reducción en AUC</p>
+<p>Precisión general se mantiene en niveles similares</p>
+<p>Hallazgo Clave: KNN emerge como el mejor modelo en esta configuración, demostrando que con las variables correctas y balanceo adecuado, algoritmos simples pueden superar a modelos más complejos</p>
+</section>
+<section id="comparativa-entre-los-4-casos" class="level3">
+<h3 class="anchored" data-anchor-id="comparativa-entre-los-4-casos">Comparativa Entre los 4 Casos</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small">
+<caption>Comparativa General de los 4 Casos Experimentales</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Caso</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Descripcion</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Mejor_Modelo</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Mejor_AUC</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Sensibilidad_Promedio</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Especificidad_Promedio</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Fortaleza_Principal</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Caso 1</td>
+<td style="text-align: left;">30 vars, sin balanceo</td>
+<td style="text-align: left;">Gradient Boosting</td>
+<td style="text-align: right;">0.6425</td>
+<td style="text-align: center;">31.25%</td>
+<td style="text-align: center;">81.07%</td>
+<td style="text-align: left;">Mayor especificidad</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Caso 2</td>
+<td style="text-align: left;">30 vars, con balanceo</td>
+<td style="text-align: left;">Regresión Logística</td>
+<td style="text-align: right;">0.6316</td>
+<td style="text-align: center;">42.19%</td>
+<td style="text-align: center;">72.53%</td>
+<td style="text-align: left;">Mejor balance general</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Caso 3</td>
+<td style="text-align: left;">7 vars, sin balanceo</td>
+<td style="text-align: left;">Regresión Logística</td>
+<td style="text-align: right;">0.6461</td>
+<td style="text-align: center;">30.56%</td>
+<td style="text-align: center;">87.71%</td>
+<td style="text-align: left;">Alta especificidad con pocas variables</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">Caso 4</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">7 vars, con balanceo</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">KNN</td>
+<td style="text-align: right; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">0.6536</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">48.44%</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">71.97%</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">Mejor sensibilidad y AUC global</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="conclusiones-y-recomendaciones-finales" class="level1">
+<h1>Conclusiones y Recomendaciones Finales</h1>
+<p>7.1 Hallazgos Clave del Estudio Selección de Variables es Efectiva: Reducir de 30 a 7 variables mejora la eficiencia sin sacrificar rendimiento</p>
+<p>Balanceo Mejora Detección de Riesgo: El sobremuestreo incrementa significativamente la sensibilidad</p>
+<p>No Hay un Modelo Único Óptimo: Diferentes configuraciones optimizan diferentes métricas</p>
+<p>Variables Críticas Identificadas: Fallas previas, ausencias y aspiración educativa son predictores clave</p>
+<section id="recomendaciones-de-implementación" class="level2">
+<h2 class="anchored" data-anchor-id="recomendaciones-de-implementación">Recomendaciones de Implementación</h2>
+<p>Para Prioridad: Detección Temprana de Riesgo Configuración recomendada: Caso 4 con modelo KNN</p>
+<p>Ventaja: 65.62% sensibilidad para detectar estudiantes reprobados</p>
+<p>Uso: Sistema de alerta temprana</p>
+<p>Para Prioridad: Optimización de Recursos Configuración recomendada: Caso 3 con Regresión Logística</p>
+<p>Ventaja: 89.39% especificidad para minimizar falsos positivos</p>
+<p>Uso: Asignación dirigida de recursos de apoyo</p>
+<p>Para Prioridad: Balance General Configuración recomendada: Caso 2 con Random Forest</p>
+<p>Ventaja: Buen balance entre todas las métricas</p>
+<p>Uso: Monitoreo general institucional</p>
+</section>
+<section id="recomendación-final" class="level2">
+<h2 class="anchored" data-anchor-id="recomendación-final">Recomendación Final</h2>
+<p>Basado en el análisis completo, recomendamos una implementación por fases:</p>
+<p>Fase 1 (Semanas 1-6): Implementar Caso 4 con KNN para maximizar detección temprana de estudiantes en riesgo.</p>
+<p>Fase 2 (Meses 2-6): Añadir Caso 3 con Regresión Logística como verificación secundaria para optimización de recursos.</p>
+<p>Fase 3 (Meses 6-12): Desarrollar un sistema ensemble que combine ambas configuraciones, ajustando automáticamente según prioridades institucionales.</p>
+</section>
+<section id="limitaciones-y-trabajo-futuro" class="level2">
+<h2 class="anchored" data-anchor-id="limitaciones-y-trabajo-futuro">Limitaciones y Trabajo Futuro</h2>
+<p>Limitaciones Reconocidas: Rendimiento Predictivo Moderado: AUC máximo de 0.6536 indica margen de mejora</p>
+<p>Contexto Específico: Datos de sistema educativo portugués</p>
+<p>Datos Auto-reportados: Posible sesgo en respuestas</p>
+<p>Direcciones Futuras: Integración de Datos Temporales: Seguimiento longitudinal de estudiantes</p>
+<p>Validación Cruzada Institucional: Probar en diferentes contextos educativos</p>
+<p>Modelos de Explicabilidad: Mejorar interpretabilidad para stakeholders no técnicos</p>
+<p>Sistemas de Recomendación: Sugerir intervenciones específicas basadas en perfiles de riesgo</p>
+<p>Nota Final: Este estudio demuestra que, aunque la predicción perfecta del rendimiento estudiantil sigue siendo un desafío, es posible identificar factores clave y desarrollar herramientas útiles para la toma de decisiones educativas basadas en datos. La combinación de selección inteligente de variables y técnicas apropiadas de balanceo puede proporcionar insights valiosos para mejorar los resultados estudiantiles.</p>
+</section>
 </section>
 
 </main>
@@ -131,13 +1136,14 @@ ul.task-list li input[type="checkbox"] {
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

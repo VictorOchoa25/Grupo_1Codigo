@@ -1,21 +1,16 @@
 ---
 title: "Análisis Predictivo del Rendimiento Académico Estudiantil"
 subtitle: "Identificación de Factores Clave y Modelos Predictivos para el Éxito Estudiantil"
-author: "Equipo de Investigación en Ciencia de Datos"
-date: "`r format(Sys.Date(), '%d de %B de %Y')`"
+author: "Salvador y Víctor"
+date: today
 format:
-  pdf:
-    documentclass: article
-    geometry:
-      - margin=1in
-    fontsize: 11pt
-    linestretch: 1.25
   html:
-    theme: cosmo
-    toc: true
-    toc-depth: 3
-    toc-title: "Tabla de Contenidos"
-    code-fold: true
+    theme: flatly
+    toc: true        # activa el índice
+    toc-depth: 3     # niveles de encabezados
+    toc-location: left   # barra lateral
+    # opcional:
+    # number-sections: true
 ---
 
 ```{r setup, include=FALSE}
@@ -32,15 +27,142 @@ library(kableExtra)
 library(ggplot2)
 ```
 
-1. Análisis Exploratorio de Datos (EDA)
-1.1 Descripción del Conjunto de Datos
+# Introducción
+
+El conjunto de datos [*Student Performance*](https://doi.org/10.24432/C5TG7T) contiene información detallada sobre el rendimiento académico de estudiantes de secundaria en la asignatura de Matemáticas, junto con una amplia gama de variables demográficas, sociales, familiares y conductuales. Los datos fueron recopilados mediante encuestas en dos escuelas secundarias públicas de Portugal y están disponibles en el repositorio UCI Machine Learning.
+
+Basados en la descripción del respositorio, el rendimiento académico de los estudiantes no depende únicamente de su capacidad cognitiva, sino que está fuertemente influenciado por factores contextuales como el entorno familiar, los hábitos de estudio, el apoyo escolar, las relaciones sociales y las condiciones socioeconómicas. En este contexto, identificar tempranamente a los estudiantes en riesgo de reprobación permite a las instituciones educativas implementar estrategias de intervención oportuna, optimizando recursos y promoviendo la equidad en el aprendizaje. Por ello, es crucial desarrollar modelos predictivos que, a partir de variables observables al inicio del curso, puedan anticipar el resultado académico final.
+
+El conjunto de datos incluye 395 observaciones y 33 variables, entre las que se encuentran:
+
+-   **Demográficas**: edad, género, tipo de residencia (urbana o rural).
+
+-   **Familiares**: nivel educativo de los padres, ocupación, tipo de tutor, calidad de las relaciones familiares.
+
+-   **Académicas**: número de ausencias, fracasos previos, apoyo escolar extra, acceso a internet.
+
+-   **De comportamiento**: tiempo de estudio, frecuencia de salidas con amigos, consumo de alcohol, tiempo libre.
+
+-   **De desempeño**: calificaciones en el primer (G1), segundo (G2) y tercer período (G3).
+
+En este proyecto de **clasificación binaria**; el objetivo es detectar si un estudiante aprobará o reprobará, transformando la variable objetivo continua (G3) en una variable categórica binaria. Así, en lugar de predecir la calificación exacta, se define la variable respuesta **Pass** como:
+
+$$
+\texttt{Pass} =\begin{cases}\text{yes}, & \text{si } \texttt{G3} \geq 10 \\\text{no}, & \text{si } \texttt{G3} < 10\end{cases}
+$$
+
+Este umbral (10 sobre 20) corresponde al criterio tradicional de aprobación en el sistema educativo portugués . Es importante destacar que, para preservar la validez de la predicción temprana, las calificaciones intermedias (G1 y G2) se excluyen del conjunto de predictores, evitando así cualquier fuga de información y asegurando que el modelo se base únicamente en factores observables antes del cierre del curso.
+
+# Business understanding
+
+Planteamos algunas preguntas sobre nuestros datos:
+
+-   ¿Un mayor nivel educativo de los padres se asocia con una mayor probabilidad de aprobación?
+-   ¿El número de fracasos previos es el predictor más fuerte de reprobación?
+-   ¿El apoyo escolar extra mejora significativamente las probabilidades de aprobación?
+-   ¿Una mayor frecuencia de salidas con amigos se asocia con menor rendimiento?
+
+# Análisis Exploratorio de Datos (EDA)
+## Descripción del Conjunto de Datos
 El análisis utiliza el conjunto de datos de Rendimiento Estudiantil que contiene 395 estudiantes con 33 atributos que describen demografía, contexto social y registros académicos. La variable objetivo se derivó de la nota final (G3):
 
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| results: 'hide'
+
+
+library(tidyverse)
+library(readr)
+library(skimr)
+library(patchwork)
+library(ggridges)
+library(kableExtra)
+
+# 1.1 Cargar datos originales
+cat("=== CARGANDO DATOS ORIGINALES ===\n")
+datos <- read_delim("Data/studentmat.csv", 
+                    delim = ";", escape_double = FALSE, trim_ws = TRUE)
+cat("Dataset original cargado:", nrow(datos), "filas,", ncol(datos), "columnas\n\n")
+
+# 1.2 Transformación inicial (Data Understanding)
+cat("=== TRANSFORMACIÓN INICIAL ===\n")
+datos_procesados <- datos %>%
+  mutate(
+    # Variable objetivo binaria
+    reprobado = ifelse(G3 < 10, 1, 0),
+    reprobado_factor = factor(reprobado, 
+                              levels = c(0, 1), 
+                              labels = c("Aprobado", "Reprobado")),
+    
+    # Categorías para mejor visualización
+    studytime_cat = factor(studytime,
+                           levels = 1:4,
+                           labels = c("<2h", "2-5h", "5-10h", ">10h")),
+    
+    failures_cat = case_when(
+      failures == 0 ~ "Ninguno",
+      failures == 1 ~ "1 fallo",
+      failures == 2 ~ "2 fallos",
+      failures >= 3 ~ "3+ fallos"
+    ) %>% factor(levels = c("Ninguno", "1 fallo", "2 fallos", "3+ fallos")),
+    
+    absences_cat = cut(absences,
+                       breaks = c(-1, 0, 5, 10, 20, max(absences)),
+                       labels = c("0", "1-5", "6-10", "11-20", "21+"))
+  ) %>%
+  # Eliminar G1 y G2 según tu requerimiento
+  select(-G1, -G2)
+```
+
+```{r}
+tema_presentacion <- function() {
+  theme_minimal(base_size = 12) +
+    theme(
+      plot.title = element_text(size = 16, face = "bold", hjust = 0.5,
+                                margin = margin(b = 15)),
+      plot.subtitle = element_text(size = 12, color = "gray40", hjust = 0.5,
+                                   margin = margin(b = 20)),
+      axis.title = element_text(size = 12, face = "bold"),
+      axis.text = element_text(size = 10),
+      legend.title = element_text(face = "bold"),
+      legend.position = "right",
+      panel.grid.minor = element_blank(),
+      plot.margin = margin(20, 20, 20, 20)
+    )
+}
+
+
+
+p1_distribucion <- datos_procesados %>%
+  group_by(reprobado_factor) %>%
+  summarise(n = n()) %>%
+  mutate(porcentaje = n/sum(n)*100,
+         etiqueta = paste0(round(porcentaje, 1), "%")) %>%
+  ggplot(aes(x = reorder(reprobado_factor, -porcentaje), 
+             y = porcentaje, 
+             fill = reorder(reprobado_factor, -porcentaje))) +
+  geom_col(width = 0.6, alpha = 0.9) +
+  geom_text(aes(label = etiqueta), vjust = -0.5, 
+            size = 5, fontface = "bold", color = "#2E2828") +
+  scale_fill_manual(values = c("#2E86AB", "#C73E1D")) +
+  scale_y_continuous(limits = c(0, 80)) +
+  labs(title = "DISTRIBUCIÓN DE RESULTADOS ACADÉMICOS",
+       subtitle = "Porcentaje de estudiantes que aprueban vs reprueban Matemáticas",
+       x = "Resultado", y = "Porcentaje (%)",
+       caption = paste("Tasa de reprobación:", 
+                       round(mean(datos_procesados$reprobado)*100, 1), "%")) +
+  tema_presentacion() +
+  theme(legend.position = "none")
+
+p1_distribucion
+```
 Aprobado: Nota final ≥ 10 (265 estudiantes, 67.1%)
 
 Reprobado: Nota final < 10 (130 estudiantes, 32.9%)
 
-1.2 Análisis Univariado
+## Análisis Univariado
 Distribución de Variables Numéricas Clave:
 ```{r}
 estadisticas_numericas <- data.frame(
@@ -69,7 +191,7 @@ Fallas Previas: 68% de estudiantes no tienen fallas previas
 
 Educación Parental: La educación de la madre es ligeramente mayor que la del padre en promedio
 
-1.3 Análisis Bivariado con la Variable Objetivo
+## Análisis Bivariado con la Variable Objetivo
 Variables Numéricas vs. Estado Académico:
 
 ```{r}
@@ -116,7 +238,9 @@ kable(resultados_chi, caption = "Pruebas Chi-Cuadrado para Variables Categórica
            general_title = "")
 ```
 
-2. Caso 1: Todas las Variables sin Balanceo
+# Modelado y Evaluación
+
+## Caso 1: Todas las Variables sin Balanceo
 2.1 Configuración del Caso 1
 Variables: Todas las 30 variables disponibles
 
@@ -143,7 +267,7 @@ kable(resultados_caso1, caption = "Resultados del Caso 1: Todas las Variables si
   row_spec(1, bold = TRUE, background = "#E8F4F8")
 ```
 
-2.3 Análisis del Caso 1
+## Análisis del Caso 1
 Fortalezas Identificadas:
 Gradient Boosting obtuvo el mejor AUC (0.6425)
 
@@ -165,7 +289,7 @@ Existe un claro trade-off entre sensibilidad y especificidad
 
 La baja sensibilidad sugiere necesidad de abordar el desbalance de clases
 
-3. Caso 2: Todas las Variables con Balanceo
+## Caso 2: Todas las Variables con Balanceo
 3.1 Configuración del Caso 2
 Variables: Todas las 30 variables disponibles
 
@@ -192,7 +316,7 @@ kable(resultados_caso2, caption = "Resultados del Caso 2: Todas las Variables co
   row_spec(1, bold = TRUE, background = "#E8F4F8")
 ```
 
-3.3 Impacto del Balanceo en el Caso 2
+## Impacto del Balanceo en el Caso 2
 Mejoras Observadas:
 Sensibilidad incrementada significativamente en la mayoría de modelos
 
@@ -214,11 +338,11 @@ Los modelos más simples (Regresión Logística, KNN) se benefician más del bal
 
 Existe un trade-off claro entre sensibilidad y especificidad
 
-4. Proceso de Selección de Variables
-4.1 Metodología de Selección
+## Proceso de Selección de Variables
+#### Metodología de Selección
 Se emplearon tres métodos complementarios para identificar las variables más predictivas:
 
-4.1.1 Pruebas Chi-Cuadrado (Variables Categóricas)
+#### Pruebas Chi-Cuadrado (Variables Categóricas)
 
 
 ```{r}
@@ -235,7 +359,7 @@ kable(ranking_chi, caption = "Ranking de Variables Categóricas por Chi-Cuadrado
 ```
 
 
-4.1.2 Algoritmo Boruta (Importancia de Todas las Variables)
+#### Algoritmo Boruta (Importancia de Todas las Variables)
 
 ```{r}
 importancia_boruta <- data.frame(
@@ -253,7 +377,7 @@ kable(importancia_boruta, caption = "Variables Confirmadas Importantes por Borut
 ```
 
 
-4.1.3 Eliminación Recursiva de Características (RFE)
+#### Eliminación Recursiva de Características (RFE)
 Método: Random Forest como wrapper
 
 Variables óptimas identificadas: 9 variables
@@ -262,7 +386,7 @@ Top 5 variables: failures, absences, goout, Medu, schoolsup
 
 Precisión máxima: 72.91% con 9 variables
 
-4.2 Conjunto Final de Variables Seleccionadas
+#### Conjunto Final de Variables Seleccionadas
 Basado en el consenso de los tres métodos, se seleccionaron 7 variables clave:
 
 
@@ -295,7 +419,7 @@ kable(variables_finales, caption = "Conjunto Final de 7 Variables Seleccionadas"
   kable_styling(latex_options = c("striped", "hold_position", "scale_down"))
 ```
 
-4.3 Beneficios de la Selección de Variables
+#### Beneficios de la Selección de Variables
 Reducción de dimensionalidad: 30 → 7 variables (76.7% reducción)
 
 Mejor interpretabilidad: Variables más comprensibles para stakeholders
@@ -304,15 +428,15 @@ Reducción de sobreajuste: Menor riesgo de modelar ruido
 
 Eficiencia computacional: Entrenamiento y predicción más rápidos
 
-5. Caso 3: Variables Seleccionadas sin Balanceo
-5.1 Configuración del Caso 3
+## Caso 3: Variables Seleccionadas sin Balanceo
+### Configuración del Caso 3
 Variables: 7 variables seleccionadas (failures, absences, higher, age, Medu, goout, guardian)
 
 Balanceo: Sin balanceo de clases
 
 Objetivo: Evaluar rendimiento con variables optimizadas manteniendo distribución natural
 
-5.2 Resultados del Caso 3
+### Resultados del Caso 3
 
 ```{r}
 resultados_caso3 <- data.frame(
@@ -332,7 +456,7 @@ kable(resultados_caso3, caption = "Resultados del Caso 3: Variables Seleccionada
   row_spec(1, bold = TRUE, background = "#E8F4F8")
 ```
 
-5.3 Análisis del Caso 3
+### Análisis del Caso 3
 Mejoras Observadas vs. Caso 1:
 Regresión Logística mejora su AUC de 0.6335 a 0.6461
 
@@ -354,7 +478,7 @@ Se mantiene alta especificidad pero baja sensibilidad
 
 7 variables son suficientes para lograr rendimiento competitivo
 
-6. Caso 4: Variables Seleccionadas con Balanceo
+## Caso 4: Variables Seleccionadas con Balanceo
 6.1 Configuración del Caso 4
 Variables: 7 variables seleccionadas
 
@@ -383,7 +507,7 @@ kable(resultados_caso4, caption = "Resultados del Caso 4: Variables Seleccionada
 ```
 
 
-6.3 Análisis del Caso 4
+### Análisis del Caso 4
 Mejoras Significativas:
 KNN logra el mejor AUC global (0.6536) y la mayor sensibilidad (65.62%)
 
@@ -401,7 +525,7 @@ Precisión general se mantiene en niveles similares
 Hallazgo Clave:
 KNN emerge como el mejor modelo en esta configuración, demostrando que con las variables correctas y balanceo adecuado, algoritmos simples pueden superar a modelos más complejos
 
-6.4 Comparativa Entre los 4 Casos
+### Comparativa Entre los 4 Casos
 
 ```{r}
 comparativa_casos <- data.frame(
@@ -427,7 +551,7 @@ kable(comparativa_casos, caption = "Comparativa General de los 4 Casos Experimen
   row_spec(4, bold = TRUE, background = "#E8F4F8")
 ```
 
-7. Conclusiones y Recomendaciones Finales
+# Conclusiones y Recomendaciones Finales
 7.1 Hallazgos Clave del Estudio
 Selección de Variables es Efectiva: Reducir de 30 a 7 variables mejora la eficiencia sin sacrificar rendimiento
 
@@ -437,7 +561,7 @@ No Hay un Modelo Único Óptimo: Diferentes configuraciones optimizan diferentes
 
 Variables Críticas Identificadas: Fallas previas, ausencias y aspiración educativa son predictores clave
 
-7.2 Recomendaciones de Implementación
+## Recomendaciones de Implementación
 Para Prioridad: Detección Temprana de Riesgo
 Configuración recomendada: Caso 4 con modelo KNN
 
@@ -459,7 +583,7 @@ Ventaja: Buen balance entre todas las métricas
 
 Uso: Monitoreo general institucional
 
-7.3 Recomendación Final
+## Recomendación Final
 Basado en el análisis completo, recomendamos una implementación por fases:
 
 Fase 1 (Semanas 1-6): Implementar Caso 4 con KNN para maximizar detección temprana de estudiantes en riesgo.
@@ -468,7 +592,7 @@ Fase 2 (Meses 2-6): Añadir Caso 3 con Regresión Logística como verificación 
 
 Fase 3 (Meses 6-12): Desarrollar un sistema ensemble que combine ambas configuraciones, ajustando automáticamente según prioridades institucionales.
 
-7.4 Limitaciones y Trabajo Futuro
+## Limitaciones y Trabajo Futuro
 Limitaciones Reconocidas:
 Rendimiento Predictivo Moderado: AUC máximo de 0.6536 indica margen de mejora
 

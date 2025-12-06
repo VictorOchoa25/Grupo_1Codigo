@@ -1,0 +1,761 @@
+% Options for packages loaded elsewhere
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  11pt,
+]{article}
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage{setspace}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+% Make \paragraph and \subparagraph free-standing
+\makeatletter
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}{
+    \@ifstar
+      \xxxParagraphStar
+      \xxxParagraphNoStar
+  }
+  \newcommand{\xxxParagraphStar}[1]{\oldparagraph*{#1}\mbox{}}
+  \newcommand{\xxxParagraphNoStar}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}{
+    \@ifstar
+      \xxxSubParagraphStar
+      \xxxSubParagraphNoStar
+  }
+  \newcommand{\xxxSubParagraphStar}[1]{\oldsubparagraph*{#1}\mbox{}}
+  \newcommand{\xxxSubParagraphNoStar}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+\makeatother
+
+
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+
+
+
+
+
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+
+
+ 
+
+
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Table of contents}
+\else
+  \newcommand\contentsname{Table of contents}
+\fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{List of Figures}
+\else
+  \newcommand\listfigurename{List of Figures}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{List of Tables}
+\else
+  \newcommand\listtablename{List of Tables}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Figure}
+\else
+  \newcommand\figurename{Figure}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Table}
+\else
+  \newcommand\tablename{Table}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Análisis Predictivo del Rendimiento Académico Estudiantil},
+  pdfauthor={Equipo de Investigación en Ciencia de Datos},
+  colorlinks=true,
+  linkcolor={blue},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+
+\title{Análisis Predictivo del Rendimiento Académico Estudiantil}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{Identificación de Factores Clave y Modelos Predictivos para el
+Éxito Estudiantil}
+\author{Equipo de Investigación en Ciencia de Datos}
+\date{Invalid Date}
+\begin{document}
+\maketitle
+
+
+\setstretch{1.25}
+\section{Introducción}\label{introducciuxf3n}
+
+El conjunto de datos
+\href{https://doi.org/10.24432/C5TG7T}{\emph{Student Performance}}
+contiene información detallada sobre el rendimiento académico de
+estudiantes de secundaria en la asignatura de Matemáticas, junto con una
+amplia gama de variables demográficas, sociales, familiares y
+conductuales. Los datos fueron recopilados mediante encuestas en dos
+escuelas secundarias públicas de Portugal y están disponibles en el
+repositorio UCI Machine Learning.
+
+Basados en la descripción del respositorio, el rendimiento académico de
+los estudiantes no depende únicamente de su capacidad cognitiva, sino
+que está fuertemente influenciado por factores contextuales como el
+entorno familiar, los hábitos de estudio, el apoyo escolar, las
+relaciones sociales y las condiciones socioeconómicas. En este contexto,
+identificar tempranamente a los estudiantes en riesgo de reprobación
+permite a las instituciones educativas implementar estrategias de
+intervención oportuna, optimizando recursos y promoviendo la equidad en
+el aprendizaje. Por ello, es crucial desarrollar modelos predictivos
+que, a partir de variables observables al inicio del curso, puedan
+anticipar el resultado académico final.
+
+El conjunto de datos incluye 395 observaciones y 33 variables, entre las
+que se encuentran:
+
+\begin{itemize}
+\item
+  \textbf{Demográficas}: edad, género, tipo de residencia (urbana o
+  rural);
+\item
+  \textbf{Familiares}: nivel educativo de los padres, ocupación, tipo de
+  tutor, calidad de las relaciones familiares;
+\item
+  \textbf{Académicas}: número de ausencias, fracasos previos, apoyo
+  escolar extra, acceso a internet;
+\item
+  \textbf{De comportamiento}: tiempo de estudio, frecuencia de salidas
+  con amigos, consumo de alcohol, tiempo libre;
+\item
+  \textbf{De desempeño}: calificaciones en el primer (G1), segundo (G2)
+  y tercer período (G3).
+\end{itemize}
+
+Ya que el problema original, al basarse en la calificación final (G3),
+es de naturaleza \textbf{regresiva} (predicción de una variable
+continua). Sin embargo, dado que este proyecto se enfoca en
+\textbf{clasificación binaria}; es decir, en detectar si un estudiante
+aprobará o reprobará, se transforma la variable objetivo continua en una
+variable categórica binaria. Así, en lugar de predecir la calificación
+exacta, se define la variable respuesta \textbf{Pass} como:
+
+\[
+\texttt{Pass} =\begin{cases}\text{yes}, & \text{si } \texttt{G3} \geq 10 \\\text{no}, & \text{si } \texttt{G3} < 10\end{cases}
+\]
+
+Este umbral (10 sobre 20) corresponde al criterio tradicional de
+aprobación en el sistema educativo portugués . Importante destacar que,
+para preservar la validez de la predicción temprana, las calificaciones
+intermedias (G1 y G2) se excluyen del conjunto de predictores, evitando
+así cualquier fuga de información y asegurando que el modelo se base
+únicamente en factores observables antes del cierre del curso.
+
+\section{Business understanding}\label{business-understanding}
+
+Planteamos algunas preguntas sobre nuestros datos:
+
+\begin{itemize}
+\tightlist
+\item
+  ¿Un mayor nivel educativo de los padres se asocia con una mayor
+  probabilidad de aprobación?
+\item
+  ¿El número de fracasos previos es el predictor más fuerte de
+  reprobación?
+\item
+  ¿El apoyo escolar extra mejora significativamente las probabilidades
+  de aprobación?
+\item
+  ¿Una mayor frecuencia de salidas con amigos se asocia con menor
+  rendimiento?
+\end{itemize}
+
+\section{Análisis Exploratorio de Datos
+(EDA)}\label{anuxe1lisis-exploratorio-de-datos-eda}
+
+\subsection{Descripción del Conjunto de
+Datos}\label{descripciuxf3n-del-conjunto-de-datos}
+
+El análisis utiliza el conjunto de datos de Rendimiento Estudiantil que
+contiene 395 estudiantes con 33 atributos que describen demografía,
+contexto social y registros académicos. La variable objetivo se derivó
+de la nota final (G3):
+
+Aprobado: Nota final ≥ 10 (265 estudiantes, 67.1\%)
+
+Reprobado: Nota final \textless{} 10 (130 estudiantes, 32.9\%)
+
+\subsection{Análisis Univariado}\label{anuxe1lisis-univariado}
+
+Distribución de Variables Numéricas Clave:
+
+\begin{longtable}[t]{lrrrrrr}
+\caption{\label{tab:unnamed-chunk-1}Estadísticas Descriptivas de Variables Numéricas Clave}\\
+\toprule
+Variable & Media & Mediana & Desviacion\_Estandar & Minimo & Maximo & Asimetria\\
+\midrule
+\cellcolor{gray!10}{Edad} & \cellcolor{gray!10}{16.71} & \cellcolor{gray!10}{17.0} & \cellcolor{gray!10}{1.29} & \cellcolor{gray!10}{15} & \cellcolor{gray!10}{22} & \cellcolor{gray!10}{0.46}\\
+Ausencias & 5.53 & 4.0 & 7.75 & 0 & 75 & 3.64\\
+\cellcolor{gray!10}{Fallas Previas} & \cellcolor{gray!10}{0.32} & \cellcolor{gray!10}{0.0} & \cellcolor{gray!10}{0.73} & \cellcolor{gray!10}{0} & \cellcolor{gray!10}{3} & \cellcolor{gray!10}{2.37}\\
+Educación de la Madre & 2.70 & 3.0 & 1.10 & 0 & 4 & -0.32\\
+\cellcolor{gray!10}{Educación del Padre} & \cellcolor{gray!10}{2.55} & \cellcolor{gray!10}{2.5} & \cellcolor{gray!10}{1.07} & \cellcolor{gray!10}{1} & \cellcolor{gray!10}{4} & \cellcolor{gray!10}{-0.03}\\
+\addlinespace
+Tiempo de Estudio & 2.04 & 2.0 & 0.82 & 1 & 4 & 0.63\\
+\cellcolor{gray!10}{Salidas Sociales} & \cellcolor{gray!10}{3.08} & \cellcolor{gray!10}{3.0} & \cellcolor{gray!10}{1.12} & \cellcolor{gray!10}{1} & \cellcolor{gray!10}{5} & \cellcolor{gray!10}{0.12}\\
+Alcohol Diario & 1.50 & 1.0 & 0.94 & 1 & 5 & 2.17\\
+\bottomrule
+\end{longtable}
+
+Hallazgos Clave del Análisis Univariado: Distribución de Edad: La
+mayoría de estudiantes (moda = 17) están en sus últimos años de
+adolescencia
+
+Ausentismo: Alta variabilidad con algunos estudiantes faltando hasta 75
+clases
+
+Fallas Previas: 68\% de estudiantes no tienen fallas previas
+
+Educación Parental: La educación de la madre es ligeramente mayor que la
+del padre en promedio
+
+\subsection{Análisis Bivariado con la Variable
+Objetivo}\label{anuxe1lisis-bivariado-con-la-variable-objetivo}
+
+Variables Numéricas vs.~Estado Académico:
+
+\begin{longtable}[t]{lrrrl}
+\caption{\label{tab:unnamed-chunk-2}Valores Promedio por Estado Académico}\\
+\toprule
+Variable & Media\_Aprobados & Media\_Reprobados & Diferencia & Direccion\\
+\midrule
+\cellcolor{gray!10}{Fallas Previas} & \cellcolor{gray!10}{0.12} & \cellcolor{gray!10}{0.73} & \cellcolor{gray!10}{0.61} & \cellcolor{gray!10}{Reprobados tienen más}\\
+Ausencias & 4.42 & 7.65 & 3.23 & Reprobados tienen más\\
+\cellcolor{gray!10}{Educación de la Madre} & \cellcolor{gray!10}{2.85} & \cellcolor{gray!10}{2.38} & \cellcolor{gray!10}{0.47} & \cellcolor{gray!10}{Aprobados tienen más educación}\\
+Edad & 16.58 & 17.02 & 0.44 & Reprobados son mayores\\
+\cellcolor{gray!10}{Salidas Sociales} & \cellcolor{gray!10}{2.97} & \cellcolor{gray!10}{3.34} & \cellcolor{gray!10}{0.37} & \cellcolor{gray!10}{Reprobados salen más}\\
+\bottomrule
+\end{longtable}
+
+Variables Categóricas vs.~Estado (Pruebas Chi-Cuadrado):
+
+\begin{longtable}[t]{lrcl}
+\caption{\label{tab:unnamed-chunk-3}Pruebas Chi-Cuadrado para Variables Categóricas}\\
+\toprule
+Variable & Valor\_P & Significancia & Interpretacion\\
+\midrule
+\cellcolor{gray!10}{higher (desea educación superior)} & \cellcolor{gray!10}{0.02385} & \cellcolor{gray!10}{**} & \cellcolor{gray!10}{Fuertemente relacionado con éxito académico}\\
+guardian (tutor) & 0.03277 & ** & Tipo de tutor influye en resultados\\
+\cellcolor{gray!10}{paid (clases pagadas extra)} & \cellcolor{gray!10}{0.05645} & \cellcolor{gray!10}{*} & \cellcolor{gray!10}{Clases extra pueden ayudar marginalmente}\\
+romantic (en relación) & 0.09125 & . & Relaciones románticas tienen efecto marginal\\
+\cellcolor{gray!10}{Mjob (trabajo madre)} & \cellcolor{gray!10}{0.09994} & \cellcolor{gray!10}{.} & \cellcolor{gray!10}{Trabajo de la madre tiene alguna influencia}\\
+\addlinespace
+internet (acceso a internet) & 0.10624 & NS & Acceso a internet no es estadísticamente significativo\\
+\bottomrule
+\multicolumn{4}{l}{\rule{0pt}{1em}**: p < 0.05, *: p < 0.10, .: p < 0.15, NS: No Significativo}\\
+\end{longtable}
+
+\section{Caso 1: Todas las Variables sin
+Balanceo}\label{caso-1-todas-las-variables-sin-balanceo}
+
+2.1 Configuración del Caso 1 Variables: Todas las 30 variables
+disponibles
+
+Balanceo: Sin balanceo de clases (distribución natural 67.1\% Aprobado /
+32.9\% Reprobado)
+
+Objetivo: Establecer línea base de rendimiento con todas las
+características
+
+2.2 Resultados del Caso 1
+
+\begin{longtable}[t]{lrcccc}
+\caption{\label{tab:unnamed-chunk-4}Resultados del Caso 1: Todas las Variables sin Balanceo}\\
+\toprule
+Modelo & AUC & Precision & Sensibilidad & Especificidad & Posicion\\
+\midrule
+\cellcolor[HTML]{E8F4F8}{\textbf{\cellcolor{gray!10}{Gradient Boosting}}} & \cellcolor[HTML]{E8F4F8}{\textbf{\cellcolor{gray!10}{0.6425}}} & \cellcolor[HTML]{E8F4F8}{\textbf{\cellcolor{gray!10}{63.27\%}}} & \cellcolor[HTML]{E8F4F8}{\textbf{\cellcolor{gray!10}{25.00\%}}} & \cellcolor[HTML]{E8F4F8}{\textbf{\cellcolor{gray!10}{81.82\%}}} & \cellcolor[HTML]{E8F4F8}{\textbf{\cellcolor{gray!10}{1}}}\\
+Regresión Logística & 0.6335 & 61.22\% & 31.25\% & 75.76\% & 2\\
+\cellcolor{gray!10}{Random Forest} & \cellcolor{gray!10}{0.6127} & \cellcolor{gray!10}{71.43\%} & \cellcolor{gray!10}{40.62\%} & \cellcolor{gray!10}{86.36\%} & \cellcolor{gray!10}{3}\\
+Árbol de Decisión & 0.6125 & 64.29\% & 37.50\% & 77.27\% & 4\\
+\cellcolor{gray!10}{SVM Radial} & \cellcolor{gray!10}{0.5909} & \cellcolor{gray!10}{70.41\%} & \cellcolor{gray!10}{31.25\%} & \cellcolor{gray!10}{89.39\%} & \cellcolor{gray!10}{5}\\
+\addlinespace
+KNN & 0.5386 & 63.27\% & 25.00\% & 81.82\% & 6\\
+\cellcolor{gray!10}{Naive Bayes} & \cellcolor{gray!10}{0.5421} & \cellcolor{gray!10}{59.18\%} & \cellcolor{gray!10}{31.25\%} & \cellcolor{gray!10}{72.73\%} & \cellcolor{gray!10}{7}\\
+\bottomrule
+\end{longtable}
+
+\subsection{Análisis del Caso 1}\label{anuxe1lisis-del-caso-1}
+
+Fortalezas Identificadas: Gradient Boosting obtuvo el mejor AUC (0.6425)
+
+Random Forest logró la mayor precisión general (71.43\%)
+
+SVM Radial alcanzó la mayor especificidad (89.39\%)
+
+Debilidades Identificadas: Baja sensibilidad general: Todos los modelos
+detectan menos del 50\% de estudiantes reprobados
+
+Sobreajuste potencial: 30 variables pueden introducir ruido en algunos
+modelos
+
+KNN y Naive Bayes mostraron rendimiento inferior
+
+Conclusiones del Caso 1: Los modelos complejos (Gradient Boosting,
+Random Forest) funcionan mejor con todas las variables
+
+Existe un claro trade-off entre sensibilidad y especificidad
+
+La baja sensibilidad sugiere necesidad de abordar el desbalance de
+clases
+
+\section{Caso 2: Todas las Variables con
+Balanceo}\label{caso-2-todas-las-variables-con-balanceo}
+
+3.1 Configuración del Caso 2 Variables: Todas las 30 variables
+disponibles
+
+Balanceo: Con sobremuestreo (up-sampling) para balancear clases
+
+Objetivo: Evaluar impacto del balanceo manteniendo todas las
+características
+
+3.2 Resultados del Caso 2
+
+\begin{longtable}[t]{lrcccc}
+\caption{\label{tab:unnamed-chunk-5}Resultados del Caso 2: Todas las Variables con Balanceo}\\
+\toprule
+Modelo & AUC & Precision & Sensibilidad & Especificidad & Cambio\_Sensibilidad\\
+\midrule
+\cellcolor[HTML]{E8F4F8}{\textbf{\cellcolor{gray!10}{Regresión Logística}}} & \cellcolor[HTML]{E8F4F8}{\textbf{\cellcolor{gray!10}{0.6316}}} & \cellcolor[HTML]{E8F4F8}{\textbf{\cellcolor{gray!10}{61.22\%}}} & \cellcolor[HTML]{E8F4F8}{\textbf{\cellcolor{gray!10}{50.00\%}}} & \cellcolor[HTML]{E8F4F8}{\textbf{\cellcolor{gray!10}{66.67\%}}} & \cellcolor[HTML]{E8F4F8}{\textbf{\cellcolor{gray!10}{+60.0\%}}}\\
+Gradient Boosting & 0.6259 & 63.27\% & 40.62\% & 74.24\% & +62.5\%\\
+\cellcolor{gray!10}{Random Forest} & \cellcolor{gray!10}{0.6120} & \cellcolor{gray!10}{66.33\%} & \cellcolor{gray!10}{40.62\%} & \cellcolor{gray!10}{78.79\%} & \cellcolor{gray!10}{0.0\%}\\
+SVM Radial & 0.6009 & 59.18\% & 37.50\% & 69.70\% & +20.0\%\\
+\cellcolor{gray!10}{Árbol de Decisión} & \cellcolor{gray!10}{0.5881} & \cellcolor{gray!10}{68.37\%} & \cellcolor{gray!10}{31.25\%} & \cellcolor{gray!10}{86.36\%} & \cellcolor{gray!10}{-16.7\%}\\
+\addlinespace
+KNN & 0.5573 & 57.14\% & 53.12\% & 59.09\% & +112.5\%\\
+\bottomrule
+\end{longtable}
+
+\subsection{Impacto del Balanceo en el Caso
+2}\label{impacto-del-balanceo-en-el-caso-2}
+
+Mejoras Observadas: Sensibilidad incrementada significativamente en la
+mayoría de modelos
+
+Regresión Logística mejoró su sensibilidad de 31.25\% a 50.00\%
+
+KNN duplicó su sensibilidad (de 25.00\% a 53.12\%)
+
+Compensaciones Observadas: Reducción en AUC en la mayoría de modelos
+
+Disminución en especificidad como trade-off por mayor sensibilidad
+
+Precisión general se mantuvo similar o disminuyó ligeramente
+
+Conclusiones del Caso 2: El balanceo mejora significativamente la
+detección de estudiantes reprobados
+
+Los modelos más simples (Regresión Logística, KNN) se benefician más del
+balanceo
+
+Existe un trade-off claro entre sensibilidad y especificidad
+
+\section{Proceso de Selección de
+Variables}\label{proceso-de-selecciuxf3n-de-variables}
+
+\subsection{Metodología de
+Selección}\label{metodologuxeda-de-selecciuxf3n}
+
+Se emplearon tres métodos complementarios para identificar las variables
+más predictivas:
+
+\subsubsection{Pruebas Chi-Cuadrado (Variables
+Categóricas)}\label{pruebas-chi-cuadrado-variables-categuxf3ricas}
+
+\begin{longtable}[t]{lrcc}
+\caption{\label{tab:unnamed-chunk-6}Ranking de Variables Categóricas por Chi-Cuadrado}\\
+\toprule
+Variable & Valor\_P & Significancia & Decision\\
+\midrule
+\cellcolor{gray!10}{higher} & \cellcolor{gray!10}{0.02385} & \cellcolor{gray!10}{Muy alta} & \cellcolor{gray!10}{Seleccionada}\\
+guardian & 0.03277 & Alta & Seleccionada\\
+\cellcolor{gray!10}{paid} & \cellcolor{gray!10}{0.05645} & \cellcolor{gray!10}{Moderada} & \cellcolor{gray!10}{Considerada}\\
+romantic & 0.09125 & Marginal & Considerada\\
+\cellcolor{gray!10}{Mjob} & \cellcolor{gray!10}{0.09994} & \cellcolor{gray!10}{Marginal} & \cellcolor{gray!10}{Considerada}\\
+\addlinespace
+internet & 0.10624 & Baja & No seleccionada\\
+\bottomrule
+\end{longtable}
+
+\subsubsection{Algoritmo Boruta (Importancia de Todas las
+Variables)}\label{algoritmo-boruta-importancia-de-todas-las-variables}
+
+\begin{longtable}[t]{lrcc}
+\caption{\label{tab:unnamed-chunk-7}Variables Confirmadas Importantes por Boruta}\\
+\toprule
+Variable & Importancia\_Media & Decision & Categoria\\
+\midrule
+\cellcolor{gray!10}{failures} & \cellcolor{gray!10}{22.90} & \cellcolor{gray!10}{Confirmada} & \cellcolor{gray!10}{Académica}\\
+absences & 11.23 & Confirmada & Asistencia\\
+\cellcolor{gray!10}{goout} & \cellcolor{gray!10}{8.09} & \cellcolor{gray!10}{Confirmada} & \cellcolor{gray!10}{Conductual}\\
+schoolsup & 7.04 & Confirmada & Apoyo\\
+\cellcolor{gray!10}{guardian} & \cellcolor{gray!10}{6.34} & \cellcolor{gray!10}{Confirmada} & \cellcolor{gray!10}{Familiar}\\
+\addlinespace
+Medu & 4.22 & Confirmada & Familiar\\
+\cellcolor{gray!10}{age} & \cellcolor{gray!10}{4.01} & \cellcolor{gray!10}{Confirmada} & \cellcolor{gray!10}{Demográfica}\\
+\bottomrule
+\end{longtable}
+
+\subsubsection{Eliminación Recursiva de Características
+(RFE)}\label{eliminaciuxf3n-recursiva-de-caracteruxedsticas-rfe}
+
+Método: Random Forest como wrapper
+
+Variables óptimas identificadas: 9 variables
+
+Top 5 variables: failures, absences, goout, Medu, schoolsup
+
+Precisión máxima: 72.91\% con 9 variables
+
+\subsection{Conjunto Final de Variables
+Seleccionadas}\label{conjunto-final-de-variables-seleccionadas}
+
+Basado en el consenso de los tres métodos, se seleccionaron 7 variables
+clave:
+
+\begin{longtable}[t]{llcl}
+\caption{\label{tab:unnamed-chunk-8}Conjunto Final de 7 Variables Seleccionadas}\\
+\toprule
+Variable & Descripcion & Metodos\_Que\_La\_Seleccionan & Justificacion\\
+\midrule
+\cellcolor{gray!10}{failures} & \cellcolor{gray!10}{Número de fallas académicas previas} & \cellcolor{gray!10}{3/3} & \cellcolor{gray!10}{Predictor más fuerte en todos los análisis}\\
+absences & Número total de ausencias & 3/3 & Alta correlación con rendimiento académico\\
+\cellcolor{gray!10}{higher} & \cellcolor{gray!10}{Intención de cursar educación superior} & \cellcolor{gray!10}{2/3} & \cellcolor{gray!10}{Fuertemente relacionada con motivación estudiantil}\\
+age & Edad del estudiante & 2/3 & Indicador potencial de repetición de grado\\
+\cellcolor{gray!10}{Medu} & \cellcolor{gray!10}{Nivel educativo de la madre} & \cellcolor{gray!10}{2/3} & \cellcolor{gray!10}{Factor socioeconómico importante}\\
+\addlinespace
+goout & Frecuencia de salidas sociales & 2/3 & Indicador de balance vida-estudio\\
+\cellcolor{gray!10}{guardian} & \cellcolor{gray!10}{Persona responsable del estudiante} & \cellcolor{gray!10}{2/3} & \cellcolor{gray!10}{Indicador de estructura de apoyo familiar}\\
+\bottomrule
+\end{longtable}
+
+\subsection{Beneficios de la Selección de
+Variables}\label{beneficios-de-la-selecciuxf3n-de-variables}
+
+Reducción de dimensionalidad: 30 → 7 variables (76.7\% reducción)
+
+Mejor interpretabilidad: Variables más comprensibles para stakeholders
+
+Reducción de sobreajuste: Menor riesgo de modelar ruido
+
+Eficiencia computacional: Entrenamiento y predicción más rápidos
+
+\section{Caso 3: Variables Seleccionadas sin
+Balanceo}\label{caso-3-variables-seleccionadas-sin-balanceo}
+
+\subsection{Configuración del Caso 3}\label{configuraciuxf3n-del-caso-3}
+
+Variables: 7 variables seleccionadas (failures, absences, higher, age,
+Medu, goout, guardian)
+
+Balanceo: Sin balanceo de clases
+
+Objetivo: Evaluar rendimiento con variables optimizadas manteniendo
+distribución natural
+
+\subsection{Resultados del Caso 3}\label{resultados-del-caso-3}
+
+\begin{longtable}[t]{lrcccc}
+\caption{\label{tab:unnamed-chunk-9}Resultados del Caso 3: Variables Seleccionadas sin Balanceo}\\
+\toprule
+Modelo & AUC & Precision & Sensibilidad & Especificidad & Comparacion\_Caso1\\
+\midrule
+\cellcolor[HTML]{E8F4F8}{\textbf{\cellcolor{gray!10}{Regresión Logística}}} & \cellcolor[HTML]{E8F4F8}{\textbf{\cellcolor{gray!10}{0.6461}}} & \cellcolor[HTML]{E8F4F8}{\textbf{\cellcolor{gray!10}{69.39\%}}} & \cellcolor[HTML]{E8F4F8}{\textbf{\cellcolor{gray!10}{28.12\%}}} & \cellcolor[HTML]{E8F4F8}{\textbf{\cellcolor{gray!10}{89.39\%}}} & \cellcolor[HTML]{E8F4F8}{\textbf{\cellcolor{gray!10}{+2.0\% AUC}}}\\
+Gradient Boosting & 0.6409 & 68.37\% & 28.12\% & 87.88\% & -0.2\% AUC\\
+\cellcolor{gray!10}{Random Forest} & \cellcolor{gray!10}{0.6274} & \cellcolor{gray!10}{68.37\%} & \cellcolor{gray!10}{31.25\%} & \cellcolor{gray!10}{86.36\%} & \cellcolor{gray!10}{+2.4\% AUC}\\
+KNN & 0.6054 & 72.45\% & 34.38\% & 90.91\% & +12.4\% AUC\\
+\cellcolor{gray!10}{SVM Radial} & \cellcolor{gray!10}{0.6016} & \cellcolor{gray!10}{68.37\%} & \cellcolor{gray!10}{31.25\%} & \cellcolor{gray!10}{86.36\%} & \cellcolor{gray!10}{+1.8\% AUC}\\
+\addlinespace
+Árbol de Decisión & 0.5881 & 68.37\% & 31.25\% & 86.36\% & -4.0\% AUC\\
+\bottomrule
+\end{longtable}
+
+\subsection{Análisis del Caso 3}\label{anuxe1lisis-del-caso-3}
+
+Mejoras Observadas vs.~Caso 1: Regresión Logística mejora su AUC de
+0.6335 a 0.6461
+
+KNN muestra la mayor mejora en precisión (de 63.27\% a 72.45\%)
+
+Especificidad general más alta: Promedio de 87.71\% vs.~81.07\% en Caso
+1
+
+Características Persistentes: Sensibilidad aún baja: Promedio de 30.56\%
+
+Trade-off sensibilidad-especificidad sigue presente
+
+Modelos más simples mejoran relativamente más que modelos complejos
+
+Conclusiones del Caso 3: La selección de variables mejora el rendimiento
+de modelos más simples
+
+Se mantiene alta especificidad pero baja sensibilidad
+
+7 variables son suficientes para lograr rendimiento competitivo
+
+\section{Caso 4: Variables Seleccionadas con
+Balanceo}\label{caso-4-variables-seleccionadas-con-balanceo}
+
+6.1 Configuración del Caso 4 Variables: 7 variables seleccionadas
+
+Balanceo: Con sobremuestreo (up-sampling)
+
+Objetivo: Combinar beneficios de selección de variables y balanceo de
+clases
+
+6.2 Resultados del Caso 4
+
+\begin{longtable}[t]{lrccccl}
+\caption{\label{tab:unnamed-chunk-10}Resultados del Caso 4: Variables Seleccionadas con Balanceo}\\
+\toprule
+Modelo & AUC & Precision & Sensibilidad & Especificidad & AUC\_vs\_Caso3 & Sensibilidad\_vs\_Caso3\\
+\midrule
+\cellcolor[HTML]{E8F4F8}{\textbf{\cellcolor{gray!10}{KNN}}} & \cellcolor[HTML]{E8F4F8}{\textbf{\cellcolor{gray!10}{0.6536}}} & \cellcolor[HTML]{E8F4F8}{\textbf{\cellcolor{gray!10}{63.27\%}}} & \cellcolor[HTML]{E8F4F8}{\textbf{\cellcolor{gray!10}{65.62\%}}} & \cellcolor[HTML]{E8F4F8}{\textbf{\cellcolor{gray!10}{62.12\%}}} & \cellcolor[HTML]{E8F4F8}{\textbf{\cellcolor{gray!10}{+4.82\%}}} & \cellcolor[HTML]{E8F4F8}{\textbf{\cellcolor{gray!10}{+91.2\%}}}\\
+Random Forest & 0.6383 & 65.31\% & 37.50\% & 78.79\% & +1.09\% & +20.0\%\\
+\cellcolor{gray!10}{SVM Radial} & \cellcolor{gray!10}{0.6316} & \cellcolor{gray!10}{69.39\%} & \cellcolor{gray!10}{46.88\%} & \cellcolor{gray!10}{80.30\%} & \cellcolor{gray!10}{+3.00\%} & \cellcolor{gray!10}{+50.0\%}\\
+Gradient Boosting & 0.6283 & 62.24\% & 53.12\% & 66.67\% & -1.26\% & +88.9\%\\
+\cellcolor{gray!10}{Regresión Logística} & \cellcolor{gray!10}{0.6278} & \cellcolor{gray!10}{61.22\%} & \cellcolor{gray!10}{46.88\%} & \cellcolor{gray!10}{68.18\%} & \cellcolor{gray!10}{-1.83\%} & \cellcolor{gray!10}{+66.7\%}\\
+\addlinespace
+Árbol de Decisión & 0.5743 & 61.22\% & 31.25\% & 75.76\% & -1.38\% & 0.0\%\\
+\bottomrule
+\end{longtable}
+
+\subsection{Análisis del Caso 4}\label{anuxe1lisis-del-caso-4}
+
+Mejoras Significativas: KNN logra el mejor AUC global (0.6536) y la
+mayor sensibilidad (65.62\%)
+
+Sensibilidad promedio incrementada de 30.56\% (Caso 3) a 48.44\%
+
+Balance mejorado entre métricas de rendimiento
+
+Trade-offs Observados: Especificidad disminuye como compensación por
+mayor sensibilidad
+
+Algunos modelos (GLM, GBM) muestran ligera reducción en AUC
+
+Precisión general se mantiene en niveles similares
+
+Hallazgo Clave: KNN emerge como el mejor modelo en esta configuración,
+demostrando que con las variables correctas y balanceo adecuado,
+algoritmos simples pueden superar a modelos más complejos
+
+\subsection{Comparativa Entre los 4
+Casos}\label{comparativa-entre-los-4-casos}
+
+\begin{longtable}[t]{lllrccl}
+\caption{\label{tab:unnamed-chunk-11}Comparativa General de los 4 Casos Experimentales}\\
+\toprule
+Caso & Descripcion & Mejor\_Modelo & Mejor\_AUC & Sensibilidad\_Promedio & Especificidad\_Promedio & Fortaleza\_Principal\\
+\midrule
+\cellcolor{gray!10}{Caso 1} & \cellcolor{gray!10}{30 vars, sin balanceo} & \cellcolor{gray!10}{Gradient Boosting} & \cellcolor{gray!10}{0.6425} & \cellcolor{gray!10}{31.25\%} & \cellcolor{gray!10}{81.07\%} & \cellcolor{gray!10}{Mayor especificidad}\\
+Caso 2 & 30 vars, con balanceo & Regresión Logística & 0.6316 & 42.19\% & 72.53\% & Mejor balance general\\
+\cellcolor{gray!10}{Caso 3} & \cellcolor{gray!10}{7 vars, sin balanceo} & \cellcolor{gray!10}{Regresión Logística} & \cellcolor{gray!10}{0.6461} & \cellcolor{gray!10}{30.56\%} & \cellcolor{gray!10}{87.71\%} & \cellcolor{gray!10}{Alta especificidad con pocas variables}\\
+\cellcolor[HTML]{E8F4F8}{\textbf{Caso 4}} & \cellcolor[HTML]{E8F4F8}{\textbf{7 vars, con balanceo}} & \cellcolor[HTML]{E8F4F8}{\textbf{KNN}} & \cellcolor[HTML]{E8F4F8}{\textbf{0.6536}} & \cellcolor[HTML]{E8F4F8}{\textbf{48.44\%}} & \cellcolor[HTML]{E8F4F8}{\textbf{71.97\%}} & \cellcolor[HTML]{E8F4F8}{\textbf{Mejor sensibilidad y AUC global}}\\
+\bottomrule
+\end{longtable}
+
+\section{Conclusiones y Recomendaciones
+Finales}\label{conclusiones-y-recomendaciones-finales}
+
+7.1 Hallazgos Clave del Estudio Selección de Variables es Efectiva:
+Reducir de 30 a 7 variables mejora la eficiencia sin sacrificar
+rendimiento
+
+Balanceo Mejora Detección de Riesgo: El sobremuestreo incrementa
+significativamente la sensibilidad
+
+No Hay un Modelo Único Óptimo: Diferentes configuraciones optimizan
+diferentes métricas
+
+Variables Críticas Identificadas: Fallas previas, ausencias y aspiración
+educativa son predictores clave
+
+\subsection{Recomendaciones de
+Implementación}\label{recomendaciones-de-implementaciuxf3n}
+
+Para Prioridad: Detección Temprana de Riesgo Configuración recomendada:
+Caso 4 con modelo KNN
+
+Ventaja: 65.62\% sensibilidad para detectar estudiantes reprobados
+
+Uso: Sistema de alerta temprana
+
+Para Prioridad: Optimización de Recursos Configuración recomendada: Caso
+3 con Regresión Logística
+
+Ventaja: 89.39\% especificidad para minimizar falsos positivos
+
+Uso: Asignación dirigida de recursos de apoyo
+
+Para Prioridad: Balance General Configuración recomendada: Caso 2 con
+Random Forest
+
+Ventaja: Buen balance entre todas las métricas
+
+Uso: Monitoreo general institucional
+
+\subsection{Recomendación Final}\label{recomendaciuxf3n-final}
+
+Basado en el análisis completo, recomendamos una implementación por
+fases:
+
+Fase 1 (Semanas 1-6): Implementar Caso 4 con KNN para maximizar
+detección temprana de estudiantes en riesgo.
+
+Fase 2 (Meses 2-6): Añadir Caso 3 con Regresión Logística como
+verificación secundaria para optimización de recursos.
+
+Fase 3 (Meses 6-12): Desarrollar un sistema ensemble que combine ambas
+configuraciones, ajustando automáticamente según prioridades
+institucionales.
+
+\subsection{Limitaciones y Trabajo
+Futuro}\label{limitaciones-y-trabajo-futuro}
+
+Limitaciones Reconocidas: Rendimiento Predictivo Moderado: AUC máximo de
+0.6536 indica margen de mejora
+
+Contexto Específico: Datos de sistema educativo portugués
+
+Datos Auto-reportados: Posible sesgo en respuestas
+
+Direcciones Futuras: Integración de Datos Temporales: Seguimiento
+longitudinal de estudiantes
+
+Validación Cruzada Institucional: Probar en diferentes contextos
+educativos
+
+Modelos de Explicabilidad: Mejorar interpretabilidad para stakeholders
+no técnicos
+
+Sistemas de Recomendación: Sugerir intervenciones específicas basadas en
+perfiles de riesgo
+
+Nota Final: Este estudio demuestra que, aunque la predicción perfecta
+del rendimiento estudiantil sigue siendo un desafío, es posible
+identificar factores clave y desarrollar herramientas útiles para la
+toma de decisiones educativas basadas en datos. La combinación de
+selección inteligente de variables y técnicas apropiadas de balanceo
+puede proporcionar insights valiosos para mejorar los resultados
+estudiantiles.
+
+
+
+
+\end{document}
