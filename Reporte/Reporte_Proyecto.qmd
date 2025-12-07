@@ -25,6 +25,10 @@ knitr::opts_chunk$set(
 library(knitr)
 library(kableExtra)
 library(ggplot2)
+library(tidyverse)      # Manipulación y visualización de datos
+library(skimr)          # Resúmenes estadísticos
+library(corrplot)       # Matrices de correlación
+library(patchwork)      # Composición de gráficos
 ```
 
 # Introducción
@@ -62,181 +66,185 @@ Planteamos algunas preguntas sobre nuestros datos:
 -   ¿El apoyo escolar extra mejora significativamente las probabilidades de aprobación?
 -   ¿Una mayor frecuencia de salidas con amigos se asocia con menor rendimiento?
 
-# Análisis Exploratorio de Datos (EDA)
+
+# Compresión de los datos.
+
+
+
 ## Descripción del Conjunto de Datos
-El análisis utiliza el conjunto de datos de Rendimiento Estudiantil que contiene 395 estudiantes con 33 atributos que describen demografía, contexto social y registros académicos. La variable objetivo se derivó de la nota final (G3):
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-#| results: 'hide'
+El análisis utiliza el conjunto de datos de Rendimiento Estudiantil que contiene 395 estudiantes con 33 atributos que describen variable de tipo: demografía, contexto social y registros académicos. 
 
 
-library(tidyverse)
-library(readr)
-library(skimr)
-library(patchwork)
-library(ggridges)
-library(kableExtra)
+```{r load-data}
+# 2. DATA PREP
+df_raw <- read.csv("Data/studentmat.csv", sep = ";", stringsAsFactors = FALSE)
+df_raw$age <- as.numeric(df_raw$age); df_raw$absences <- as.numeric(df_raw$absences)
+df_raw$G3 <- as.numeric(df_raw$G3)
 
-# 1.1 Cargar datos originales
-cat("=== CARGANDO DATOS ORIGINALES ===\n")
-datos <- read_delim("Data/studentmat.csv", 
-                    delim = ";", escape_double = FALSE, trim_ws = TRUE)
-cat("Dataset original cargado:", nrow(datos), "filas,", ncol(datos), "columnas\n\n")
-
-# 1.2 Transformación inicial (Data Understanding)
-cat("=== TRANSFORMACIÓN INICIAL ===\n")
-datos_procesados <- datos %>%
-  mutate(
-    # Variable objetivo binaria
-    reprobado = ifelse(G3 < 10, 1, 0),
-    reprobado_factor = factor(reprobado, 
-                              levels = c(0, 1), 
-                              labels = c("Aprobado", "Reprobado")),
-    
-    # Categorías para mejor visualización
-    studytime_cat = factor(studytime,
-                           levels = 1:4,
-                           labels = c("<2h", "2-5h", "5-10h", ">10h")),
-    
-    failures_cat = case_when(
-      failures == 0 ~ "Ninguno",
-      failures == 1 ~ "1 fallo",
-      failures == 2 ~ "2 fallos",
-      failures >= 3 ~ "3+ fallos"
-    ) %>% factor(levels = c("Ninguno", "1 fallo", "2 fallos", "3+ fallos")),
-    
-    absences_cat = cut(absences,
-                       breaks = c(-1, 0, 5, 10, 20, max(absences)),
-                       labels = c("0", "1-5", "6-10", "11-20", "21+"))
-  ) %>%
-  # Eliminar G1 y G2 según tu requerimiento
-  select(-G1, -G2)
-```
-
-```{r}
-tema_presentacion <- function() {
-  theme_minimal(base_size = 12) +
-    theme(
-      plot.title = element_text(size = 16, face = "bold", hjust = 0.5,
-                                margin = margin(b = 15)),
-      plot.subtitle = element_text(size = 12, color = "gray40", hjust = 0.5,
-                                   margin = margin(b = 20)),
-      axis.title = element_text(size = 12, face = "bold"),
-      axis.text = element_text(size = 10),
-      legend.title = element_text(face = "bold"),
-      legend.position = "right",
-      panel.grid.minor = element_blank(),
-      plot.margin = margin(20, 20, 20, 20)
-    )
-}
-
-
-
-p1_distribucion <- datos_procesados %>%
-  group_by(reprobado_factor) %>%
-  summarise(n = n()) %>%
-  mutate(porcentaje = n/sum(n)*100,
-         etiqueta = paste0(round(porcentaje, 1), "%")) %>%
-  ggplot(aes(x = reorder(reprobado_factor, -porcentaje), 
-             y = porcentaje, 
-             fill = reorder(reprobado_factor, -porcentaje))) +
-  geom_col(width = 0.6, alpha = 0.9) +
-  geom_text(aes(label = etiqueta), vjust = -0.5, 
-            size = 5, fontface = "bold", color = "#2E2828") +
-  scale_fill_manual(values = c("#2E86AB", "#C73E1D")) +
-  scale_y_continuous(limits = c(0, 80)) +
-  labs(title = "DISTRIBUCIÓN DE RESULTADOS ACADÉMICOS",
-       subtitle = "Porcentaje de estudiantes que aprueban vs reprueban Matemáticas",
-       x = "Resultado", y = "Porcentaje (%)",
-       caption = paste("Tasa de reprobación:", 
-                       round(mean(datos_procesados$reprobado)*100, 1), "%")) +
-  tema_presentacion() +
-  theme(legend.position = "none")
-
-p1_distribucion
-```
-Aprobado: Nota final ≥ 10 (265 estudiantes, 67.1%)
-
-Reprobado: Nota final < 10 (130 estudiantes, 32.9%)
-
-## Análisis Univariado
-Distribución de Variables Numéricas Clave:
-```{r}
-estadisticas_numericas <- data.frame(
-  Variable = c("Edad", "Ausencias", "Fallas Previas", "Educación de la Madre", 
-               "Educación del Padre", "Tiempo de Estudio", "Salidas Sociales", 
-               "Alcohol Diario"),
-  Media = c(16.71, 5.53, 0.32, 2.70, 2.55, 2.04, 3.08, 1.50),
-  Mediana = c(17.0, 4.0, 0.0, 3.0, 2.5, 2.0, 3.0, 1.0),
-  Desviacion_Estandar = c(1.29, 7.75, 0.73, 1.10, 1.07, 0.82, 1.12, 0.94),
-  Minimo = c(15, 0, 0, 0, 1, 1, 1, 1),
-  Maximo = c(22, 75, 3, 4, 4, 4, 5, 5),
-  Asimetria = c(0.46, 3.64, 2.37, -0.32, -0.03, 0.63, 0.12, 2.17)
-)
-
-kable(estadisticas_numericas, caption = "Estadísticas Descriptivas de Variables Numéricas Clave", 
-      align = c('l', 'r', 'r', 'r', 'r', 'r', 'r'), booktabs = TRUE) %>%
-  kable_styling(latex_options = c("striped", "hold_position", "scale_down"))
-```
-
-Hallazgos Clave del Análisis Univariado:
-Distribución de Edad: La mayoría de estudiantes (moda = 17) están en sus últimos años de adolescencia
-
-Ausentismo: Alta variabilidad con algunos estudiantes faltando hasta 75 clases
-
-Fallas Previas: 68% de estudiantes no tienen fallas previas
-
-Educación Parental: La educación de la madre es ligeramente mayor que la del padre en promedio
-
-## Análisis Bivariado con la Variable Objetivo
-Variables Numéricas vs. Estado Académico:
-
-```{r}
-comparacion_estado <- data.frame(
-  Variable = c("Fallas Previas", "Ausencias", "Educación de la Madre", 
-               "Edad", "Salidas Sociales"),
-  Media_Aprobados = c(0.12, 4.42, 2.85, 16.58, 2.97),
-  Media_Reprobados = c(0.73, 7.65, 2.38, 17.02, 3.34),
-  Diferencia = c(0.61, 3.23, 0.47, 0.44, 0.37),
-  Direccion = c("Reprobados tienen más", "Reprobados tienen más", 
-                "Aprobados tienen más educación", "Reprobados son mayores", 
-                "Reprobados salen más")
-)
-
-kable(comparacion_estado, caption = "Valores Promedio por Estado Académico", 
-      align = c('l', 'r', 'r', 'r', 'l'), booktabs = TRUE) %>%
-  kable_styling(latex_options = c("striped", "hold_position"))
+# Target: Status
+data <- df_raw %>%
+  mutate(Status = ifelse(G3 >= 10, "Aprobado", "Reprobado")) %>%
+  mutate(Status = as.factor(Status)) %>%
+  select(-G1, -G2, -G3) %>%
+  mutate(across(where(is.character), as.factor))
 ```
 
 
-Variables Categóricas vs. Estado (Pruebas Chi-Cuadrado):
 
-```{r}
-resultados_chi <- data.frame(
-  Variable = c("higher (desea educación superior)", "guardian (tutor)", 
-               "paid (clases pagadas extra)", "romantic (en relación)", 
-               "Mjob (trabajo madre)", "internet (acceso a internet)"),
-  Valor_P = c(0.02385, 0.03277, 0.05645, 0.09125, 0.09994, 0.10624),
-  Significancia = c("**", "**", "*", ".", ".", "NS"),
-  Interpretacion = c(
-    "Fuertemente relacionado con éxito académico",
-    "Tipo de tutor influye en resultados",
-    "Clases extra pueden ayudar marginalmente",
-    "Relaciones románticas tienen efecto marginal",
-    "Trabajo de la madre tiene alguna influencia",
-    "Acceso a internet no es estadísticamente significativo"
+```{r head-data}
+head(data, 10) %>% 
+  kable(caption = "Primeras 10 observaciones del dataset")
+```
+
+```{r dict-demographic}
+dict_demographic <- tibble(
+  Variable = c("school", "sex", "age", "address"),
+  Tipo = c("Categórica", "Categórica", "Numérica", "Categórica"),
+  Valores = c("GP, MS", "F, M", "15-22", "U, R"),
+  Descripción = c(
+    "Escuela del estudiante (GP: Gabriel Pereira, MS: Mousinho da Silveira)",
+    "Sexo del estudiante (F: Femenino, M: Masculino)",
+    "Edad del estudiante en años",
+    "Tipo de domicilio del estudiante (U: Urbano, R: Rural)"
   )
 )
 
-kable(resultados_chi, caption = "Pruebas Chi-Cuadrado para Variables Categóricas", 
-      align = c('l', 'r', 'c', 'l'), booktabs = TRUE) %>%
-  kable_styling(latex_options = c("striped", "hold_position", "scale_down")) %>%
-  footnote(general = "**: p < 0.05, *: p < 0.10, .: p < 0.15, NS: No Significativo", 
-           general_title = "")
+dict_demographic %>%
+  kable(caption = "Variables Demográficas")
 ```
+
+```{r dict-family}
+dict_family <- tibble(
+  Variable = c("famsize", "Pstatus", "Medu", "Fedu", "Mjob", "Fjob", "guardian"),
+  Tipo = c("Categórica", "Categórica", "Ordinal", "Ordinal", "Categórica", "Categórica", "Categórica"),
+  Valores = c("LE3, GT3", "T, A", "0-4", "0-4", "teacher, health, services, at_home, other", 
+              "teacher, health, services, at_home, other", "mother, father, other"),
+  Descripción = c(
+    "Tamaño de la familia (LE3: ≤3 miembros, GT3: >3 miembros)",
+    "Estado de convivencia de los padres (T: Juntos, A: Separados)",
+    "Nivel educativo de la madre (0: ninguna, 1: primaria, 2: 5-9 grado, 3: secundaria, 4: superior)",
+    "Nivel educativo del padre (0: ninguna, 1: primaria, 2: 5-9 grado, 3: secundaria, 4: superior)",
+    "Trabajo de la madre",
+    "Trabajo del padre",
+    "Tutor legal del estudiante"
+  )
+)
+
+dict_family %>%
+  kable(caption = "Variables Familiares")
+```
+
+```{r dict-school}
+dict_school <- tibble(
+  Variable = c("reason", "traveltime", "studytime", "failures", "schoolsup", 
+               "famsup", "paid", "activities", "nursery", "higher", "absences"),
+  Tipo = c("Categórica", "Ordinal", "Ordinal", "Numérica", "Categórica", 
+           "Categórica", "Categórica", "Categórica", "Categórica", "Categórica", "Numérica"),
+  Valores = c("home, reputation, course, other", "1-4", "1-4", "0-4", "yes, no", 
+              "yes, no", "yes, no", "yes, no", "yes, no", "yes, no", "0-93"),
+  Descripción = c(
+    "Razón para elegir esta escuela",
+    "Tiempo de viaje casa-escuela (1: <15min, 2: 15-30min, 3: 30min-1h, 4: >1h)",
+    "Tiempo de estudio semanal (1: <2h, 2: 2-5h, 3: 5-10h, 4: >10h)",
+    "Número de fallos académicos previos",
+    "Recibe apoyo educativo extra de la escuela",
+    "Recibe apoyo educativo de la familia",
+    "Toma clases extra pagadas en matemáticas",
+    "Participa en actividades extracurriculares",
+    "Asistió a guardería",
+    "Desea seguir educación superior",
+    "Número de ausencias escolares"
+  )
+)
+
+dict_school %>%
+  kable(caption = "Variables Escolares")
+```
+
+```{r dict-social}
+dict_social <- tibble(
+  Variable = c("internet", "romantic", "famrel", "freetime", "goout", 
+               "Dalc", "Walc", "health"),
+  Tipo = c("Categórica", "Categórica", "Ordinal", "Ordinal", "Ordinal", 
+           "Ordinal", "Ordinal", "Ordinal"),
+  Valores = c("yes, no", "yes, no", "1-5", "1-5", "1-5", "1-5", "1-5", "1-5"),
+  Descripción = c(
+    "Tiene acceso a internet en casa",
+    "Está en una relación romántica",
+    "Calidad de relaciones familiares (1: muy mala - 5: excelente)",
+    "Tiempo libre después de la escuela (1: muy bajo - 5: muy alto)",
+    "Frecuencia de salidas con amigos (1: muy baja - 5: muy alta)",
+    "Consumo de alcohol entre semana (1: muy bajo - 5: muy alto)",
+    "Consumo de alcohol en fin de semana (1: muy bajo - 5: muy alto)",
+    "Estado de salud actual (1: muy malo - 5: muy bueno)"
+  )
+)
+
+dict_social %>%
+  kable(caption = "Variables Sociales y de Salud")
+```
+
+
+```{r dict-target}
+dict_target <- tibble(
+  Variable = "G3",
+  Tipo = "Numérica",
+  Valores = "0-20",
+  Descripción = "Calificación final en matemáticas (escala portuguesa). Umbral de aprobación: ≥10"
+)
+
+dict_target %>%
+  kable(caption = "Variable Objetivo")
+```
+
+
+# Análisis Exploratorio de Datos (EDA)
+
+
+```{r numeric-distributions, fig.width=12, fig.height=10}
+# Variables numéricas para análisis
+numeric_vars_eda <- c("age", "Medu", "Fedu", "traveltime", "studytime", 
+                       "failures", "famrel", "freetime", "goout", 
+                       "Dalc", "Walc", "health", "absences")
+
+# Crear histogramas
+data %>%
+  select(all_of(numeric_vars_eda)) %>%
+  pivot_longer(everything(), names_to = "Variable", values_to = "Valor") %>%
+  ggplot(aes(x = Valor)) +
+  geom_histogram(aes(y = after_stat(density)), bins = 20, 
+                 fill = "steelblue", color = "white", alpha = 0.7) +
+  geom_density(color = "red", linewidth = 1, alpha = 0.5) +
+  facet_wrap(~Variable, scales = "free", ncol = 4) +
+  labs(title = "Distribución de Variables Numéricas",
+       subtitle = "Histograma con curva de densidad superpuesta",
+       x = "Valor",
+       y = "Densidad") +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold"))
+```
+
+```{r numeric-stats}
+# Estadísticas detalladas
+stats_numeric <- data %>%
+  select(all_of(numeric_vars_eda)) %>%
+  pivot_longer(everything(), names_to = "Variable", values_to = "Valor") %>%
+  group_by(Variable) %>%
+  summarise(
+    Min = min(Valor),
+    Q1 = quantile(Valor, 0.25),
+    Mediana = median(Valor),
+    Media = round(mean(Valor), 2),
+    Q3 = quantile(Valor, 0.75),
+    Max = max(Valor),
+    SD = round(sd(Valor), 2),
+  ) %>%
+  arrange(Variable)
+
+stats_numeric %>%
+  kable(caption = "Estadísticas descriptivas de variables numéricas")
+```
+
 
 # Modelado y Evaluación
 

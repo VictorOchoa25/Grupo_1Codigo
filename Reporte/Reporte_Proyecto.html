@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Salvador y Víctor">
-<meta name="dcterms.date" content="2025-12-06">
+<meta name="dcterms.date" content="2025-12-07">
 
 <title>Análisis Predictivo del Rendimiento Académico Estudiantil</title>
 <style>
@@ -84,12 +84,11 @@ window.Quarto = {
   <ul>
   <li><a href="#introducción" id="toc-introducción" class="nav-link active" data-scroll-target="#introducción">Introducción</a></li>
   <li><a href="#business-understanding" id="toc-business-understanding" class="nav-link" data-scroll-target="#business-understanding">Business understanding</a></li>
-  <li><a href="#análisis-exploratorio-de-datos-eda" id="toc-análisis-exploratorio-de-datos-eda" class="nav-link" data-scroll-target="#análisis-exploratorio-de-datos-eda">Análisis Exploratorio de Datos (EDA)</a>
+  <li><a href="#compresión-de-los-datos." id="toc-compresión-de-los-datos." class="nav-link" data-scroll-target="#compresión-de-los-datos.">Compresión de los datos.</a>
   <ul class="collapse">
   <li><a href="#descripción-del-conjunto-de-datos" id="toc-descripción-del-conjunto-de-datos" class="nav-link" data-scroll-target="#descripción-del-conjunto-de-datos">Descripción del Conjunto de Datos</a></li>
-  <li><a href="#análisis-univariado" id="toc-análisis-univariado" class="nav-link" data-scroll-target="#análisis-univariado">Análisis Univariado</a></li>
-  <li><a href="#análisis-bivariado-con-la-variable-objetivo" id="toc-análisis-bivariado-con-la-variable-objetivo" class="nav-link" data-scroll-target="#análisis-bivariado-con-la-variable-objetivo">Análisis Bivariado con la Variable Objetivo</a></li>
   </ul></li>
+  <li><a href="#análisis-exploratorio-de-datos-eda" id="toc-análisis-exploratorio-de-datos-eda" class="nav-link" data-scroll-target="#análisis-exploratorio-de-datos-eda">Análisis Exploratorio de Datos (EDA)</a></li>
   <li><a href="#modelado-y-evaluación" id="toc-modelado-y-evaluación" class="nav-link" data-scroll-target="#modelado-y-evaluación">Modelado y Evaluación</a>
   <ul class="collapse">
   <li><a href="#caso-1-todas-las-variables-sin-balanceo" id="toc-caso-1-todas-las-variables-sin-balanceo" class="nav-link" data-scroll-target="#caso-1-todas-las-variables-sin-balanceo">Caso 1: Todas las Variables sin Balanceo</a></li>
@@ -142,7 +141,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">December 6, 2025</p>
+      <p class="date">December 7, 2025</p>
     </div>
   </div>
   
@@ -182,242 +181,883 @@ window.Quarto = {
 <li>¿Una mayor frecuencia de salidas con amigos se asocia con menor rendimiento?</li>
 </ul>
 </section>
-<section id="análisis-exploratorio-de-datos-eda" class="level1">
-<h1>Análisis Exploratorio de Datos (EDA)</h1>
+<section id="compresión-de-los-datos." class="level1">
+<h1>Compresión de los datos.</h1>
 <section id="descripción-del-conjunto-de-datos" class="level2">
 <h2 class="anchored" data-anchor-id="descripción-del-conjunto-de-datos">Descripción del Conjunto de Datos</h2>
-<p>El análisis utiliza el conjunto de datos de Rendimiento Estudiantil que contiene 395 estudiantes con 33 atributos que describen demografía, contexto social y registros académicos. La variable objetivo se derivó de la nota final (G3):</p>
+<p>El análisis utiliza el conjunto de datos de Rendimiento Estudiantil que contiene 395 estudiantes con 33 atributos que describen variable de tipo: demografía, contexto social y registros académicos.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Primeras 10 observaciones del dataset</caption>
+<colgroup>
+<col style="width: 2%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 4%">
+<col style="width: 3%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 3%">
+<col style="width: 4%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 4%">
+<col style="width: 3%">
+<col style="width: 2%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 2%">
+<col style="width: 3%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 3%">
+<col style="width: 4%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">school</th>
+<th style="text-align: left;">sex</th>
+<th style="text-align: right;">age</th>
+<th style="text-align: left;">address</th>
+<th style="text-align: left;">famsize</th>
+<th style="text-align: left;">Pstatus</th>
+<th style="text-align: right;">Medu</th>
+<th style="text-align: right;">Fedu</th>
+<th style="text-align: left;">Mjob</th>
+<th style="text-align: left;">Fjob</th>
+<th style="text-align: left;">reason</th>
+<th style="text-align: left;">guardian</th>
+<th style="text-align: right;">traveltime</th>
+<th style="text-align: right;">studytime</th>
+<th style="text-align: right;">failures</th>
+<th style="text-align: left;">schoolsup</th>
+<th style="text-align: left;">famsup</th>
+<th style="text-align: left;">paid</th>
+<th style="text-align: left;">activities</th>
+<th style="text-align: left;">nursery</th>
+<th style="text-align: left;">higher</th>
+<th style="text-align: left;">internet</th>
+<th style="text-align: left;">romantic</th>
+<th style="text-align: right;">famrel</th>
+<th style="text-align: right;">freetime</th>
+<th style="text-align: right;">goout</th>
+<th style="text-align: right;">Dalc</th>
+<th style="text-align: right;">Walc</th>
+<th style="text-align: right;">health</th>
+<th style="text-align: right;">absences</th>
+<th style="text-align: left;">Status</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">GP</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: left;">U</td>
+<td style="text-align: left;">GT3</td>
+<td style="text-align: left;">A</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">at_home</td>
+<td style="text-align: left;">teacher</td>
+<td style="text-align: left;">course</td>
+<td style="text-align: left;">mother</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">Reprobado</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GP</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: left;">U</td>
+<td style="text-align: left;">GT3</td>
+<td style="text-align: left;">T</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">at_home</td>
+<td style="text-align: left;">other</td>
+<td style="text-align: left;">course</td>
+<td style="text-align: left;">father</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Reprobado</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GP</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: left;">U</td>
+<td style="text-align: left;">LE3</td>
+<td style="text-align: left;">T</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">at_home</td>
+<td style="text-align: left;">other</td>
+<td style="text-align: left;">other</td>
+<td style="text-align: left;">mother</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">Aprobado</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GP</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: left;">U</td>
+<td style="text-align: left;">GT3</td>
+<td style="text-align: left;">T</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">health</td>
+<td style="text-align: left;">services</td>
+<td style="text-align: left;">home</td>
+<td style="text-align: left;">mother</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Aprobado</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GP</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: left;">U</td>
+<td style="text-align: left;">GT3</td>
+<td style="text-align: left;">T</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">other</td>
+<td style="text-align: left;">other</td>
+<td style="text-align: left;">home</td>
+<td style="text-align: left;">father</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Aprobado</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GP</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: left;">U</td>
+<td style="text-align: left;">LE3</td>
+<td style="text-align: left;">T</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">services</td>
+<td style="text-align: left;">other</td>
+<td style="text-align: left;">reputation</td>
+<td style="text-align: left;">mother</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">Aprobado</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GP</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: left;">U</td>
+<td style="text-align: left;">LE3</td>
+<td style="text-align: left;">T</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">other</td>
+<td style="text-align: left;">other</td>
+<td style="text-align: left;">home</td>
+<td style="text-align: left;">mother</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">Aprobado</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GP</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: left;">U</td>
+<td style="text-align: left;">GT3</td>
+<td style="text-align: left;">A</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">other</td>
+<td style="text-align: left;">teacher</td>
+<td style="text-align: left;">home</td>
+<td style="text-align: left;">mother</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">Reprobado</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GP</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: left;">U</td>
+<td style="text-align: left;">LE3</td>
+<td style="text-align: left;">A</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">services</td>
+<td style="text-align: left;">other</td>
+<td style="text-align: left;">home</td>
+<td style="text-align: left;">mother</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">Aprobado</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GP</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: left;">U</td>
+<td style="text-align: left;">GT3</td>
+<td style="text-align: left;">T</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">other</td>
+<td style="text-align: left;">other</td>
+<td style="text-align: left;">home</td>
+<td style="text-align: left;">mother</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">Aprobado</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Variables Demográficas</caption>
+<colgroup>
+<col style="width: 9%">
+<col style="width: 11%">
+<col style="width: 8%">
+<col style="width: 71%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Variable</th>
+<th style="text-align: left;">Tipo</th>
+<th style="text-align: left;">Valores</th>
+<th style="text-align: left;">Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">school</td>
+<td style="text-align: left;">Categórica</td>
+<td style="text-align: left;">GP, MS</td>
+<td style="text-align: left;">Escuela del estudiante (GP: Gabriel Pereira, MS: Mousinho da Silveira)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sex</td>
+<td style="text-align: left;">Categórica</td>
+<td style="text-align: left;">F, M</td>
+<td style="text-align: left;">Sexo del estudiante (F: Femenino, M: Masculino)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">age</td>
+<td style="text-align: left;">Numérica</td>
+<td style="text-align: left;">15-22</td>
+<td style="text-align: left;">Edad del estudiante en años</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">address</td>
+<td style="text-align: left;">Categórica</td>
+<td style="text-align: left;">U, R</td>
+<td style="text-align: left;">Tipo de domicilio del estudiante (U: Urbano, R: Rural)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Variables Familiares</caption>
+<colgroup>
+<col style="width: 5%">
+<col style="width: 6%">
+<col style="width: 26%">
+<col style="width: 60%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Variable</th>
+<th style="text-align: left;">Tipo</th>
+<th style="text-align: left;">Valores</th>
+<th style="text-align: left;">Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">famsize</td>
+<td style="text-align: left;">Categórica</td>
+<td style="text-align: left;">LE3, GT3</td>
+<td style="text-align: left;">Tamaño de la familia (LE3: ≤3 miembros, GT3: &gt;3 miembros)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pstatus</td>
+<td style="text-align: left;">Categórica</td>
+<td style="text-align: left;">T, A</td>
+<td style="text-align: left;">Estado de convivencia de los padres (T: Juntos, A: Separados)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Medu</td>
+<td style="text-align: left;">Ordinal</td>
+<td style="text-align: left;">0-4</td>
+<td style="text-align: left;">Nivel educativo de la madre (0: ninguna, 1: primaria, 2: 5-9 grado, 3: secundaria, 4: superior)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Fedu</td>
+<td style="text-align: left;">Ordinal</td>
+<td style="text-align: left;">0-4</td>
+<td style="text-align: left;">Nivel educativo del padre (0: ninguna, 1: primaria, 2: 5-9 grado, 3: secundaria, 4: superior)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Mjob</td>
+<td style="text-align: left;">Categórica</td>
+<td style="text-align: left;">teacher, health, services, at_home, other</td>
+<td style="text-align: left;">Trabajo de la madre</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Fjob</td>
+<td style="text-align: left;">Categórica</td>
+<td style="text-align: left;">teacher, health, services, at_home, other</td>
+<td style="text-align: left;">Trabajo del padre</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">guardian</td>
+<td style="text-align: left;">Categórica</td>
+<td style="text-align: left;">mother, father, other</td>
+<td style="text-align: left;">Tutor legal del estudiante</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Variables Escolares</caption>
+<colgroup>
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 24%">
+<col style="width: 58%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Variable</th>
+<th style="text-align: left;">Tipo</th>
+<th style="text-align: left;">Valores</th>
+<th style="text-align: left;">Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">reason</td>
+<td style="text-align: left;">Categórica</td>
+<td style="text-align: left;">home, reputation, course, other</td>
+<td style="text-align: left;">Razón para elegir esta escuela</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">traveltime</td>
+<td style="text-align: left;">Ordinal</td>
+<td style="text-align: left;">1-4</td>
+<td style="text-align: left;">Tiempo de viaje casa-escuela (1: &lt;15min, 2: 15-30min, 3: 30min-1h, 4: &gt;1h)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">studytime</td>
+<td style="text-align: left;">Ordinal</td>
+<td style="text-align: left;">1-4</td>
+<td style="text-align: left;">Tiempo de estudio semanal (1: &lt;2h, 2: 2-5h, 3: 5-10h, 4: &gt;10h)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">failures</td>
+<td style="text-align: left;">Numérica</td>
+<td style="text-align: left;">0-4</td>
+<td style="text-align: left;">Número de fallos académicos previos</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">schoolsup</td>
+<td style="text-align: left;">Categórica</td>
+<td style="text-align: left;">yes, no</td>
+<td style="text-align: left;">Recibe apoyo educativo extra de la escuela</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">famsup</td>
+<td style="text-align: left;">Categórica</td>
+<td style="text-align: left;">yes, no</td>
+<td style="text-align: left;">Recibe apoyo educativo de la familia</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">paid</td>
+<td style="text-align: left;">Categórica</td>
+<td style="text-align: left;">yes, no</td>
+<td style="text-align: left;">Toma clases extra pagadas en matemáticas</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">activities</td>
+<td style="text-align: left;">Categórica</td>
+<td style="text-align: left;">yes, no</td>
+<td style="text-align: left;">Participa en actividades extracurriculares</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">nursery</td>
+<td style="text-align: left;">Categórica</td>
+<td style="text-align: left;">yes, no</td>
+<td style="text-align: left;">Asistió a guardería</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">higher</td>
+<td style="text-align: left;">Categórica</td>
+<td style="text-align: left;">yes, no</td>
+<td style="text-align: left;">Desea seguir educación superior</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">absences</td>
+<td style="text-align: left;">Numérica</td>
+<td style="text-align: left;">0-93</td>
+<td style="text-align: left;">Número de ausencias escolares</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Variables Sociales y de Salud</caption>
+<colgroup>
+<col style="width: 9%">
+<col style="width: 11%">
+<col style="width: 8%">
+<col style="width: 69%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Variable</th>
+<th style="text-align: left;">Tipo</th>
+<th style="text-align: left;">Valores</th>
+<th style="text-align: left;">Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">internet</td>
+<td style="text-align: left;">Categórica</td>
+<td style="text-align: left;">yes, no</td>
+<td style="text-align: left;">Tiene acceso a internet en casa</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">romantic</td>
+<td style="text-align: left;">Categórica</td>
+<td style="text-align: left;">yes, no</td>
+<td style="text-align: left;">Está en una relación romántica</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">famrel</td>
+<td style="text-align: left;">Ordinal</td>
+<td style="text-align: left;">1-5</td>
+<td style="text-align: left;">Calidad de relaciones familiares (1: muy mala - 5: excelente)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">freetime</td>
+<td style="text-align: left;">Ordinal</td>
+<td style="text-align: left;">1-5</td>
+<td style="text-align: left;">Tiempo libre después de la escuela (1: muy bajo - 5: muy alto)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">goout</td>
+<td style="text-align: left;">Ordinal</td>
+<td style="text-align: left;">1-5</td>
+<td style="text-align: left;">Frecuencia de salidas con amigos (1: muy baja - 5: muy alta)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Dalc</td>
+<td style="text-align: left;">Ordinal</td>
+<td style="text-align: left;">1-5</td>
+<td style="text-align: left;">Consumo de alcohol entre semana (1: muy bajo - 5: muy alto)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Walc</td>
+<td style="text-align: left;">Ordinal</td>
+<td style="text-align: left;">1-5</td>
+<td style="text-align: left;">Consumo de alcohol en fin de semana (1: muy bajo - 5: muy alto)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">health</td>
+<td style="text-align: left;">Ordinal</td>
+<td style="text-align: left;">1-5</td>
+<td style="text-align: left;">Estado de salud actual (1: muy malo - 5: muy bueno)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Variable Objetivo</caption>
+<colgroup>
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 7%">
+<col style="width: 75%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Variable</th>
+<th style="text-align: left;">Tipo</th>
+<th style="text-align: left;">Valores</th>
+<th style="text-align: left;">Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">G3</td>
+<td style="text-align: left;">Numérica</td>
+<td style="text-align: left;">0-20</td>
+<td style="text-align: left;">Calificación final en matemáticas (escala portuguesa). Umbral de aprobación: ≥10</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</section>
+<section id="análisis-exploratorio-de-datos-eda" class="level1">
+<h1>Análisis Exploratorio de Datos (EDA)</h1>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="Reporte_Proyecto_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%" data-fig-pos="H"></p>
+<p><img src="Reporte_Proyecto_files/figure-html/numeric-distributions-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%" data-fig-pos="H"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>Aprobado: Nota final ≥ 10 (265 estudiantes, 67.1%)</p>
-<p>Reprobado: Nota final &lt; 10 (130 estudiantes, 32.9%)</p>
-</section>
-<section id="análisis-univariado" class="level2">
-<h2 class="anchored" data-anchor-id="análisis-univariado">Análisis Univariado</h2>
-<p>Distribución de Variables Numéricas Clave:</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<table class="table caption-top table-sm table-striped small">
-<caption>Estadísticas Descriptivas de Variables Numéricas Clave</caption>
+<table class="caption-top table table-sm table-striped small">
+<caption>Estadísticas descriptivas de variables numéricas</caption>
 <thead>
 <tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Variable</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Media</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Mediana</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Desviacion_Estandar</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Minimo</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Maximo</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Asimetria</th>
+<th style="text-align: left;">Variable</th>
+<th style="text-align: right;">Min</th>
+<th style="text-align: right;">Q1</th>
+<th style="text-align: right;">Mediana</th>
+<th style="text-align: right;">Media</th>
+<th style="text-align: right;">Q3</th>
+<th style="text-align: right;">Max</th>
+<th style="text-align: right;">SD</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Edad</td>
-<td style="text-align: right;">16.71</td>
-<td style="text-align: right;">17.0</td>
-<td style="text-align: right;">1.29</td>
-<td style="text-align: right;">15</td>
-<td style="text-align: right;">22</td>
-<td style="text-align: right;">0.46</td>
+<td style="text-align: left;">Dalc</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.48</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0.89</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Ausencias</td>
-<td style="text-align: right;">5.53</td>
-<td style="text-align: right;">4.0</td>
-<td style="text-align: right;">7.75</td>
+<td style="text-align: left;">Fedu</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">75</td>
-<td style="text-align: right;">3.64</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2.52</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1.09</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Fallas Previas</td>
-<td style="text-align: right;">0.32</td>
-<td style="text-align: right;">0.0</td>
-<td style="text-align: right;">0.73</td>
+<td style="text-align: left;">Medu</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">2.75</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1.09</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Walc</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2.29</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">1.29</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">absences</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">5.71</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">8.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">age</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">16.70</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">1.28</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">failures</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.33</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">3</td>
-<td style="text-align: right;">2.37</td>
+<td style="text-align: right;">0.74</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Educación de la Madre</td>
-<td style="text-align: right;">2.70</td>
-<td style="text-align: right;">3.0</td>
-<td style="text-align: right;">1.10</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">-0.32</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Educación del Padre</td>
-<td style="text-align: right;">2.55</td>
-<td style="text-align: right;">2.5</td>
-<td style="text-align: right;">1.07</td>
+<td style="text-align: left;">famrel</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: right;">4</td>
-<td style="text-align: right;">-0.03</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">3.94</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0.90</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">freetime</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3.24</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">1.00</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Tiempo de Estudio</td>
+<td style="text-align: left;">goout</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3.11</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">1.11</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">health</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">3.55</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">1.39</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">studytime</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
 <td style="text-align: right;">2.04</td>
-<td style="text-align: right;">2.0</td>
-<td style="text-align: right;">0.82</td>
-<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
 <td style="text-align: right;">4</td>
-<td style="text-align: right;">0.63</td>
+<td style="text-align: right;">0.84</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Salidas Sociales</td>
-<td style="text-align: right;">3.08</td>
-<td style="text-align: right;">3.0</td>
-<td style="text-align: right;">1.12</td>
+<td style="text-align: left;">traveltime</td>
 <td style="text-align: right;">1</td>
-<td style="text-align: right;">5</td>
-<td style="text-align: right;">0.12</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Alcohol Diario</td>
-<td style="text-align: right;">1.50</td>
-<td style="text-align: right;">1.0</td>
-<td style="text-align: right;">0.94</td>
 <td style="text-align: right;">1</td>
-<td style="text-align: right;">5</td>
-<td style="text-align: right;">2.17</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.45</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0.70</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-<p>Hallazgos Clave del Análisis Univariado: Distribución de Edad: La mayoría de estudiantes (moda = 17) están en sus últimos años de adolescencia</p>
-<p>Ausentismo: Alta variabilidad con algunos estudiantes faltando hasta 75 clases</p>
-<p>Fallas Previas: 68% de estudiantes no tienen fallas previas</p>
-<p>Educación Parental: La educación de la madre es ligeramente mayor que la del padre en promedio</p>
-</section>
-<section id="análisis-bivariado-con-la-variable-objetivo" class="level2">
-<h2 class="anchored" data-anchor-id="análisis-bivariado-con-la-variable-objetivo">Análisis Bivariado con la Variable Objetivo</h2>
-<p>Variables Numéricas vs.&nbsp;Estado Académico:</p>
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<table class="table caption-top table-sm table-striped small">
-<caption>Valores Promedio por Estado Académico</caption>
-<thead>
-<tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Variable</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Media_Aprobados</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Media_Reprobados</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Diferencia</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">Direccion</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Fallas Previas</td>
-<td style="text-align: right;">0.12</td>
-<td style="text-align: right;">0.73</td>
-<td style="text-align: right;">0.61</td>
-<td style="text-align: left;">Reprobados tienen más</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Ausencias</td>
-<td style="text-align: right;">4.42</td>
-<td style="text-align: right;">7.65</td>
-<td style="text-align: right;">3.23</td>
-<td style="text-align: left;">Reprobados tienen más</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Educación de la Madre</td>
-<td style="text-align: right;">2.85</td>
-<td style="text-align: right;">2.38</td>
-<td style="text-align: right;">0.47</td>
-<td style="text-align: left;">Aprobados tienen más educación</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Edad</td>
-<td style="text-align: right;">16.58</td>
-<td style="text-align: right;">17.02</td>
-<td style="text-align: right;">0.44</td>
-<td style="text-align: left;">Reprobados son mayores</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Salidas Sociales</td>
-<td style="text-align: right;">2.97</td>
-<td style="text-align: right;">3.34</td>
-<td style="text-align: right;">0.37</td>
-<td style="text-align: left;">Reprobados salen más</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p>Variables Categóricas vs.&nbsp;Estado (Pruebas Chi-Cuadrado):</p>
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<table class="table caption-top table-sm table-striped small">
-<caption>Pruebas Chi-Cuadrado para Variables Categóricas</caption>
-<thead>
-<tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Variable</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Valor_P</th>
-<th style="text-align: center;" data-quarto-table-cell-role="th">Significancia</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">Interpretacion</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">higher (desea educación superior)</td>
-<td style="text-align: right;">0.02385</td>
-<td style="text-align: center;">**</td>
-<td style="text-align: left;">Fuertemente relacionado con éxito académico</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">guardian (tutor)</td>
-<td style="text-align: right;">0.03277</td>
-<td style="text-align: center;">**</td>
-<td style="text-align: left;">Tipo de tutor influye en resultados</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">paid (clases pagadas extra)</td>
-<td style="text-align: right;">0.05645</td>
-<td style="text-align: center;">*</td>
-<td style="text-align: left;">Clases extra pueden ayudar marginalmente</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">romantic (en relación)</td>
-<td style="text-align: right;">0.09125</td>
-<td style="text-align: center;">.</td>
-<td style="text-align: left;">Relaciones románticas tienen efecto marginal</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Mjob (trabajo madre)</td>
-<td style="text-align: right;">0.09994</td>
-<td style="text-align: center;">.</td>
-<td style="text-align: left;">Trabajo de la madre tiene alguna influencia</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">internet (acceso a internet)</td>
-<td style="text-align: right;">0.10624</td>
-<td style="text-align: center;">NS</td>
-<td style="text-align: left;">Acceso a internet no es estadísticamente significativo</td>
-</tr>
-</tbody><tfoot>
-<tr class="odd">
-<td style="text-align: left; padding: 0;"><sup></sup> **: p &lt; 0.05, *: p &lt; 0.10, .: p &lt; 0.15, NS: No Significativo</td>
-<td style="text-align: right;"></td>
-<td style="text-align: center;"></td>
-<td style="text-align: left;"></td>
-</tr>
-</tfoot>
-
-</table>
-</div>
-</div>
-</section>
 </section>
 <section id="modelado-y-evaluación" class="level1">
 <h1>Modelado y Evaluación</h1>
