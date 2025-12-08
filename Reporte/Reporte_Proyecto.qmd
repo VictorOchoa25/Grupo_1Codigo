@@ -70,25 +70,23 @@ Planteamos algunas preguntas sobre nuestros datos:
 
 ## Descripción del Conjunto de Datos
 
-El análisis utiliza el conjunto de datos de Rendimiento Estudiantil que contiene 395 estudiantes con 33 atributos que describen variable de tipo: demografía, contexto social y registros académicos.
+El proyecto utiliza el conjunto de datos de Rendimiento Estudiantil que contiene 395 estudiantes con 33 atributos que describen variable de tipo: demografía, contexto social y registros académicos.
 
 ```{r load-data}
-# 2. DATA PREP
-df_raw <- read.csv("Data/studentmat.csv", sep = ";", stringsAsFactors = FALSE)
-df_raw$age <- as.numeric(df_raw$age); df_raw$absences <- as.numeric(df_raw$absences)
-df_raw$G3 <- as.numeric(df_raw$G3)
 
-# Target: Status
-data <- df_raw %>%
-  mutate(Status = ifelse(G3 >= 10, "Aprobado", "Reprobado")) %>%
-  mutate(Status = as.factor(Status)) %>%
-  select(-G1, -G2, -G3) %>%
-  mutate(across(where(is.character), as.factor))
-```
+library(tidyverse)
+library(janitor) # Para limpiar y estandarizar nombres de columnas
+library(knitr)   # Para generar tablas limpias (kable)
+library(skimr)   # Para generar resúmenes estadísticos rápidos
+# 1. Cargar el dataset usando read_csv2 para el delimitador punto y coma (;)
 
-```{r head-data}
-head(data, 10) %>% 
-  kable(caption = "Primeras 10 observaciones del dataset")
+data_raw <- read_csv2("Data/studentmat.csv")
+
+# 2. Limpiar los nombres de las columnas (ej: de "G1" a "g1")
+data <- data_raw %>%
+  clean_names()
+
+
 ```
 
 ```{r dict-demographic}
@@ -179,62 +177,233 @@ dict_social %>%
   kable(caption = "Variables Sociales y de Salud")
 ```
 
-```{r dict-target}
-dict_target <- tibble(
-  Variable = "G3",
-  Tipo = "Numérica",
-  Valores = "0-20",
-  Descripción = "Calificación final en matemáticas (escala portuguesa). Umbral de aprobación: ≥10"
-)
+```{r head-data}
+head(data, 10) %>% 
+  kable(caption = "Primeras 10 observaciones del dataset")
 
-dict_target %>%
-  kable(caption = "Variable Objetivo")
+
+data_summary <- data %>% skim()
+data_summary
+
 ```
+
+Este conjunto de datos contiene información sobre 395 estudiantes, sin valores faltantes. Incluye 33 variables que describen aspectos personales, familiares, sociales y académicos. Hay 17 variables categóricas, como el género, la escuela o el motivo para elegir esta, y 16 numéricas, como edad, tiempo de estudio, número de ausencias y calificaciones en los tres periodos (g1, g2, g3). Todos los datos están completos, lo que permite un análisis confiable del rendimiento académico y los factores asociados.
 
 # Análisis Exploratorio de Datos (EDA)
 
-```{r numeric-distributions, fig.width=12, fig.height=10}
-# Variables numéricas para análisis
-numeric_vars_eda <- c("age", "Medu", "Fedu", "traveltime", "studytime", 
-                       "failures", "famrel", "freetime", "goout", 
-                       "Dalc", "Walc", "health", "absences")
-
-# Crear histogramas
-data %>%
-  select(all_of(numeric_vars_eda)) %>%
-  pivot_longer(everything(), names_to = "Variable", values_to = "Valor") %>%
-  ggplot(aes(x = Valor)) +
-  geom_histogram(aes(y = after_stat(density)), bins = 20, 
-                 fill = "steelblue", color = "white", alpha = 0.7) +
-  geom_density(color = "red", linewidth = 1, alpha = 0.5) +
-  facet_wrap(~Variable, scales = "free", ncol = 4) +
-  labs(title = "Distribución de Variables Numéricas",
-       subtitle = "Histograma con curva de densidad superpuesta",
-       x = "Valor",
-       y = "Densidad") +
-  theme_minimal() +
-  theme(plot.title = element_text(face = "bold"))
+```{r}
+#| label: setup-eda
+#| include: false
+#| message: false
+library(tidyverse)
+library(knitr)
+library(corrplot) # Para visualizar la matriz de correlación
+library(patchwork) # Para organizar gráficos
 ```
 
-```{r numeric-stats}
-# Estadísticas detalladas
-stats_numeric <- data %>%
-  select(all_of(numeric_vars_eda)) %>%
-  pivot_longer(everything(), names_to = "Variable", values_to = "Valor") %>%
-  group_by(Variable) %>%
-  summarise(
-    Min = min(Valor),
-    Q1 = quantile(Valor, 0.25),
-    Mediana = median(Valor),
-    Media = round(mean(Valor), 2),
-    Q3 = quantile(Valor, 0.75),
-    Max = max(Valor),
-    SD = round(sd(Valor), 2),
-  ) %>%
-  arrange(Variable)
+### Análisis Univariado de la Variable Objetivo ($\text{G3}$)
 
-stats_numeric %>%
-  kable(caption = "Estadísticas descriptivas de variables numéricas")
+```{r}
+#| label: g3-distribution
+#| echo: false
+#| message: false
+#| fig-width: 8
+#| fig-height: 4
+
+g3_stats <- data %>%
+  summarise(
+    Media = mean(g3),
+    Mediana = median(g3),
+    Min = min(g3),
+    Max = max(g3)
+  )
+
+# Histograma de G3
+data %>%
+  ggplot(aes(x = g3)) +
+  geom_histogram(binwidth = 1, fill = "darkred", color = "white", alpha = 0.8) +
+  geom_vline(aes(xintercept = g3_stats$Media), color = "blue", linetype = "dashed", size = 1) +
+  labs(title = "Distribución de la Nota Final (G3)",
+       x = "Nota Final (G3)",
+       y = "Frecuencia") +
+  theme_minimal()
+
+cat("\n### Estadísticas Descriptivas de G3\n")
+g3_stats %>%
+  kable(caption = "Estadísticas clave de la Nota Final (G3).", digits = 2, format = "html")
+```
+
+La distribución de la nota final (\$\\text{G3}\$) presenta un sesgo negativo (hacia la izquierda), ya que la Mediana (11) es ligeramente superior a la Media (10.42), aunque ambos valores son cercanos. El rango completo de notas es utilizado, yendo de \$\\text{0}\$ (nota mínima) a \$\\text{20}\$ (nota máxima). La presencia de una alta frecuencia de notas cero sugiere un número significativo de reprobados o no presentados.
+
+### Análisis Bivariado: Factores Numéricos vs. $\text{G3}$
+
+```{r}
+#| label: correlation-matrix
+#| echo: false
+#| message: false
+#| fig-width: 9
+#| fig-height: 9
+
+# Seleccionar solo las variables numéricas que serán predictoras
+num_predictors <- data %>% 
+  select(g3, age, medu, fedu, traveltime, studytime, failures, famrel, freetime, goout, dalc, walc, health, absences)
+
+# Calcular la matriz de correlación de Pearson
+cor_matrix <- cor(num_predictors)
+
+cat("### Matriz de Correlación de Factores Numéricos y G3\n")
+
+# Gráfico de la matriz de correlación
+corrplot(cor_matrix, 
+         method = "circle", 
+         type = "lower", 
+         diag = FALSE,
+         title = "Correlación entre G3 y Factores Numéricos",
+         mar=c(0,0,1,0)) # Ajustar márgenes para el título
+```
+
+-   Las correlaciones más fuertes y negativas se encuentran con **`failures`** (-0.37) y **`age`** (-0.23). Los estudiantes con más fallas previas y de mayor edad tienden a tener notas $\text{G3}$ más bajas.
+
+<!-- -->
+
+-   Existe una correlación positiva con la **`medu`** (Educación de la Madre, 0.22) y **`fedu`** (Educación del Padre, 0.17).
+
+### Relaciones Gráficas de Factores Clave vs. $\text{G3}$
+
+```{r}
+#| label: key-numerical-vs-g3
+#| echo: false
+#| message: false
+#| fig-width: 12
+#| fig-height: 4
+
+# Failures vs G3 (Boxplot ya que failures es discreta)
+plot_failures <- data %>%
+  mutate(failures_cat = factor(failures, levels = 0:4, labels = c("0", "1", "2", "3", ">3"))) %>%
+  ggplot(aes(x = failures_cat, y = g3)) +
+  geom_boxplot(fill = "lightblue") +
+  labs(title = "G3 vs. Fallas Previas", x = "Número de Fallas", y = "G3") +
+  theme_minimal()
+
+# Studytime vs G3 (Boxplot)
+plot_studytime <- data %>%
+  mutate(studytime_cat = factor(studytime)) %>%
+  ggplot(aes(x = studytime_cat, y = g3)) +
+  geom_boxplot(fill = "lightgreen") +
+  labs(title = "G3 vs. Tiempo de Estudio", x = "Tiempo (1 a 4)", y = "G3") +
+  theme_minimal()
+
+# Absences vs G3 (Scatter con línea de tendencia)
+plot_absences <- data %>%
+  ggplot(aes(x = absences, y = g3)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "lm", color = "red", se = FALSE) +
+  labs(title = "G3 vs. Ausencias", x = "Número de Ausencias", y = "G3") +
+  theme_minimal()
+
+# Mostrar los tres gráficos
+plot_failures + plot_studytime + plot_absences
+```
+
+-   **Fallas Previas (`failures`):** Existe una **relación negativa muy fuerte**. A medida que el número de fallas previas aumenta (de 0 a $>3$), la **mediana de** $\text{G3}$ cae drásticamente, validando que el historial académico es un predictor que puede ser muy útil.
+
+<!-- -->
+
+-   **Tiempo de Estudio (`studytime`):** La relación es **positiva**. Los estudiantes que dedican más tiempo a estudiar semanalmente (niveles 2, 3 y 4) muestran consistentemente una **mediana de** $\text{G3}$ superior a aquellos que estudian menos de 2 horas (nivel 1).
+
+-   **Ausencias (`absences`):** El gráfico de dispersión muestra una **correlación muy débil** con $\text{G3}$, ya que la línea de tendencia es casi plana, lo que sugiere que el número de ausencias por sí solo no es un predictor lineal fuerte de la nota final para la mayoría de los estudiantes.
+
+### Análisis Bivariado: Factores Categóricos vs. $\text{G3}$
+
+```{r}
+#| label: key-categorical-vs-g3
+#| echo: false
+#| message: false
+#| fig-width: 12
+#| fig-height: 4
+
+# Función para crear Boxplots de Categorías vs G3
+plot_category_vs_g3 <- function(data, variable, title, x_lab) {
+  data %>%
+    ggplot(aes(x = as.factor(.data[[variable]]), y = g3, fill = as.factor(.data[[variable]]))) +
+    geom_boxplot(show.legend = FALSE) +
+    labs(title = title, x = x_lab, y = "G3 (Nota Final)") +
+    theme_minimal()
+}
+
+# Sexo vs G3
+plot_sex <- plot_category_vs_g3(data, "sex", "G3 vs Sexo", "Sexo (F/M)")
+
+# Deseo de Educación Superior (higher) vs G3
+plot_higher <- plot_category_vs_g3(data, "higher", "G3 vs Deseo de Ed. Superior", "¿Desea estudiar?")
+
+# Apoyo de la Familia (famsup) vs G3
+plot_famsup <- plot_category_vs_g3(data, "famsup", "G3 vs Apoyo Familiar", "¿Apoyo Fam?")
+
+# Mostrar los tres gráficos
+plot_sex + plot_higher + plot_famsup
+```
+
+-   **Deseo de Educación Superior (`higher`):** Esta es la variable categórica **más influyente**. Los estudiantes que expresan un deseo de seguir estudios superiores (**"yes"**) tienen una **mediana de** $\text{G3}$ significativamente más alta (alrededor de 12) que aquellos que no lo desean, lo que puede indicar la importancia de la **motivación** como predictor.
+
+<!-- -->
+
+-   **Sexo (`sex`):** Existe una **diferencia sutil pero verificable** en el rendimiento. Los estudiantes varones (**M**) registran una **mediana de** $\text{G3}$ superior (11.00) a la de las estudiantes mujeres (**F**, 10.00).
+
+-   **Apoyo Familiar (`famsup`):** El impacto de contar con apoyo familiar es **mínimo**. La diferencia en la mediana de $\text{G3}$ entre los grupos es **casi nula**, lo que indica que es probable que esta variable sea un predictor débil para el modelado.
+
+### Respuesta preliminar a las preguntas de Business understanding
+
+```{r}
+#| label: conclusion-table-final-clean-v2
+#| echo: false
+#| message: false
+
+library(knitr)
+library(dplyr)
+library(tibble)
+library(kableExtra)
+
+# 1. Crear el data frame con la información (SOLO TEXTO SIMPLE)
+analisis_negocio_df_final <- tribble(
+  ~Pregunta_Negocio, ~Variables_Clave, ~Analisis_Datos, ~Conclusion_Preliminar,
+  "¿Un mayor nivel educativo de los padres se asocia con una mayor probabilidad de aprobación?", 
+  "G3 vs. Medu y Fedu", 
+  "Correlación positiva y moderada con G3 (Medu: 0.22, Fedu: 0.17).", 
+  "Sí. Hay una asociación positiva. El nivel educativo de los padres se correlaciona con un mayor rendimiento.",
+  
+  "¿El número de fracasos previos es el predictor más fuerte de reprobación?", 
+  "G3 vs. failures", 
+  "Correlación más fuerte y negativa de todos los factores (-0.37). Caída drástica de la mediana de G3.", 
+  "Sí. failures es el predictor de bajo rendimiento más potente entre los factores asociados.",
+  
+  "¿El apoyo escolar extra mejora significativamente las probabilidades de aprobación?", 
+  "G3 vs. schoolsup", 
+  "Mediana de G3 para estudiantes con apoyo (9.0) es inferior a la de sin apoyo (11.0).", 
+  "Inconcluso. schoolsup es un indicador de riesgo, lo que sugiere que identifica a estudiantes con bajo rendimiento inicial.",
+  
+  "¿Una mayor frecuencia de salidas con amigos se asocia con menor rendimiento?", 
+  "G3 vs. goout", 
+  "Correlación negativa, pero débil (-0.13). Tendencia a la baja en G3 con más salidas.", 
+  "Sí, existe una asociación negativa, pero su impacto es menor que otros factores, como failures o higher."
+)
+
+# 2. Renderizar la tabla usando kable con un estilo HTML atractivo
+analisis_negocio_df_final %>%
+  knitr::kable(
+    caption = "Resumen de las Conclusiones Preliminares del EDA frente a las Preguntas de Negocio",
+    col.names = c("Pregunta de Negocio", "Variables Clave", "Análisis del EDA", "Conclusión Preliminar"),
+    format = "html"
+  ) %>%
+  # Añadir estilos de tabla generales
+  kable_styling(
+    bootstrap_options = c("striped", "hover", "condensed", "responsive"),
+    full_width = T,
+    font_size = 11
+  ) %>%
+  # Resaltar las filas de conclusión fuerte (1 y 2) con colores suaves
+  row_spec(1, color = "black", background = "#E6F3FF") %>% 
+  row_spec(2, color = "black", background = "#FFE6E6") 
 ```
 
 # Modelado
@@ -436,7 +605,6 @@ kable(variables_finales, caption = "Conjunto Final de 7 Variables Seleccionadas"
 
 3.  Ejecución de los Casos de Estudio
 
-
 A continuación, se ejecutan los cuatro casos secuencialmente.
 
 Función de Entrenamiento Genérica
@@ -489,9 +657,6 @@ train_and_evaluate_all <- function(train_data, valid_data, ctrl, case_name) {
 
 ```
 
-
-
-
 Caso 1: Todas las Variables / Sin Balanceo
 
 Condiciones: Se utilizan las 30 variables disponibles sin aplicar técnicas de re-muestreo.
@@ -503,8 +668,6 @@ ctrl_imb <- trainControl(method = "cv", number = 10, classProbs = TRUE, summaryF
 # Ejecución Completa
 results_c1 <- train_and_evaluate_all(train_global, valid_global, ctrl_imb, "Caso 1")
 ```
-
-
 
 Caso 2: Todas las Variables / Con Balanceo (SMOTE)
 
@@ -518,7 +681,6 @@ ctrl_bal <- trainControl(method = "cv", number = 10, classProbs = TRUE,
 # Ejecución Completa
 results_c2 <- train_and_evaluate_all(train_global, valid_global, ctrl_bal, "Caso 2")
 ```
-
 
 Caso 3: Variables Seleccionadas / Sin Balanceo
 
@@ -568,9 +730,6 @@ kbl(final_results, caption = "Tabla General de Resultados: Comparativa Completa 
   column_spec(4, bold = T, color = "#e74c3c") %>% # Resaltar Sensibilidad
   collapse_rows(columns = 1, valign = "top") # Agrupar visualmente por columna 'Caso'
 ```
-
-
-
 
 # Conclusiones y Recomendaciones Finales
 
