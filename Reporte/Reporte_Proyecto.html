@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.26">
+<meta name="generator" content="quarto-1.7.32">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -28,15 +28,14 @@ ul.task-list li input[type="checkbox"] {
 <script src="Reporte_Proyecto_files/libs/clipboard/clipboard.min.js"></script>
 <script src="Reporte_Proyecto_files/libs/quarto-html/quarto.js" type="module"></script>
 <script src="Reporte_Proyecto_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="Reporte_Proyecto_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="Reporte_Proyecto_files/libs/quarto-html/popper.min.js"></script>
 <script src="Reporte_Proyecto_files/libs/quarto-html/tippy.umd.min.js"></script>
 <script src="Reporte_Proyecto_files/libs/quarto-html/anchor.min.js"></script>
 <link href="Reporte_Proyecto_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="Reporte_Proyecto_files/libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="Reporte_Proyecto_files/libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="Reporte_Proyecto_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="Reporte_Proyecto_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="Reporte_Proyecto_files/libs/bootstrap/bootstrap-0b716d6fe31096b8dc5b1cb48462c79f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="Reporte_Proyecto_files/libs/bootstrap/bootstrap-6e5ff12f349f7d7ee99023e5a7f49be9.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script src="Reporte_Proyecto_files/libs/kePrint-0.0.1/kePrint.js"></script>
 
 <link href="Reporte_Proyecto_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet">
@@ -56,7 +55,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+      if (mathElements[i].tagName == "SPAN") {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -89,25 +88,7 @@ window.Quarto = {
   <li><a href="#descripción-del-conjunto-de-datos" id="toc-descripción-del-conjunto-de-datos" class="nav-link" data-scroll-target="#descripción-del-conjunto-de-datos">Descripción del Conjunto de Datos</a></li>
   </ul></li>
   <li><a href="#análisis-exploratorio-de-datos-eda" id="toc-análisis-exploratorio-de-datos-eda" class="nav-link" data-scroll-target="#análisis-exploratorio-de-datos-eda">Análisis Exploratorio de Datos (EDA)</a></li>
-  <li><a href="#modelado-y-evaluación" id="toc-modelado-y-evaluación" class="nav-link" data-scroll-target="#modelado-y-evaluación">Modelado y Evaluación</a>
-  <ul class="collapse">
-  <li><a href="#caso-1-todas-las-variables-sin-balanceo" id="toc-caso-1-todas-las-variables-sin-balanceo" class="nav-link" data-scroll-target="#caso-1-todas-las-variables-sin-balanceo">Caso 1: Todas las Variables sin Balanceo</a></li>
-  <li><a href="#análisis-del-caso-1" id="toc-análisis-del-caso-1" class="nav-link" data-scroll-target="#análisis-del-caso-1">Análisis del Caso 1</a></li>
-  <li><a href="#caso-2-todas-las-variables-con-balanceo" id="toc-caso-2-todas-las-variables-con-balanceo" class="nav-link" data-scroll-target="#caso-2-todas-las-variables-con-balanceo">Caso 2: Todas las Variables con Balanceo</a></li>
-  <li><a href="#impacto-del-balanceo-en-el-caso-2" id="toc-impacto-del-balanceo-en-el-caso-2" class="nav-link" data-scroll-target="#impacto-del-balanceo-en-el-caso-2">Impacto del Balanceo en el Caso 2</a></li>
-  <li><a href="#proceso-de-selección-de-variables" id="toc-proceso-de-selección-de-variables" class="nav-link" data-scroll-target="#proceso-de-selección-de-variables">Proceso de Selección de Variables</a></li>
-  <li><a href="#caso-3-variables-seleccionadas-sin-balanceo" id="toc-caso-3-variables-seleccionadas-sin-balanceo" class="nav-link" data-scroll-target="#caso-3-variables-seleccionadas-sin-balanceo">Caso 3: Variables Seleccionadas sin Balanceo</a>
-  <ul class="collapse">
-  <li><a href="#configuración-del-caso-3" id="toc-configuración-del-caso-3" class="nav-link" data-scroll-target="#configuración-del-caso-3">Configuración del Caso 3</a></li>
-  <li><a href="#resultados-del-caso-3" id="toc-resultados-del-caso-3" class="nav-link" data-scroll-target="#resultados-del-caso-3">Resultados del Caso 3</a></li>
-  <li><a href="#análisis-del-caso-3" id="toc-análisis-del-caso-3" class="nav-link" data-scroll-target="#análisis-del-caso-3">Análisis del Caso 3</a></li>
-  </ul></li>
-  <li><a href="#caso-4-variables-seleccionadas-con-balanceo" id="toc-caso-4-variables-seleccionadas-con-balanceo" class="nav-link" data-scroll-target="#caso-4-variables-seleccionadas-con-balanceo">Caso 4: Variables Seleccionadas con Balanceo</a>
-  <ul class="collapse">
-  <li><a href="#análisis-del-caso-4" id="toc-análisis-del-caso-4" class="nav-link" data-scroll-target="#análisis-del-caso-4">Análisis del Caso 4</a></li>
-  <li><a href="#comparativa-entre-los-4-casos" id="toc-comparativa-entre-los-4-casos" class="nav-link" data-scroll-target="#comparativa-entre-los-4-casos">Comparativa Entre los 4 Casos</a></li>
-  </ul></li>
-  </ul></li>
+  <li><a href="#modelado" id="toc-modelado" class="nav-link" data-scroll-target="#modelado">Modelado</a></li>
   <li><a href="#conclusiones-y-recomendaciones-finales" id="toc-conclusiones-y-recomendaciones-finales" class="nav-link" data-scroll-target="#conclusiones-y-recomendaciones-finales">Conclusiones y Recomendaciones Finales</a>
   <ul class="collapse">
   <li><a href="#recomendaciones-de-implementación" id="toc-recomendaciones-de-implementación" class="nav-link" data-scroll-target="#recomendaciones-de-implementación">Recomendaciones de Implementación</a></li>
@@ -1059,331 +1040,220 @@ window.Quarto = {
 </div>
 </div>
 </section>
-<section id="modelado-y-evaluación" class="level1">
-<h1>Modelado y Evaluación</h1>
-<section id="caso-1-todas-las-variables-sin-balanceo" class="level2">
-<h2 class="anchored" data-anchor-id="caso-1-todas-las-variables-sin-balanceo">Caso 1: Todas las Variables sin Balanceo</h2>
-<p>2.1 Configuración del Caso 1 Variables: Todas las 30 variables disponibles</p>
-<p>Balanceo: Sin balanceo de clases (distribución natural 67.1% Aprobado / 32.9% Reprobado)</p>
-<p>Objetivo: Establecer línea base de rendimiento con todas las características</p>
-<p>2.2 Resultados del Caso 1</p>
+<section id="modelado" class="level1">
+<h1>Modelado</h1>
+<ol type="1">
+<li>Introducción y Configuración</li>
+</ol>
+<p>Este reporte consolida el análisis de cuatro casos de estudio distintos para predecir el estatus de aprobación/reprobación de los estudiantes. El objetivo es determinar el impacto de la selección de variables y el balanceo de clases en el rendimiento del modelo.</p>
+<p>Casos a Evaluar:</p>
+<p>Caso 1: Todas las Variables / Sin Balanceo.</p>
+<p>Caso 2: Todas las Variables / Con Balanceo (SMOTE).</p>
+<p>Caso 3: Variables Seleccionadas / Sin Balanceo.</p>
+<p>Caso 4: Variables Seleccionadas / Con Balanceo (SMOTE - Modelo Optimizado).</p>
+<ol start="2" type="1">
+<li>Carga y Preparación de Datos</li>
+</ol>
+<p>Se carga el conjunto de datos y se aplica el preprocesamiento estándar: conversión de tipos y eliminación de variables de notas intermedias (G1, G2) para evitar la filtración de información.</p>
+<p>Proceso de Selección de Variables</p>
+<p>Antes de proceder con el modelado, se emplearon tres métodos complementarios para identificar las variables más predictivas y reducir la dimensionalidad del problema.</p>
+<p>Metodología de Selección</p>
+<p>Pruebas Chi-Cuadrado: Para evaluar la dependencia entre variables categóricas y el estatus de aprobación.</p>
+<p>Algoritmo Boruta: Para determinar la importancia de todas las variables frente a un atributo sombra aleatorio.</p>
+<p>Eliminación Recursiva de Características (RFE): Para encontrar el subconjunto óptimo de variables que maximiza la precisión.</p>
+<ol type="1">
+<li>Pruebas Chi-Cuadrado (Variables Categóricas)</li>
+</ol>
+<p>A continuación, se ejecuta el código para calcular el valor P de Chi-Cuadrado para cada variable categórica frente a la variable objetivo Status.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<table class="table caption-top table-sm table-striped small">
-<caption>Resultados del Caso 1: Todas las Variables sin Balanceo</caption>
+<table class="table table-striped table-hover caption-top table-sm small" data-quarto-postprocess="true">
+<caption>Top 10 Variables por Chi-Cuadrado</caption>
 <thead>
 <tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Modelo</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">AUC</th>
-<th style="text-align: center;" data-quarto-table-cell-role="th">Precision</th>
-<th style="text-align: center;" data-quarto-table-cell-role="th">Sensibilidad</th>
-<th style="text-align: center;" data-quarto-table-cell-role="th">Especificidad</th>
-<th style="text-align: center;" data-quarto-table-cell-role="th">Posicion</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">Gradient Boosting</td>
-<td style="text-align: right; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">0.6425</td>
-<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">63.27%</td>
-<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">25.00%</td>
-<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">81.82%</td>
-<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">1</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Regresión Logística</td>
-<td style="text-align: right;">0.6335</td>
-<td style="text-align: center;">61.22%</td>
-<td style="text-align: center;">31.25%</td>
-<td style="text-align: center;">75.76%</td>
-<td style="text-align: center;">2</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Random Forest</td>
-<td style="text-align: right;">0.6127</td>
-<td style="text-align: center;">71.43%</td>
-<td style="text-align: center;">40.62%</td>
-<td style="text-align: center;">86.36%</td>
-<td style="text-align: center;">3</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Árbol de Decisión</td>
-<td style="text-align: right;">0.6125</td>
-<td style="text-align: center;">64.29%</td>
-<td style="text-align: center;">37.50%</td>
-<td style="text-align: center;">77.27%</td>
-<td style="text-align: center;">4</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">SVM Radial</td>
-<td style="text-align: right;">0.5909</td>
-<td style="text-align: center;">70.41%</td>
-<td style="text-align: center;">31.25%</td>
-<td style="text-align: center;">89.39%</td>
-<td style="text-align: center;">5</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">KNN</td>
-<td style="text-align: right;">0.5386</td>
-<td style="text-align: center;">63.27%</td>
-<td style="text-align: center;">25.00%</td>
-<td style="text-align: center;">81.82%</td>
-<td style="text-align: center;">6</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Naive Bayes</td>
-<td style="text-align: right;">0.5421</td>
-<td style="text-align: center;">59.18%</td>
-<td style="text-align: center;">31.25%</td>
-<td style="text-align: center;">72.73%</td>
-<td style="text-align: center;">7</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</section>
-<section id="análisis-del-caso-1" class="level2">
-<h2 class="anchored" data-anchor-id="análisis-del-caso-1">Análisis del Caso 1</h2>
-<p>Fortalezas Identificadas: Gradient Boosting obtuvo el mejor AUC (0.6425)</p>
-<p>Random Forest logró la mayor precisión general (71.43%)</p>
-<p>SVM Radial alcanzó la mayor especificidad (89.39%)</p>
-<p>Debilidades Identificadas: Baja sensibilidad general: Todos los modelos detectan menos del 50% de estudiantes reprobados</p>
-<p>Sobreajuste potencial: 30 variables pueden introducir ruido en algunos modelos</p>
-<p>KNN y Naive Bayes mostraron rendimiento inferior</p>
-<p>Conclusiones del Caso 1: Los modelos complejos (Gradient Boosting, Random Forest) funcionan mejor con todas las variables</p>
-<p>Existe un claro trade-off entre sensibilidad y especificidad</p>
-<p>La baja sensibilidad sugiere necesidad de abordar el desbalance de clases</p>
-</section>
-<section id="caso-2-todas-las-variables-con-balanceo" class="level2">
-<h2 class="anchored" data-anchor-id="caso-2-todas-las-variables-con-balanceo">Caso 2: Todas las Variables con Balanceo</h2>
-<p>3.1 Configuración del Caso 2 Variables: Todas las 30 variables disponibles</p>
-<p>Balanceo: Con sobremuestreo (up-sampling) para balancear clases</p>
-<p>Objetivo: Evaluar impacto del balanceo manteniendo todas las características</p>
-<p>3.2 Resultados del Caso 2</p>
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<table class="table caption-top table-sm table-striped small">
-<caption>Resultados del Caso 2: Todas las Variables con Balanceo</caption>
-<thead>
-<tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Modelo</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">AUC</th>
-<th style="text-align: center;" data-quarto-table-cell-role="th">Precision</th>
-<th style="text-align: center;" data-quarto-table-cell-role="th">Sensibilidad</th>
-<th style="text-align: center;" data-quarto-table-cell-role="th">Especificidad</th>
-<th style="text-align: center;" data-quarto-table-cell-role="th">Cambio_Sensibilidad</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">Regresión Logística</td>
-<td style="text-align: right; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">0.6316</td>
-<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">61.22%</td>
-<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">50.00%</td>
-<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">66.67%</td>
-<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">+60.0%</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Gradient Boosting</td>
-<td style="text-align: right;">0.6259</td>
-<td style="text-align: center;">63.27%</td>
-<td style="text-align: center;">40.62%</td>
-<td style="text-align: center;">74.24%</td>
-<td style="text-align: center;">+62.5%</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Random Forest</td>
-<td style="text-align: right;">0.6120</td>
-<td style="text-align: center;">66.33%</td>
-<td style="text-align: center;">40.62%</td>
-<td style="text-align: center;">78.79%</td>
-<td style="text-align: center;">0.0%</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">SVM Radial</td>
-<td style="text-align: right;">0.6009</td>
-<td style="text-align: center;">59.18%</td>
-<td style="text-align: center;">37.50%</td>
-<td style="text-align: center;">69.70%</td>
-<td style="text-align: center;">+20.0%</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Árbol de Decisión</td>
-<td style="text-align: right;">0.5881</td>
-<td style="text-align: center;">68.37%</td>
-<td style="text-align: center;">31.25%</td>
-<td style="text-align: center;">86.36%</td>
-<td style="text-align: center;">-16.7%</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">KNN</td>
-<td style="text-align: right;">0.5573</td>
-<td style="text-align: center;">57.14%</td>
-<td style="text-align: center;">53.12%</td>
-<td style="text-align: center;">59.09%</td>
-<td style="text-align: center;">+112.5%</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</section>
-<section id="impacto-del-balanceo-en-el-caso-2" class="level2">
-<h2 class="anchored" data-anchor-id="impacto-del-balanceo-en-el-caso-2">Impacto del Balanceo en el Caso 2</h2>
-<p>Mejoras Observadas: Sensibilidad incrementada significativamente en la mayoría de modelos</p>
-<p>Regresión Logística mejoró su sensibilidad de 31.25% a 50.00%</p>
-<p>KNN duplicó su sensibilidad (de 25.00% a 53.12%)</p>
-<p>Compensaciones Observadas: Reducción en AUC en la mayoría de modelos</p>
-<p>Disminución en especificidad como trade-off por mayor sensibilidad</p>
-<p>Precisión general se mantuvo similar o disminuyó ligeramente</p>
-<p>Conclusiones del Caso 2: El balanceo mejora significativamente la detección de estudiantes reprobados</p>
-<p>Los modelos más simples (Regresión Logística, KNN) se benefician más del balanceo</p>
-<p>Existe un trade-off claro entre sensibilidad y especificidad</p>
-</section>
-<section id="proceso-de-selección-de-variables" class="level2">
-<h2 class="anchored" data-anchor-id="proceso-de-selección-de-variables">Proceso de Selección de Variables</h2>
-<section id="metodología-de-selección" class="level4">
-<h4 class="anchored" data-anchor-id="metodología-de-selección">Metodología de Selección</h4>
-<p>Se emplearon tres métodos complementarios para identificar las variables más predictivas:</p>
-</section>
-<section id="pruebas-chi-cuadrado-variables-categóricas" class="level4">
-<h4 class="anchored" data-anchor-id="pruebas-chi-cuadrado-variables-categóricas">Pruebas Chi-Cuadrado (Variables Categóricas)</h4>
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<table class="table caption-top table-sm table-striped small">
-<caption>Ranking de Variables Categóricas por Chi-Cuadrado</caption>
-<thead>
-<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
 <th style="text-align: left;" data-quarto-table-cell-role="th">Variable</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Valor_P</th>
-<th style="text-align: center;" data-quarto-table-cell-role="th">Significancia</th>
-<th style="text-align: center;" data-quarto-table-cell-role="th">Decision</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">P_Value</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
+<td style="text-align: left;">15</td>
 <td style="text-align: left;">higher</td>
-<td style="text-align: right;">0.02385</td>
-<td style="text-align: center;">Muy alta</td>
-<td style="text-align: center;">Seleccionada</td>
+<td style="text-align: right;">0.0238491</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">9</td>
 <td style="text-align: left;">guardian</td>
-<td style="text-align: right;">0.03277</td>
-<td style="text-align: center;">Alta</td>
-<td style="text-align: center;">Seleccionada</td>
+<td style="text-align: right;">0.0327710</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">12</td>
 <td style="text-align: left;">paid</td>
-<td style="text-align: right;">0.05645</td>
-<td style="text-align: center;">Moderada</td>
-<td style="text-align: center;">Considerada</td>
+<td style="text-align: right;">0.0564532</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">17</td>
 <td style="text-align: left;">romantic</td>
-<td style="text-align: right;">0.09125</td>
-<td style="text-align: center;">Marginal</td>
-<td style="text-align: center;">Considerada</td>
+<td style="text-align: right;">0.0912505</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">6</td>
 <td style="text-align: left;">Mjob</td>
-<td style="text-align: right;">0.09994</td>
-<td style="text-align: center;">Marginal</td>
-<td style="text-align: center;">Considerada</td>
+<td style="text-align: right;">0.0999381</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">16</td>
 <td style="text-align: left;">internet</td>
-<td style="text-align: right;">0.10624</td>
-<td style="text-align: center;">Baja</td>
-<td style="text-align: center;">No seleccionada</td>
+<td style="text-align: right;">0.1062446</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">schoolsup</td>
+<td style="text-align: right;">0.1304583</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">7</td>
+<td style="text-align: left;">Fjob</td>
+<td style="text-align: right;">0.1417439</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">famsize</td>
+<td style="text-align: right;">0.2478672</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">reason</td>
+<td style="text-align: right;">0.2686851</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-</section>
-<section id="algoritmo-boruta-importancia-de-todas-las-variables" class="level4">
-<h4 class="anchored" data-anchor-id="algoritmo-boruta-importancia-de-todas-las-variables">Algoritmo Boruta (Importancia de Todas las Variables)</h4>
+<ol start="2" type="1">
+<li>Algoritmo Boruta (Importancia de Todas las Variables)</li>
+</ol>
+<p>Se ejecuta el algoritmo Boruta para confirmar qué variables son estadísticamente más relevantes que el azar.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<table class="table caption-top table-sm table-striped small">
-<caption>Variables Confirmadas Importantes por Boruta</caption>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Reporte_Proyecto_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%" data-fig-pos="H"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small" data-quarto-postprocess="true">
+<caption>Variables Confirmadas por Boruta</caption>
 <thead>
 <tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
 <th style="text-align: left;" data-quarto-table-cell-role="th">Variable</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Importancia_Media</th>
-<th style="text-align: center;" data-quarto-table-cell-role="th">Decision</th>
-<th style="text-align: center;" data-quarto-table-cell-role="th">Categoria</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">meanImp</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">decision</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">failures</td>
-<td style="text-align: right;">22.90</td>
-<td style="text-align: center;">Confirmada</td>
-<td style="text-align: center;">Académica</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">absences</td>
-<td style="text-align: right;">11.23</td>
-<td style="text-align: center;">Confirmada</td>
-<td style="text-align: center;">Asistencia</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">goout</td>
-<td style="text-align: right;">8.09</td>
-<td style="text-align: center;">Confirmada</td>
-<td style="text-align: center;">Conductual</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">schoolsup</td>
-<td style="text-align: right;">7.04</td>
-<td style="text-align: center;">Confirmada</td>
-<td style="text-align: center;">Apoyo</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">guardian</td>
-<td style="text-align: right;">6.34</td>
-<td style="text-align: center;">Confirmada</td>
-<td style="text-align: center;">Familiar</td>
+<td style="text-align: left;">age</td>
+<td style="text-align: left;">age</td>
+<td style="text-align: right;">4.013982</td>
+<td style="text-align: center;">Confirmed</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Medu</td>
-<td style="text-align: right;">4.22</td>
-<td style="text-align: center;">Confirmada</td>
-<td style="text-align: center;">Familiar</td>
+<td style="text-align: left;">Medu</td>
+<td style="text-align: right;">4.224011</td>
+<td style="text-align: center;">Confirmed</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">age</td>
-<td style="text-align: right;">4.01</td>
-<td style="text-align: center;">Confirmada</td>
-<td style="text-align: center;">Demográfica</td>
+<td style="text-align: left;">guardian</td>
+<td style="text-align: left;">guardian</td>
+<td style="text-align: right;">6.343347</td>
+<td style="text-align: center;">Confirmed</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">failures</td>
+<td style="text-align: left;">failures</td>
+<td style="text-align: right;">22.896434</td>
+<td style="text-align: center;">Confirmed</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">schoolsup</td>
+<td style="text-align: left;">schoolsup</td>
+<td style="text-align: right;">7.042423</td>
+<td style="text-align: center;">Confirmed</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">goout</td>
+<td style="text-align: left;">goout</td>
+<td style="text-align: right;">8.094555</td>
+<td style="text-align: center;">Confirmed</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">absences</td>
+<td style="text-align: left;">absences</td>
+<td style="text-align: right;">11.233122</td>
+<td style="text-align: center;">Confirmed</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-</section>
-<section id="eliminación-recursiva-de-características-rfe" class="level4">
-<h4 class="anchored" data-anchor-id="eliminación-recursiva-de-características-rfe">Eliminación Recursiva de Características (RFE)</h4>
-<p>Método: Random Forest como wrapper</p>
-<p>Variables óptimas identificadas: 9 variables</p>
-<p>Top 5 variables: failures, absences, goout, Medu, schoolsup</p>
-<p>Precisión máxima: 72.91% con 9 variables</p>
-</section>
-<section id="conjunto-final-de-variables-seleccionadas" class="level4">
-<h4 class="anchored" data-anchor-id="conjunto-final-de-variables-seleccionadas">Conjunto Final de Variables Seleccionadas</h4>
-<p>Basado en el consenso de los tres métodos, se seleccionaron 7 variables clave:</p>
+<ol start="3" type="1">
+<li>Eliminación Recursiva de Características (RFE)</li>
+</ol>
+<p>Finalmente, se utiliza RFE con un modelo Random Forest como base para encontrar el número óptimo de variables.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Recursive feature selection
+
+Outer resampling method: Cross-Validated (5 fold) 
+
+Resampling performance over subset size:
+
+ Variables Accuracy  Kappa AccuracySD KappaSD Selected
+         1   0.7375 0.3490    0.02892 0.05705         
+         2   0.7274 0.2870    0.02594 0.08059         
+         3   0.7375 0.3173    0.02718 0.06940         
+         4   0.7207 0.2984    0.03690 0.05626         
+         5   0.7376 0.3534    0.03290 0.04966        *
+         6   0.7208 0.3159    0.06840 0.14729         
+         7   0.7276 0.3286    0.05434 0.10437         
+         8   0.7104 0.2660    0.01918 0.06655         
+         9   0.7206 0.3050    0.02948 0.05266         
+        10   0.7105 0.2729    0.02921 0.06488         
+        11   0.7040 0.2716    0.05052 0.09251         
+        12   0.7006 0.2479    0.04479 0.09006         
+        13   0.7037 0.2502    0.03087 0.08618         
+        14   0.6969 0.2377    0.03394 0.10313         
+        15   0.7005 0.2343    0.05245 0.11623         
+        30   0.7039 0.2343    0.06647 0.13819         
+
+The top 5 variables (out of 5):
+   failures, absences, goout, Medu, schoolsup</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Reporte_Proyecto_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%" data-fig-pos="H"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Conjunto Final de Variables Seleccionadas</p>
+<p>Basado en el consenso de los tres métodos anteriores, se seleccionaron las siguientes 7 variables clave para los Casos 3 y 4.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<table class="table caption-top table-sm table-striped small">
+<table class="table table-striped table-hover caption-top table-sm small" data-quarto-postprocess="true">
 <caption>Conjunto Final de 7 Variables Seleccionadas</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;" data-quarto-table-cell-role="th">Variable</th>
 <th style="text-align: left;" data-quarto-table-cell-role="th">Descripcion</th>
-<th style="text-align: center;" data-quarto-table-cell-role="th">Metodos_Que_La_Seleccionan</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Metodos_Seleccion</th>
 <th style="text-align: left;" data-quarto-table-cell-role="th">Justificacion</th>
 </tr>
 </thead>
@@ -1434,256 +1304,215 @@ window.Quarto = {
 </table>
 </div>
 </div>
-</section>
-<section id="beneficios-de-la-selección-de-variables" class="level4">
-<h4 class="anchored" data-anchor-id="beneficios-de-la-selección-de-variables">Beneficios de la Selección de Variables</h4>
-<p>Reducción de dimensionalidad: 30 → 7 variables (76.7% reducción)</p>
-<p>Mejor interpretabilidad: Variables más comprensibles para stakeholders</p>
-<p>Reducción de sobreajuste: Menor riesgo de modelar ruido</p>
-<p>Eficiencia computacional: Entrenamiento y predicción más rápidos</p>
-</section>
-</section>
-<section id="caso-3-variables-seleccionadas-sin-balanceo" class="level2">
-<h2 class="anchored" data-anchor-id="caso-3-variables-seleccionadas-sin-balanceo">Caso 3: Variables Seleccionadas sin Balanceo</h2>
-<section id="configuración-del-caso-3" class="level3">
-<h3 class="anchored" data-anchor-id="configuración-del-caso-3">Configuración del Caso 3</h3>
-<p>Variables: 7 variables seleccionadas (failures, absences, higher, age, Medu, goout, guardian)</p>
-<p>Balanceo: Sin balanceo de clases</p>
-<p>Objetivo: Evaluar rendimiento con variables optimizadas manteniendo distribución natural</p>
-</section>
-<section id="resultados-del-caso-3" class="level3">
-<h3 class="anchored" data-anchor-id="resultados-del-caso-3">Resultados del Caso 3</h3>
+<ol start="3" type="1">
+<li>Ejecución de los Casos de Estudio</li>
+</ol>
+<p>A continuación, se ejecutan los cuatro casos secuencialmente.</p>
+<p>Función de Entrenamiento Genérica</p>
+<p>Para asegurar que todos los modelos se ejecuten en todos los casos, definimos una función que entrena una lista estándar de algoritmos.</p>
+<p>Caso 1: Todas las Variables / Sin Balanceo</p>
+<p>Condiciones: Se utilizan las 30 variables disponibles sin aplicar técnicas de re-muestreo.</p>
+<p>Caso 2: Todas las Variables / Con Balanceo (SMOTE)</p>
+<p>Condiciones: Se utilizan todas las variables, pero se activa el método SMOTE para equilibrar las clases sintéticamente durante el entrenamiento.</p>
+<p>Caso 3: Variables Seleccionadas / Sin Balanceo</p>
+<p>Condiciones: Se filtra el dataset para usar solo las 7 variables más relevantes (failures, absences, etc.), sin balanceo.</p>
+<p>Caso 4: Variables Seleccionadas / Con Balanceo (SMOTE)</p>
+<p>Condiciones: Modelo optimizado. Variables seleccionadas + SMOTE.</p>
+<ol start="4" type="1">
+<li>Comparación Final de Resultados</li>
+</ol>
+<p>Se consolida la información de todos los casos para identificar la configuración óptima.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<table class="table caption-top table-sm table-striped small">
-<caption>Resultados del Caso 3: Variables Seleccionadas sin Balanceo</caption>
+<table class="table table-striped table-hover caption-top table-sm small" data-quarto-postprocess="true">
+<caption>Tabla General de Resultados: Comparativa Completa por Caso</caption>
 <thead>
 <tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Modelo</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">AUC</th>
-<th style="text-align: center;" data-quarto-table-cell-role="th">Precision</th>
-<th style="text-align: center;" data-quarto-table-cell-role="th">Sensibilidad</th>
-<th style="text-align: center;" data-quarto-table-cell-role="th">Especificidad</th>
-<th style="text-align: center;" data-quarto-table-cell-role="th">Comparacion_Caso1</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;"></th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Caso</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Modelo</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">AUC</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Sensibilidad</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Especificidad</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">Regresión Logística</td>
-<td style="text-align: right; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">0.6461</td>
-<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">69.39%</td>
-<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">28.12%</td>
-<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">89.39%</td>
-<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">+2.0% AUC</td>
+<td rowspan="6" style="text-align: left; vertical-align: top !important;">Sensitivity3</td>
+<td style="text-align: left;">Caso 1</td>
+<td style="text-align: left;">gbm</td>
+<td style="text-align: right; font-weight: bold; color: rgba(231, 76, 60, 255) !important;">0.643</td>
+<td style="text-align: right;">0.250</td>
+<td style="text-align: right;">0.818</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Gradient Boosting</td>
-<td style="text-align: right;">0.6409</td>
-<td style="text-align: center;">68.37%</td>
-<td style="text-align: center;">28.12%</td>
-<td style="text-align: center;">87.88%</td>
-<td style="text-align: center;">-0.2% AUC</td>
+<td style="text-align: left;">Caso 1</td>
+<td style="text-align: left;">glm</td>
+<td style="text-align: right; font-weight: bold; color: rgba(231, 76, 60, 255) !important;">0.634</td>
+<td style="text-align: right;">0.312</td>
+<td style="text-align: right;">0.758</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;">Random Forest</td>
-<td style="text-align: right;">0.6274</td>
-<td style="text-align: center;">68.37%</td>
-<td style="text-align: center;">31.25%</td>
-<td style="text-align: center;">86.36%</td>
-<td style="text-align: center;">+2.4% AUC</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">KNN</td>
-<td style="text-align: right;">0.6054</td>
-<td style="text-align: center;">72.45%</td>
-<td style="text-align: center;">34.38%</td>
-<td style="text-align: center;">90.91%</td>
-<td style="text-align: center;">+12.4% AUC</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">SVM Radial</td>
-<td style="text-align: right;">0.6016</td>
-<td style="text-align: center;">68.37%</td>
-<td style="text-align: center;">31.25%</td>
-<td style="text-align: center;">86.36%</td>
-<td style="text-align: center;">+1.8% AUC</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Árbol de Decisión</td>
-<td style="text-align: right;">0.5881</td>
-<td style="text-align: center;">68.37%</td>
-<td style="text-align: center;">31.25%</td>
-<td style="text-align: center;">86.36%</td>
-<td style="text-align: center;">-4.0% AUC</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</section>
-<section id="análisis-del-caso-3" class="level3">
-<h3 class="anchored" data-anchor-id="análisis-del-caso-3">Análisis del Caso 3</h3>
-<p>Mejoras Observadas vs.&nbsp;Caso 1: Regresión Logística mejora su AUC de 0.6335 a 0.6461</p>
-<p>KNN muestra la mayor mejora en precisión (de 63.27% a 72.45%)</p>
-<p>Especificidad general más alta: Promedio de 87.71% vs.&nbsp;81.07% en Caso 1</p>
-<p>Características Persistentes: Sensibilidad aún baja: Promedio de 30.56%</p>
-<p>Trade-off sensibilidad-especificidad sigue presente</p>
-<p>Modelos más simples mejoran relativamente más que modelos complejos</p>
-<p>Conclusiones del Caso 3: La selección de variables mejora el rendimiento de modelos más simples</p>
-<p>Se mantiene alta especificidad pero baja sensibilidad</p>
-<p>7 variables son suficientes para lograr rendimiento competitivo</p>
-</section>
-</section>
-<section id="caso-4-variables-seleccionadas-con-balanceo" class="level2">
-<h2 class="anchored" data-anchor-id="caso-4-variables-seleccionadas-con-balanceo">Caso 4: Variables Seleccionadas con Balanceo</h2>
-<p>6.1 Configuración del Caso 4 Variables: 7 variables seleccionadas</p>
-<p>Balanceo: Con sobremuestreo (up-sampling)</p>
-<p>Objetivo: Combinar beneficios de selección de variables y balanceo de clases</p>
-<p>6.2 Resultados del Caso 4</p>
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<table class="table caption-top table-sm table-striped small">
-<caption>Resultados del Caso 4: Variables Seleccionadas con Balanceo</caption>
-<thead>
-<tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Modelo</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">AUC</th>
-<th style="text-align: center;" data-quarto-table-cell-role="th">Precision</th>
-<th style="text-align: center;" data-quarto-table-cell-role="th">Sensibilidad</th>
-<th style="text-align: center;" data-quarto-table-cell-role="th">Especificidad</th>
-<th style="text-align: center;" data-quarto-table-cell-role="th">AUC_vs_Caso3</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">Sensibilidad_vs_Caso3</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">KNN</td>
-<td style="text-align: right; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">0.6536</td>
-<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">63.27%</td>
-<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">65.62%</td>
-<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">62.12%</td>
-<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">+4.82%</td>
-<td style="text-align: left; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">+91.2%</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Random Forest</td>
-<td style="text-align: right;">0.6383</td>
-<td style="text-align: center;">65.31%</td>
-<td style="text-align: center;">37.50%</td>
-<td style="text-align: center;">78.79%</td>
-<td style="text-align: center;">+1.09%</td>
-<td style="text-align: left;">+20.0%</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">SVM Radial</td>
-<td style="text-align: right;">0.6316</td>
-<td style="text-align: center;">69.39%</td>
-<td style="text-align: center;">46.88%</td>
-<td style="text-align: center;">80.30%</td>
-<td style="text-align: center;">+3.00%</td>
-<td style="text-align: left;">+50.0%</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Gradient Boosting</td>
-<td style="text-align: right;">0.6283</td>
-<td style="text-align: center;">62.24%</td>
-<td style="text-align: center;">53.12%</td>
-<td style="text-align: center;">66.67%</td>
-<td style="text-align: center;">-1.26%</td>
-<td style="text-align: left;">+88.9%</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Regresión Logística</td>
-<td style="text-align: right;">0.6278</td>
-<td style="text-align: center;">61.22%</td>
-<td style="text-align: center;">46.88%</td>
-<td style="text-align: center;">68.18%</td>
-<td style="text-align: center;">-1.83%</td>
-<td style="text-align: left;">+66.7%</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Árbol de Decisión</td>
-<td style="text-align: right;">0.5743</td>
-<td style="text-align: center;">61.22%</td>
-<td style="text-align: center;">31.25%</td>
-<td style="text-align: center;">75.76%</td>
-<td style="text-align: center;">-1.38%</td>
-<td style="text-align: left;">0.0%</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<section id="análisis-del-caso-4" class="level3">
-<h3 class="anchored" data-anchor-id="análisis-del-caso-4">Análisis del Caso 4</h3>
-<p>Mejoras Significativas: KNN logra el mejor AUC global (0.6536) y la mayor sensibilidad (65.62%)</p>
-<p>Sensibilidad promedio incrementada de 30.56% (Caso 3) a 48.44%</p>
-<p>Balance mejorado entre métricas de rendimiento</p>
-<p>Trade-offs Observados: Especificidad disminuye como compensación por mayor sensibilidad</p>
-<p>Algunos modelos (GLM, GBM) muestran ligera reducción en AUC</p>
-<p>Precisión general se mantiene en niveles similares</p>
-<p>Hallazgo Clave: KNN emerge como el mejor modelo en esta configuración, demostrando que con las variables correctas y balanceo adecuado, algoritmos simples pueden superar a modelos más complejos</p>
-</section>
-<section id="comparativa-entre-los-4-casos" class="level3">
-<h3 class="anchored" data-anchor-id="comparativa-entre-los-4-casos">Comparativa Entre los 4 Casos</h3>
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<table class="table caption-top table-sm table-striped small">
-<caption>Comparativa General de los 4 Casos Experimentales</caption>
-<thead>
-<tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Caso</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">Descripcion</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">Mejor_Modelo</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Mejor_AUC</th>
-<th style="text-align: center;" data-quarto-table-cell-role="th">Sensibilidad_Promedio</th>
-<th style="text-align: center;" data-quarto-table-cell-role="th">Especificidad_Promedio</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">Fortaleza_Principal</th>
-</tr>
-</thead>
-<tbody>
 <tr class="odd">
 <td style="text-align: left;">Caso 1</td>
-<td style="text-align: left;">30 vars, sin balanceo</td>
-<td style="text-align: left;">Gradient Boosting</td>
-<td style="text-align: right;">0.6425</td>
-<td style="text-align: center;">31.25%</td>
-<td style="text-align: center;">81.07%</td>
-<td style="text-align: left;">Mayor especificidad</td>
+<td style="text-align: left;">rf</td>
+<td style="text-align: right; font-weight: bold; color: rgba(231, 76, 60, 255) !important;">0.614</td>
+<td style="text-align: right;">0.406</td>
+<td style="text-align: right;">0.864</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Caso 1</td>
+<td style="text-align: left;">rpart</td>
+<td style="text-align: right; font-weight: bold; color: rgba(231, 76, 60, 255) !important;">0.612</td>
+<td style="text-align: right;">0.375</td>
+<td style="text-align: right;">0.773</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Caso 1</td>
+<td style="text-align: left;">svmRadial</td>
+<td style="text-align: right; font-weight: bold; color: rgba(231, 76, 60, 255) !important;">0.591</td>
+<td style="text-align: right;">0.312</td>
+<td style="text-align: right;">0.894</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Caso 1</td>
+<td style="text-align: left;">knn</td>
+<td style="text-align: right; font-weight: bold; color: rgba(231, 76, 60, 255) !important;">0.539</td>
+<td style="text-align: right;">0.250</td>
+<td style="text-align: right;">0.818</td>
+</tr>
+<tr class="odd">
+<td rowspan="6" style="text-align: left; vertical-align: top !important;">Sensitivity6</td>
+<td style="text-align: left;">Caso 2</td>
+<td style="text-align: left;">glm</td>
+<td style="text-align: right; font-weight: bold; color: rgba(231, 76, 60, 255) !important;">0.646</td>
+<td style="text-align: right;">0.438</td>
+<td style="text-align: right;">0.636</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Caso 2</td>
-<td style="text-align: left;">30 vars, con balanceo</td>
-<td style="text-align: left;">Regresión Logística</td>
-<td style="text-align: right;">0.6316</td>
-<td style="text-align: center;">42.19%</td>
-<td style="text-align: center;">72.53%</td>
-<td style="text-align: left;">Mejor balance general</td>
+<td style="text-align: left;">gbm</td>
+<td style="text-align: right; font-weight: bold; color: rgba(231, 76, 60, 255) !important;">0.606</td>
+<td style="text-align: right;">0.375</td>
+<td style="text-align: right;">0.727</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Caso 2</td>
+<td style="text-align: left;">rpart</td>
+<td style="text-align: right; font-weight: bold; color: rgba(231, 76, 60, 255) !important;">0.594</td>
+<td style="text-align: right;">0.438</td>
+<td style="text-align: right;">0.727</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Caso 2</td>
+<td style="text-align: left;">rf</td>
+<td style="text-align: right; font-weight: bold; color: rgba(231, 76, 60, 255) !important;">0.593</td>
+<td style="text-align: right;">0.375</td>
+<td style="text-align: right;">0.848</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Caso 2</td>
+<td style="text-align: left;">svmRadial</td>
+<td style="text-align: right; font-weight: bold; color: rgba(231, 76, 60, 255) !important;">0.589</td>
+<td style="text-align: right;">0.375</td>
+<td style="text-align: right;">0.758</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Caso 2</td>
+<td style="text-align: left;">knn</td>
+<td style="text-align: right; font-weight: bold; color: rgba(231, 76, 60, 255) !important;">0.535</td>
+<td style="text-align: right;">0.719</td>
+<td style="text-align: right;">0.303</td>
+</tr>
+<tr class="odd">
+<td rowspan="6" style="text-align: left; vertical-align: top !important;">Sensitivity7</td>
+<td style="text-align: left;">Caso 3</td>
+<td style="text-align: left;">glm</td>
+<td style="text-align: right; font-weight: bold; color: rgba(231, 76, 60, 255) !important;">0.646</td>
+<td style="text-align: right;">0.281</td>
+<td style="text-align: right;">0.894</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Caso 3</td>
+<td style="text-align: left;">gbm</td>
+<td style="text-align: right; font-weight: bold; color: rgba(231, 76, 60, 255) !important;">0.641</td>
+<td style="text-align: right;">0.281</td>
+<td style="text-align: right;">0.879</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Caso 3</td>
-<td style="text-align: left;">7 vars, sin balanceo</td>
-<td style="text-align: left;">Regresión Logística</td>
-<td style="text-align: right;">0.6461</td>
-<td style="text-align: center;">30.56%</td>
-<td style="text-align: center;">87.71%</td>
-<td style="text-align: left;">Alta especificidad con pocas variables</td>
+<td style="text-align: left;">rf</td>
+<td style="text-align: right; font-weight: bold; color: rgba(231, 76, 60, 255) !important;">0.626</td>
+<td style="text-align: right;">0.250</td>
+<td style="text-align: right;">0.833</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">Caso 4</td>
-<td style="text-align: left; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">7 vars, con balanceo</td>
-<td style="text-align: left; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">KNN</td>
-<td style="text-align: right; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">0.6536</td>
-<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">48.44%</td>
-<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">71.97%</td>
-<td style="text-align: left; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">Mejor sensibilidad y AUC global</td>
+<td style="text-align: left;">Caso 3</td>
+<td style="text-align: left;">knn</td>
+<td style="text-align: right; font-weight: bold; color: rgba(231, 76, 60, 255) !important;">0.605</td>
+<td style="text-align: right;">0.344</td>
+<td style="text-align: right;">0.909</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Caso 3</td>
+<td style="text-align: left;">svmRadial</td>
+<td style="text-align: right; font-weight: bold; color: rgba(231, 76, 60, 255) !important;">0.602</td>
+<td style="text-align: right;">0.312</td>
+<td style="text-align: right;">0.864</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Caso 3</td>
+<td style="text-align: left;">rpart</td>
+<td style="text-align: right; font-weight: bold; color: rgba(231, 76, 60, 255) !important;">0.588</td>
+<td style="text-align: right;">0.312</td>
+<td style="text-align: right;">0.864</td>
+</tr>
+<tr class="odd">
+<td rowspan="6" style="text-align: left; vertical-align: top !important;">Sensitivity8</td>
+<td style="text-align: left;">Caso 4</td>
+<td style="text-align: left;">glm</td>
+<td style="text-align: right; font-weight: bold; color: rgba(231, 76, 60, 255) !important;">0.648</td>
+<td style="text-align: right;">0.500</td>
+<td style="text-align: right;">0.742</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Caso 4</td>
+<td style="text-align: left;">rf</td>
+<td style="text-align: right; font-weight: bold; color: rgba(231, 76, 60, 255) !important;">0.633</td>
+<td style="text-align: right;">0.250</td>
+<td style="text-align: right;">0.773</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Caso 4</td>
+<td style="text-align: left;">knn</td>
+<td style="text-align: right; font-weight: bold; color: rgba(231, 76, 60, 255) !important;">0.627</td>
+<td style="text-align: right;">0.531</td>
+<td style="text-align: right;">0.727</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Caso 4</td>
+<td style="text-align: left;">gbm</td>
+<td style="text-align: right; font-weight: bold; color: rgba(231, 76, 60, 255) !important;">0.610</td>
+<td style="text-align: right;">0.375</td>
+<td style="text-align: right;">0.727</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Caso 4</td>
+<td style="text-align: left;">svmRadial</td>
+<td style="text-align: right; font-weight: bold; color: rgba(231, 76, 60, 255) !important;">0.571</td>
+<td style="text-align: right;">0.469</td>
+<td style="text-align: right;">0.697</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Caso 4</td>
+<td style="text-align: left;">rpart</td>
+<td style="text-align: right; font-weight: bold; color: rgba(231, 76, 60, 255) !important;">0.565</td>
+<td style="text-align: right;">0.375</td>
+<td style="text-align: right;">0.667</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-</section>
-</section>
 </section>
 <section id="conclusiones-y-recomendaciones-finales" class="level1">
 <h1>Conclusiones y Recomendaciones Finales</h1>
@@ -1776,14 +1605,13 @@ window.Quarto = {
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-      const outerScaffold = trigger.parentElement.cloneNode(true);
-      const codeEl = outerScaffold.querySelector('code');
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
         }
-      }
-      return codeEl.innerText;
+        return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy
