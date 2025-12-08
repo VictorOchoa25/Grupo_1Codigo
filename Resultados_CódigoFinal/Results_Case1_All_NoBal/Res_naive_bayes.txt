@@ -1,0 +1,32 @@
+[1] "MODEL: naive_bayes"
+[1] "AUC: 0.5421"
+Confusion Matrix and Statistics
+
+          Reference
+Prediction Fail Pass
+      Fail   10   18
+      Pass   22   48
+                                          
+               Accuracy : 0.5918          
+                 95% CI : (0.4879, 0.6901)
+    No Information Rate : 0.6735          
+    P-Value [Acc > NIR] : 0.9646          
+                                          
+                  Kappa : 0.0411          
+                                          
+ Mcnemar's Test P-Value : 0.6353          
+                                          
+            Sensitivity : 0.3125          
+            Specificity : 0.7273          
+         Pos Pred Value : 0.3571          
+         Neg Pred Value : 0.6857          
+              Precision : 0.3571          
+                 Recall : 0.3125          
+                     F1 : 0.3333          
+             Prevalence : 0.3265          
+         Detection Rate : 0.1020          
+   Detection Prevalence : 0.2857          
+      Balanced Accuracy : 0.5199          
+                                          
+       'Positive' Class : Fail            
+                                          

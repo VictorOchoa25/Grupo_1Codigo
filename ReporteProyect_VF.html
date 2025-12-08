@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Equipo 1: Víctor Ochoa y Salvador Rodríguez">
+
+<title>Análisis Predictivo de Rendimiento Estudiantil</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="ReporteProyect_VF_files/libs/clipboard/clipboard.min.js"></script>
+<script src="ReporteProyect_VF_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="ReporteProyect_VF_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="ReporteProyect_VF_files/libs/quarto-html/popper.min.js"></script>
+<script src="ReporteProyect_VF_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="ReporteProyect_VF_files/libs/quarto-html/anchor.min.js"></script>
+<link href="ReporteProyect_VF_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="ReporteProyect_VF_files/libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="ReporteProyect_VF_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="ReporteProyect_VF_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="ReporteProyect_VF_files/libs/bootstrap/bootstrap-813c323200a87c37e262811031999de4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introducción" id="toc-introducción" class="nav-link active" data-scroll-target="#introducción">Introducción</a></li>
+  <li><a href="#preparación-de-la-base-de-datos-para-el-modelaje" id="toc-preparación-de-la-base-de-datos-para-el-modelaje" class="nav-link" data-scroll-target="#preparación-de-la-base-de-datos-para-el-modelaje">1. Preparación de la base de datos para el modelaje</a></li>
+  <li><a href="#selección-de-variables-relevantes-para-el-status-de-un-estudiante" id="toc-selección-de-variables-relevantes-para-el-status-de-un-estudiante" class="nav-link" data-scroll-target="#selección-de-variables-relevantes-para-el-status-de-un-estudiante">2. Selección de Variables Relevantes para el Status de un Estudiante</a>
+  <ul class="collapse">
+  <li><a href="#métodos-de-selección" id="toc-métodos-de-selección" class="nav-link" data-scroll-target="#métodos-de-selección">Métodos de selección</a></li>
+  <li><a href="#resultados-del-análisis-de-importancia" id="toc-resultados-del-análisis-de-importancia" class="nav-link" data-scroll-target="#resultados-del-análisis-de-importancia">Resultados del Análisis de Importancia</a></li>
+  </ul></li>
+  <li><a href="#modelado-evaluación-de-4-casos" id="toc-modelado-evaluación-de-4-casos" class="nav-link" data-scroll-target="#modelado-evaluación-de-4-casos">3. Modelado: Evaluación de 4 Casos</a>
+  <ul class="collapse">
+  <li><a href="#caso-1-todas-las-variables-sin-balanceo" id="toc-caso-1-todas-las-variables-sin-balanceo" class="nav-link" data-scroll-target="#caso-1-todas-las-variables-sin-balanceo">Caso 1: Todas las Variables / Sin Balanceo</a></li>
+  <li><a href="#caso-2-todas-las-variables-con-balanceo-up-sampling" id="toc-caso-2-todas-las-variables-con-balanceo-up-sampling" class="nav-link" data-scroll-target="#caso-2-todas-las-variables-con-balanceo-up-sampling">Caso 2: Todas las Variables / Con Balanceo (Up-Sampling)</a></li>
+  <li><a href="#caso-3-variables-seleccionadas-sin-balanceo" id="toc-caso-3-variables-seleccionadas-sin-balanceo" class="nav-link" data-scroll-target="#caso-3-variables-seleccionadas-sin-balanceo">Caso 3: Variables Seleccionadas / Sin Balanceo</a></li>
+  <li><a href="#caso-4-variables-seleccionadas-con-balanceo" id="toc-caso-4-variables-seleccionadas-con-balanceo" class="nav-link" data-scroll-target="#caso-4-variables-seleccionadas-con-balanceo">Caso 4: Variables Seleccionadas / Con Balanceo</a></li>
+  </ul></li>
+  <li><a href="#análisis-comparativo-del-desempeño-de-los-modelos" id="toc-análisis-comparativo-del-desempeño-de-los-modelos" class="nav-link" data-scroll-target="#análisis-comparativo-del-desempeño-de-los-modelos">4.Análisis comparativo del desempeño de los modelos</a>
+  <ul class="collapse">
+  <li><a href="#resultados-de-los-modelos" id="toc-resultados-de-los-modelos" class="nav-link" data-scroll-target="#resultados-de-los-modelos">Resultados de los modelos</a></li>
+  <li><a href="#ranking-de-los-mejores-modelos" id="toc-ranking-de-los-mejores-modelos" class="nav-link" data-scroll-target="#ranking-de-los-mejores-modelos">Ranking de los mejores modelos</a>
+  <ul class="collapse">
+  <li><a href="#la-opción-de-máxima-seguridad-knn-caso-4" id="toc-la-opción-de-máxima-seguridad-knn-caso-4" class="nav-link" data-scroll-target="#la-opción-de-máxima-seguridad-knn-caso-4">La Opción de Máxima Seguridad: KNN (Caso 4)</a></li>
+  <li><a href="#el-balance-óptimo-svm-radial-caso-4" id="toc-el-balance-óptimo-svm-radial-caso-4" class="nav-link" data-scroll-target="#el-balance-óptimo-svm-radial-caso-4">El Balance Óptimo: SVM Radial (Caso 4)</a></li>
+  <li><a href="#alternativa-destacada-por-auc-glm-caso-4" id="toc-alternativa-destacada-por-auc-glm-caso-4" class="nav-link" data-scroll-target="#alternativa-destacada-por-auc-glm-caso-4">Alternativa Destacada por AUC: GLM (Caso 4)</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#hallazgos-y-conclusion-del-estudio" id="toc-hallazgos-y-conclusion-del-estudio" class="nav-link" data-scroll-target="#hallazgos-y-conclusion-del-estudio">Hallazgos y conclusion del estudio</a>
+  <ul class="collapse">
+  <li><a href="#hallazgos" id="toc-hallazgos" class="nav-link" data-scroll-target="#hallazgos">Hallazgos</a>
+  <ul class="collapse">
+  <li><a href="#variables-influyentes-en-el-éxito-o-fracaso-académico-en-matemática" id="toc-variables-influyentes-en-el-éxito-o-fracaso-académico-en-matemática" class="nav-link" data-scroll-target="#variables-influyentes-en-el-éxito-o-fracaso-académico-en-matemática">Variables influyentes en el Éxito o Fracaso académico en matemática</a></li>
+  <li><a href="#resumen-de-los-modelos-más-eficaces" id="toc-resumen-de-los-modelos-más-eficaces" class="nav-link" data-scroll-target="#resumen-de-los-modelos-más-eficaces">Resumen de los Modelos Más Eficaces</a></li>
+  </ul></li>
+  <li><a href="#conclusión" id="toc-conclusión" class="nav-link" data-scroll-target="#conclusión">Conclusión</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Análisis Predictivo de Rendimiento Estudiantil</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Equipo 1: Víctor Ochoa y Salvador Rodríguez </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introducción" class="level1">
+<h1>Introducción</h1>
+<p>En este documento presentamos un flujo de trabajo completo para predecir el rendimiento estudiantil (Status: Pass/Fail). El análisis se divide en preparación de datos, selección de características y la comparación de cuatro escenarios experimentales combinando selección de variables y balanceo de clases.</p>
+</section>
+<section id="preparación-de-la-base-de-datos-para-el-modelaje" class="level1">
+<h1>1. Preparación de la base de datos para el modelaje</h1>
+<p>Primero, se cargan las librerías necesarias y la base de datos. Luego se realiza una conversión de variables numéricas y se define a la variable objetivo <code>Status</code> basada en la nota final (G3).</p>
+<p><strong>Análisis de la Distribución de Clases:</strong> Al observar la estructura de los datos, se observó un pequeño desbalance de clases. Según los registros se tiene <strong>130 casos de “Fail”</strong> y <strong>265 casos de “Pass”</strong>. En términos proporcionales, esto representa aproximadamente un <strong>32.9% de reprobados</strong> frente a un <strong>67.1% de aprobados</strong>. Este pequeño desequilibrio sugiere que los modelos sin balanceo podrían tener dificultades para detectar la clase minoritaria (“Fail”).</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. SETUP &amp; LIBRARIES</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(tidyverse)) <span class="fu">install.packages</span>(<span class="st">"tidyverse"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(caret)) <span class="fu">install.packages</span>(<span class="st">"caret"</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(pROC)) <span class="fu">install.packages</span>(<span class="st">"pROC"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(randomForest)) <span class="fu">install.packages</span>(<span class="st">"randomForest"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(gbm)) <span class="fu">install.packages</span>(<span class="st">"gbm"</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(kernlab)) <span class="fu">install.packages</span>(<span class="st">"kernlab"</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(e1071)) <span class="fu">install.packages</span>(<span class="st">"e1071"</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(Boruta)) <span class="fu">install.packages</span>(<span class="st">"Boruta"</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(naivebayes)) <span class="fu">install.packages</span>(<span class="st">"naivebayes"</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse); <span class="fu">library</span>(caret); <span class="fu">library</span>(pROC); <span class="fu">library</span>(randomForest)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gbm); <span class="fu">library</span>(kernlab); <span class="fu">library</span>(e1071); <span class="fu">library</span>(Boruta); <span class="fu">library</span>(naivebayes)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Directorios</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>main_dir <span class="ot">&lt;-</span> <span class="st">"Resultados_CódigoFinal"</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(main_dir, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="fu">file.path</span>(main_dir, <span class="st">"02_Selection_Results"</span>), <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. DATA PREP</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>filename <span class="ot">&lt;-</span> <span class="st">"Data/studentmat.csv"</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co"># (Simulación de carga si el archivo no está en el path exacto del renderizado)</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">file.exists</span>(filename)) {</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">warning</span>(<span class="st">"Archivo no encontrado. Asegúrese de tener 'Data/studentmat.csv'"</span>)</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  df_raw <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(filename, <span class="at">sep =</span> <span class="st">";"</span>, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  numeric_cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"age"</span>, <span class="st">"absences"</span>, <span class="st">"G3"</span>, <span class="st">"Medu"</span>, <span class="st">"Fedu"</span>, <span class="st">"traveltime"</span>, </span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"studytime"</span>, <span class="st">"failures"</span>, <span class="st">"famrel"</span>, <span class="st">"freetime"</span>, <span class="st">"goout"</span>, </span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"Dalc"</span>, <span class="st">"Walc"</span>, <span class="st">"health"</span>, <span class="st">"G1"</span>, <span class="st">"G2"</span>)</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(col <span class="cf">in</span> numeric_cols) {</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(col <span class="sc">%in%</span> <span class="fu">names</span>(df_raw)) df_raw[[col]] <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(df_raw[[col]])</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>  df_class <span class="ot">&lt;-</span> df_raw <span class="sc">%&gt;%</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Status =</span> <span class="fu">ifelse</span>(G3 <span class="sc">&gt;=</span> <span class="dv">10</span>, <span class="st">"Pass"</span>, <span class="st">"Fail"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Status =</span> <span class="fu">as.factor</span>(Status)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>G1, <span class="sc">-</span>G2, <span class="sc">-</span>G3) <span class="sc">%&gt;%</span> </span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character), as.factor))</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Imprimir proporciones para el reporte</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="st">"Conteos:"</span>)</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">table</span>(df_class<span class="sc">$</span>Status))</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="st">"Proporciones:"</span>)</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">prop.table</span>(<span class="fu">table</span>(df_class<span class="sc">$</span>Status)))</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Split Global</span></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>  trainIndex <span class="ot">&lt;-</span> <span class="fu">createDataPartition</span>(df_class<span class="sc">$</span>Status, <span class="at">p =</span> <span class="fl">0.75</span>, <span class="at">list =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>  train_full <span class="ot">&lt;-</span> df_class[trainIndex, ]</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>  valid_full <span class="ot">&lt;-</span> df_class[<span class="sc">-</span>trainIndex, ]</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Conteos:"
+
+Fail Pass 
+ 130  265 
+[1] "Proporciones:"
+
+     Fail      Pass 
+0.3291139 0.6708861 </code></pre>
+</div>
+</div>
+</section>
+<section id="selección-de-variables-relevantes-para-el-status-de-un-estudiante" class="level1">
+<h1>2. Selección de Variables Relevantes para el Status de un Estudiante</h1>
+<p>El conjunto de datos original contiene numerosas variables, pero posiblemente no todas contribuyan a la detección de un estudiante en riesgo de reprobar. Incluir información irrelevante o redundante introduce “ruido” que puede llevar al sobreajuste (overfitting), haciendo que el modelo memorice los datos de entrenamiento en lugar de aprender patrones reales. Por tanto, filtrar las variables puede resultar ser una buena medida para simplificar la complejidad del modelo y mejorar su capacidad de generalización ante nuevos estudiantes.</p>
+<section id="métodos-de-selección" class="level2">
+<h2 class="anchored" data-anchor-id="métodos-de-selección">Métodos de selección</h2>
+<p>Para lograr este proceso de selección de manera objetiva y evitar el sesgo inherente a un único algoritmo, se aplicó una estrategia de consenso utilizando tres técnicas distintas de selección:</p>
+<ol type="a">
+<li><p>Chi-Cuadrado: Para evaluar la relevancia estadística entre variables categóricas.</p></li>
+<li><p>Boruta: Un método basado en Random Forest diseñado para detectar todas las variables relevantes (incluso las que tienen interacciones complejas).</p></li>
+<li><p>RFE (Eliminación Recursiva de Características): Para encontrar el subconjunto óptimo de variables que maximiza la precisión del modelo mediante validación cruzada.</p></li>
+</ol>
+</section>
+<section id="resultados-del-análisis-de-importancia" class="level2">
+<h2 class="anchored" data-anchor-id="resultados-del-análisis-de-importancia">Resultados del Análisis de Importancia</h2>
+<p>Chi-Cuadrado: Destacó a higher (intención de cursar educación superior) como la variable más significativa, siendo la única validada por los tres métodos (3 votos).</p>
+<p>Boruta: Confirmó la importancia crítica de failures (reprobaciones pasadas), schoolsup (apoyo educativo extra) y goout (salidas con amigos).</p>
+<p>Discrepancias: Se observó que variables como guardian (tutor) y age (edad) fueron sugeridas por algunos métodos pero rechazadas por otros.</p>
+<p>Criterio de Decisión (Matriz de Consenso): Para resolver estas discrepancias, se implementó una Matriz de votación uutomatizada. Se estableción como regla: una variable solo se selecciona si cuenta con el consenso de al menos 2 de los 3 algoritmos.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ---------------------------------------------------------</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># A. Chi-Cuadrado (Categórica vs Categórica)</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ---------------------------------------------------------</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>cat_vars <span class="ot">&lt;-</span> <span class="fu">names</span>(df_class)[<span class="fu">sapply</span>(df_class, is.factor)]</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>chi_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Variable=</span><span class="fu">character</span>(), <span class="at">P_Value=</span><span class="fu">numeric</span>())</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (v <span class="cf">in</span> cat_vars) {</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (v <span class="sc">!=</span> <span class="st">"Status"</span>) {</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    test <span class="ot">&lt;-</span> <span class="fu">chisq.test</span>(<span class="fu">table</span>(df_class[[v]], df_class<span class="sc">$</span>Status))</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    chi_df <span class="ot">&lt;-</span> <span class="fu">rbind</span>(chi_df, <span class="fu">data.frame</span>(<span class="at">Variable=</span>v, <span class="at">P_Value=</span>test<span class="sc">$</span>p.value))</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Ordenar y Mostrar Resultados</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>chi_df <span class="ot">&lt;-</span> chi_df[<span class="fu">order</span>(chi_df<span class="sc">$</span>P_Value),]</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"--- TOP VARIABLES POR P-VALUE (CHI-CUADRADO) ---"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "--- TOP VARIABLES POR P-VALUE (CHI-CUADRADO) ---"</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">head</span>(chi_df, <span class="dv">10</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>    Variable    P_Value
+15    higher 0.00385021
+17  romantic 0.06740352
+10 schoolsup 0.06799817
+9   guardian 0.07000507
+12      paid 0.08287639
+2        sex 0.19488312
+8     reason 0.21284952
+6       Mjob 0.25758057
+16  internet 0.27812236
+11    famsup 0.28594799</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ---------------------------------------------------------</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># B. Boruta (Selección 'All-Relevant')</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ---------------------------------------------------------</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>boruta_out <span class="ot">&lt;-</span> <span class="fu">Boruta</span>(Status <span class="sc">~</span> ., <span class="at">data =</span> df_class, <span class="at">doTrace =</span> <span class="dv">0</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico Boruta en Español</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(boruta_out, <span class="at">xlab=</span><span class="st">""</span>, <span class="at">main=</span><span class="st">"Importancia de Variables (Boruta)"</span>, <span class="at">las=</span><span class="dv">2</span>, <span class="at">cex.axis=</span><span class="fl">0.7</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ReporteProyect_VF_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar Estadísticas</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"--- VARIABLES CONFIRMADAS POR BORUTA ---"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "--- VARIABLES CONFIRMADAS POR BORUTA ---"</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">attStats</span>(boruta_out)[<span class="fu">attStats</span>(boruta_out)<span class="sc">$</span>decision <span class="sc">==</span> <span class="st">"Confirmed"</span>, ])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>            meanImp medianImp     minImp    maxImp  normHits  decision
+guardian   5.290222  5.441537  0.4634108 10.562290 0.8282828 Confirmed
+failures  26.389386 27.556590 15.9207702 31.717845 1.0000000 Confirmed
+schoolsup  7.886669  7.917989  3.0724807 14.502171 0.9595960 Confirmed
+higher     4.808679  4.740830  1.8762165  8.538176 0.8181818 Confirmed
+goout      6.716674  6.694132  1.3875369 11.579342 0.9393939 Confirmed
+absences  10.081463 10.181124  4.4796499 15.196016 0.9898990 Confirmed</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ---------------------------------------------------------</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># C. RFE (Eliminación Recursiva de Características)</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ---------------------------------------------------------</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>ctrl_rfe <span class="ot">&lt;-</span> <span class="fu">rfeControl</span>(<span class="at">functions =</span> rfFuncs, <span class="at">method =</span> <span class="st">"cv"</span>, <span class="at">number =</span> <span class="dv">5</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Excluir Status de los predictores para RFE</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>rfe_out <span class="ot">&lt;-</span> <span class="fu">rfe</span>(df_class[, <span class="fu">names</span>(df_class) <span class="sc">!=</span> <span class="st">"Status"</span>], </span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>               df_class<span class="sc">$</span>Status, <span class="at">sizes =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">15</span>), <span class="at">rfeControl =</span> ctrl_rfe)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico RFE en Español</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(rfe_out, <span class="at">type=</span><span class="fu">c</span>(<span class="st">"g"</span>, <span class="st">"o"</span>), <span class="at">main=</span><span class="st">"Precisión RFE vs Número de Variables"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ReporteProyect_VF_files/figure-html/unnamed-chunk-1-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar Variables Seleccionadas</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"--- VARIABLES ÓPTIMAS SEGÚN RFE ---"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "--- VARIABLES ÓPTIMAS SEGÚN RFE ---"</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">predictors</span>(rfe_out))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "failures"  "absences"  "goout"     "schoolsup" "higher"    "age"      
+[7] "studytime" "sex"       "famsize"  </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ---------------------------------------------------------</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># D. CRITERIO DE DECISIÓN (Análisis de Consenso)</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ---------------------------------------------------------</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Extraer listas de cada método</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co">#    Chi-Sq: Seleccionar si P-value &lt; 0.05 (Significancia estadística)</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>vars_chi <span class="ot">&lt;-</span> <span class="fu">as.character</span>(chi_df<span class="sc">$</span>Variable[chi_df<span class="sc">$</span>P_Value <span class="sc">&lt;</span> <span class="fl">0.05</span>])</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co">#    Boruta: Seleccionar si la decisión es "Confirmed"</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>bor_stats <span class="ot">&lt;-</span> <span class="fu">attStats</span>(boruta_out)</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>vars_boruta <span class="ot">&lt;-</span> <span class="fu">rownames</span>(bor_stats)[bor_stats<span class="sc">$</span>decision <span class="sc">==</span> <span class="st">"Confirmed"</span>]</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="co">#    RFE: Seleccionar el subconjunto óptimo</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>vars_rfe <span class="ot">&lt;-</span> <span class="fu">predictors</span>(rfe_out)</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Crear Tabla de Votación</span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>all_candidates <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">c</span>(vars_chi, vars_boruta, vars_rfe))</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>decision_table <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">Variable =</span> all_candidates,</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">Chi_Cuad_Sig =</span> all_candidates <span class="sc">%in%</span> vars_chi,</span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">Boruta_Conf =</span> all_candidates <span class="sc">%in%</span> vars_boruta,</span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">RFE_Opt =</span> all_candidates <span class="sc">%in%</span> vars_rfe</span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Calcular Votos (Puntaje)</span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>decision_table<span class="sc">$</span>Votos <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(decision_table[, <span class="sc">-</span><span class="dv">1</span>])</span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a><span class="co">#    Ordenar por importancia (Votos)</span></span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>decision_table <span class="ot">&lt;-</span> decision_table[<span class="fu">order</span>(<span class="sc">-</span>decision_table<span class="sc">$</span>Votos), ]</span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"--- TABLA DE CONSENSO (VOTACIÓN) ---"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "--- TABLA DE CONSENSO (VOTACIÓN) ---"</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(decision_table)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>    Variable Chi_Cuad_Sig Boruta_Conf RFE_Opt Votos
+1     higher         TRUE        TRUE    TRUE     3
+3   failures        FALSE        TRUE    TRUE     2
+4  schoolsup        FALSE        TRUE    TRUE     2
+5      goout        FALSE        TRUE    TRUE     2
+6   absences        FALSE        TRUE    TRUE     2
+2   guardian        FALSE        TRUE   FALSE     1
+7        age        FALSE       FALSE    TRUE     1
+8  studytime        FALSE       FALSE    TRUE     1
+9        sex        FALSE       FALSE    TRUE     1
+10   famsize        FALSE       FALSE    TRUE     1</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Lógica de Selección Final</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co">#    CRITERIO: Seleccionar variables con al menos 2 Votos</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>final_vars <span class="ot">&lt;-</span> <span class="fu">as.character</span>(decision_table<span class="sc">$</span>Variable[decision_table<span class="sc">$</span>Votos <span class="sc">&gt;=</span> <span class="dv">2</span>])</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co">#    IMPORTANTE: Asegurar que la variable objetivo 'Status' esté incluida</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co">#    (Status no aparece en la votación porque no es predictora, es el objetivo)</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="st">"Status"</span> <span class="sc">%in%</span> final_vars) final_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(final_vars, <span class="st">"Status"</span>)</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="co">#    Sobrescribir la lista para los siguientes pasos de modelado</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>sel_vars <span class="ot">&lt;-</span> final_vars</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"--- SELECCIÓN AUTOMATIZADA FINAL (Para Casos 3 y 4) ---"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "--- SELECCIÓN AUTOMATIZADA FINAL (Para Casos 3 y 4) ---"</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(sel_vars)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "higher"    "failures"  "schoolsup" "goout"     "absences"  "Status"   </code></pre>
+</div>
+</div>
+<p>Tal como se observa en la tabla de resultados:</p>
+<p>Variables como guardian, age, studytime, sex y famsize obtuvieron solo 1 voto, por lo que fueron descartadas para reducir el ruido.</p>
+<p>El subconjunto final seleccionado para los modelos optimizados (Casos 3 y 4) consta de las 5 variables que alcanzaron 2 o más votos, más la variable objetivo: higher, failures, schoolsup, goout, absences y Status (Variable Objetivo).</p>
+</section>
+</section>
+<section id="modelado-evaluación-de-4-casos" class="level1">
+<h1>3. Modelado: Evaluación de 4 Casos</h1>
+<p>Se define una función auxiliar para entrenar y evaluar múltiples modelos (GLM, GBM, RF, SVM, KNN y Rpart) bajo diferentes configuraciones o condiciones.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Función Helper para el loop de modelado</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>run_experiment_case <span class="ot">&lt;-</span> <span class="cf">function</span>(case_name, output_dir, train_data, valid_data, ctrl_params, model_list) {</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dir.create</span>(output_dir, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  summary_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Model=</span><span class="fu">character</span>(), <span class="at">AUC=</span><span class="fu">numeric</span>(), <span class="at">Accuracy=</span><span class="fu">numeric</span>(), </span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>                           <span class="at">Sensitivity=</span><span class="fu">numeric</span>(), <span class="at">Specificity=</span><span class="fu">numeric</span>(), <span class="at">stringsAsFactors=</span><span class="cn">FALSE</span>)</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (method <span class="cf">in</span> model_list) {</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>    fit <span class="ot">&lt;-</span> <span class="fu">tryCatch</span>({</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>       <span class="cf">if</span>(method <span class="sc">==</span> <span class="st">"gbm"</span>) {</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">train</span>(Status <span class="sc">~</span> ., <span class="at">data =</span> train_data, <span class="at">method =</span> method, <span class="at">metric=</span><span class="st">"ROC"</span>, <span class="at">trControl =</span> ctrl_params, </span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>              <span class="at">preProcess =</span> <span class="fu">c</span>(<span class="st">"center"</span>, <span class="st">"scale"</span>, <span class="st">"nzv"</span>), <span class="at">verbose=</span><span class="cn">FALSE</span>, <span class="at">tuneLength =</span> <span class="dv">3</span>)</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span> <span class="cf">if</span>(method <span class="sc">==</span> <span class="st">"rf"</span>) {</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>        <span class="fu">train</span>(Status <span class="sc">~</span> ., <span class="at">data =</span> train_data, <span class="at">method =</span> method, <span class="at">metric=</span><span class="st">"ROC"</span>, <span class="at">trControl =</span> ctrl_params, </span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>              <span class="at">preProcess =</span> <span class="fu">c</span>(<span class="st">"center"</span>, <span class="st">"scale"</span>, <span class="st">"nzv"</span>), <span class="at">ntree =</span> <span class="dv">100</span>, <span class="at">tuneLength =</span> <span class="dv">3</span>)</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span> <span class="cf">if</span>(method <span class="sc">==</span> <span class="st">"naive_bayes"</span>) {</span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>        <span class="fu">train</span>(Status <span class="sc">~</span> ., <span class="at">data =</span> train_data, <span class="at">method =</span> method, <span class="at">metric=</span><span class="st">"ROC"</span>, <span class="at">trControl =</span> ctrl_params,</span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>              <span class="at">preProcess =</span> <span class="fu">c</span>(<span class="st">"nzv"</span>), <span class="at">tuneLength =</span> <span class="dv">3</span>)</span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span> {</span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>        <span class="fu">train</span>(Status <span class="sc">~</span> ., <span class="at">data =</span> train_data, <span class="at">method =</span> method, <span class="at">metric=</span><span class="st">"ROC"</span>, <span class="at">trControl =</span> ctrl_params, </span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>              <span class="at">preProcess =</span> <span class="fu">c</span>(<span class="st">"center"</span>, <span class="st">"scale"</span>, <span class="st">"nzv"</span>), <span class="at">tuneLength =</span> <span class="dv">3</span>)</span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>    }, <span class="at">error =</span> <span class="cf">function</span>(e) <span class="fu">return</span>(<span class="cn">NULL</span>))</span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(fit)) {</span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>      probs <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit, valid_data, <span class="at">type =</span> <span class="st">"prob"</span>)</span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>      classes <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit, valid_data)</span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a>      cm <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(classes, valid_data<span class="sc">$</span>Status, <span class="at">mode =</span> <span class="st">"everything"</span>)</span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a>      pass_col <span class="ot">&lt;-</span> <span class="cf">if</span>(<span class="st">"Pass"</span> <span class="sc">%in%</span> <span class="fu">colnames</span>(probs)) <span class="st">"Pass"</span> <span class="cf">else</span> <span class="fu">colnames</span>(probs)[<span class="dv">2</span>]</span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a>      roc_obj <span class="ot">&lt;-</span> <span class="fu">roc</span>(valid_data<span class="sc">$</span>Status, probs[, pass_col], <span class="at">levels =</span> <span class="fu">c</span>( <span class="st">"Fail"</span>,<span class="st">"Pass"</span>), <span class="at">direction =</span> <span class="st">"&lt;"</span>, <span class="at">quiet=</span><span class="cn">TRUE</span>)</span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>      summary_df <span class="ot">&lt;-</span> <span class="fu">rbind</span>(summary_df, <span class="fu">data.frame</span>(</span>
+<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a>        <span class="at">Model =</span> method, <span class="at">AUC =</span> <span class="fu">round</span>(<span class="fu">as.numeric</span>(<span class="fu">auc</span>(roc_obj)), <span class="dv">4</span>),</span>
+<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a>        <span class="at">Accuracy =</span> <span class="fu">round</span>(cm<span class="sc">$</span>overall[<span class="st">'Accuracy'</span>], <span class="dv">4</span>),</span>
+<span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a>        <span class="at">Sensitivity =</span> <span class="fu">round</span>(cm<span class="sc">$</span>byClass[<span class="st">'Sensitivity'</span>], <span class="dv">4</span>),</span>
+<span id="cb25-36"><a href="#cb25-36" aria-hidden="true" tabindex="-1"></a>        <span class="at">Specificity =</span> <span class="fu">round</span>(cm<span class="sc">$</span>byClass[<span class="st">'Specificity'</span>], <span class="dv">4</span>), <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb25-37"><a href="#cb25-37" aria-hidden="true" tabindex="-1"></a>      ))</span>
+<span id="cb25-38"><a href="#cb25-38" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb25-39"><a href="#cb25-39" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb25-40"><a href="#cb25-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(summary_df[<span class="fu">order</span>(<span class="sc">-</span>summary_df<span class="sc">$</span>AUC), ])</span>
+<span id="cb25-41"><a href="#cb25-41" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb25-42"><a href="#cb25-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-43"><a href="#cb25-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-44"><a href="#cb25-44" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">exists</span>(<span class="st">"train_full"</span>)) {</span>
+<span id="cb25-45"><a href="#cb25-45" aria-hidden="true" tabindex="-1"></a>  train_sel <span class="ot">&lt;-</span> train_full[, sel_vars]</span>
+<span id="cb25-46"><a href="#cb25-46" aria-hidden="true" tabindex="-1"></a>  valid_sel <span class="ot">&lt;-</span> valid_full[, sel_vars]</span>
+<span id="cb25-47"><a href="#cb25-47" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="caso-1-todas-las-variables-sin-balanceo" class="level2">
+<h2 class="anchored" data-anchor-id="caso-1-todas-las-variables-sin-balanceo">Caso 1: Todas las Variables / Sin Balanceo</h2>
+<p>En este primer escenario base, se utilizan todas las variables disponibles sin corregir el leve desbalance de clases.</p>
+<p>Al ejecutar este caso, se observa que el modelo GBM obtuvo el mejor AUC con 0.6425. Sin embargo, el problema del desbalance es evidente en la métrica de Sensibilidad (capacidad de detectar “Fail”), la cual fue muy baja para la mayoría de los modelos (ej. GBM con 0.25 y Random Forest con 0.4062). Esto indica que los modelos tienden a predecir la clase mayoritaria (“Pass”).</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Configuración del Control (Cross-Validation)</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>ctrl_nobal <span class="ot">&lt;-</span> <span class="fu">trainControl</span>(<span class="at">method =</span> <span class="st">"cv"</span>, <span class="at">number =</span> <span class="dv">10</span>, <span class="at">classProbs =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">summaryFunction =</span> twoClassSummary, <span class="at">savePredictions =</span> <span class="st">"final"</span>)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Lista de Modelos a evaluar</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>models_case1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"glm"</span>, <span class="st">"knn"</span>, <span class="st">"svmRadial"</span>, <span class="st">"rpart"</span>, <span class="st">"rf"</span>, <span class="st">"gbm"</span>, <span class="st">"naive_bayes"</span>)</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Ejecución del Experimento</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Guardamos los resultados en 'res_c1'</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>res_c1 <span class="ot">&lt;-</span> <span class="fu">run_experiment_case</span>(<span class="st">"Case 1"</span>, <span class="st">"Resultados_CódigoFinal/Results_Case1"</span>, </span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>                              train_full, valid_full, ctrl_nobal, models_case1)</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. VISUALIZACIÓN DE RESULTADOS EN EL DOCUMENTO</span></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="co"># (Esto es lo que faltaba para que aparezca en el reporte)</span></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"--- TABLA DE RENDIMIENTO: CASO 1 ---"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "--- TABLA DE RENDIMIENTO: CASO 1 ---"</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Usamos kable para que la tabla se vea profesional en el reporte</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(res_c1, <span class="at">digits =</span> <span class="dv">4</span>, <span class="at">caption =</span> <span class="st">"Resultados: Todas las Variables / Sin Balanceo"</span>,<span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Resultados: Todas las Variables / Sin Balanceo</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Model</th>
+<th style="text-align: right;">AUC</th>
+<th style="text-align: right;">Accuracy</th>
+<th style="text-align: right;">Sensitivity</th>
+<th style="text-align: right;">Specificity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">gbm</td>
+<td style="text-align: right;">0.6425</td>
+<td style="text-align: right;">0.6327</td>
+<td style="text-align: right;">0.2500</td>
+<td style="text-align: right;">0.8182</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">glm</td>
+<td style="text-align: right;">0.6335</td>
+<td style="text-align: right;">0.6122</td>
+<td style="text-align: right;">0.3125</td>
+<td style="text-align: right;">0.7576</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">rf</td>
+<td style="text-align: right;">0.6127</td>
+<td style="text-align: right;">0.7143</td>
+<td style="text-align: right;">0.4062</td>
+<td style="text-align: right;">0.8636</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">rpart</td>
+<td style="text-align: right;">0.6125</td>
+<td style="text-align: right;">0.6429</td>
+<td style="text-align: right;">0.3750</td>
+<td style="text-align: right;">0.7727</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">svmRadial</td>
+<td style="text-align: right;">0.5909</td>
+<td style="text-align: right;">0.7041</td>
+<td style="text-align: right;">0.3125</td>
+<td style="text-align: right;">0.8939</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">naive_bayes</td>
+<td style="text-align: right;">0.5421</td>
+<td style="text-align: right;">0.5918</td>
+<td style="text-align: right;">0.3125</td>
+<td style="text-align: right;">0.7273</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">knn</td>
+<td style="text-align: right;">0.5386</td>
+<td style="text-align: right;">0.6327</td>
+<td style="text-align: right;">0.2500</td>
+<td style="text-align: right;">0.8182</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="caso-2-todas-las-variables-con-balanceo-up-sampling" class="level2">
+<h2 class="anchored" data-anchor-id="caso-2-todas-las-variables-con-balanceo-up-sampling">Caso 2: Todas las Variables / Con Balanceo (Up-Sampling)</h2>
+<p>Aquí se aplica la técnica de Up-Sampling para equilibrar las clases durante el entrenamiento.</p>
+<p>Análisis de Resultados: Con el balanceo, el modelo GLM lideró la tabla con un AUC de 0.6316. Lo más destacable es la mejora drástica en la Sensibilidad: el GLM subió a 0.50 y el KNN a 0.5312. Aunque la Exactitud (Accuracy) general cae ligeramente respecto al Caso 1, el modelo es mucho más útil para identificar a los estudiantes en riesgo.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Configuración del Control (Con Balanceo 'Up-Sampling')</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>ctrl_bal <span class="ot">&lt;-</span> <span class="fu">trainControl</span>(<span class="at">method =</span> <span class="st">"cv"</span>, <span class="at">number =</span> <span class="dv">10</span>, <span class="at">classProbs =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">summaryFunction =</span> twoClassSummary, <span class="at">savePredictions =</span> <span class="st">"final"</span>,</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">sampling =</span> <span class="st">"up"</span>)</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Lista de Modelos (Estándar)</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>models_std <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"glm"</span>, <span class="st">"knn"</span>, <span class="st">"svmRadial"</span>, <span class="st">"rpart"</span>, <span class="st">"rf"</span>, <span class="st">"gbm"</span>)</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Ejecución del Experimento</span></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>res_c2 <span class="ot">&lt;-</span> <span class="fu">run_experiment_case</span>(<span class="st">"Case 2"</span>, <span class="st">"Resultados_CódigoFinal/Results_Case2"</span>, </span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>                              train_full, valid_full, ctrl_bal, models_std)</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. VISUALIZACIÓN DE RESULTADOS</span></span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"--- TABLA DE RENDIMIENTO: CASO 2 ---"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "--- TABLA DE RENDIMIENTO: CASO 2 ---"</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(res_c2, <span class="at">digits =</span> <span class="dv">4</span>, <span class="at">caption =</span> <span class="st">"Resultados: Todas las Variables / Con Balanceo (Up-Sampling)"</span>,<span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Resultados: Todas las Variables / Con Balanceo (Up-Sampling)</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Model</th>
+<th style="text-align: right;">AUC</th>
+<th style="text-align: right;">Accuracy</th>
+<th style="text-align: right;">Sensitivity</th>
+<th style="text-align: right;">Specificity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">glm</td>
+<td style="text-align: right;">0.6316</td>
+<td style="text-align: right;">0.6122</td>
+<td style="text-align: right;">0.5000</td>
+<td style="text-align: right;">0.6667</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">gbm</td>
+<td style="text-align: right;">0.6259</td>
+<td style="text-align: right;">0.6327</td>
+<td style="text-align: right;">0.4062</td>
+<td style="text-align: right;">0.7424</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">rf</td>
+<td style="text-align: right;">0.6120</td>
+<td style="text-align: right;">0.6633</td>
+<td style="text-align: right;">0.4062</td>
+<td style="text-align: right;">0.7879</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">svmRadial</td>
+<td style="text-align: right;">0.6009</td>
+<td style="text-align: right;">0.5918</td>
+<td style="text-align: right;">0.3750</td>
+<td style="text-align: right;">0.6970</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">rpart</td>
+<td style="text-align: right;">0.5881</td>
+<td style="text-align: right;">0.6837</td>
+<td style="text-align: right;">0.3125</td>
+<td style="text-align: right;">0.8636</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">knn</td>
+<td style="text-align: right;">0.5573</td>
+<td style="text-align: right;">0.5714</td>
+<td style="text-align: right;">0.5312</td>
+<td style="text-align: right;">0.5909</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="caso-3-variables-seleccionadas-sin-balanceo" class="level2">
+<h2 class="anchored" data-anchor-id="caso-3-variables-seleccionadas-sin-balanceo">Caso 3: Variables Seleccionadas / Sin Balanceo</h2>
+<p>En el Caso 3 (Variables Seleccionadas / Sin Balanceo), el modelo GLM obtuvo el mayor AUC (0.6671), seguido por GBM (0.6615). A pesar de la selección de variables, la sensibilidad (capacidad para detectar la clase positiva, que en este caso son los estudiantes que reprueban) sigue siendo baja, con un valor de 0.3750 para GLM y 0.3125 para GBM, lo que indica que el modelo no está capturando bien a los estudiantes en riesgo. La especificidad, en cambio, es alta (0.8485 para GLM), lo que significa que el modelo es bueno para identificar a los estudiantes que pasarán.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Ejecución del Experimento</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Utilizamos 'train_sel' y 'valid_sel' (definidos en la sección de selección)</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Utilizamos 'ctrl_nobal' y 'models_std' (definidos en pasos anteriores)</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>res_c3 <span class="ot">&lt;-</span> <span class="fu">run_experiment_case</span>(<span class="st">"Case 3"</span>, <span class="st">"Resultados_CódigoFinal/Results_Case3"</span>, </span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>                              train_sel, valid_sel, ctrl_nobal, models_std)</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. VISUALIZACIÓN DE RESULTADOS</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"--- TABLA DE RENDIMIENTO: CASO 3 ---"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "--- TABLA DE RENDIMIENTO: CASO 3 ---"</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(res_c3, <span class="at">digits =</span> <span class="dv">4</span>, <span class="at">caption =</span> <span class="st">"Resultados: Variables Seleccionadas / Sin Balanceo"</span>,<span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Resultados: Variables Seleccionadas / Sin Balanceo</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Model</th>
+<th style="text-align: right;">AUC</th>
+<th style="text-align: right;">Accuracy</th>
+<th style="text-align: right;">Sensitivity</th>
+<th style="text-align: right;">Specificity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">glm</td>
+<td style="text-align: right;">0.6671</td>
+<td style="text-align: right;">0.6939</td>
+<td style="text-align: right;">0.3750</td>
+<td style="text-align: right;">0.8485</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">gbm</td>
+<td style="text-align: right;">0.6615</td>
+<td style="text-align: right;">0.6224</td>
+<td style="text-align: right;">0.3125</td>
+<td style="text-align: right;">0.7727</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">svmRadial</td>
+<td style="text-align: right;">0.6520</td>
+<td style="text-align: right;">0.6633</td>
+<td style="text-align: right;">0.3438</td>
+<td style="text-align: right;">0.8182</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">knn</td>
+<td style="text-align: right;">0.6302</td>
+<td style="text-align: right;">0.6224</td>
+<td style="text-align: right;">0.2500</td>
+<td style="text-align: right;">0.8030</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">rf</td>
+<td style="text-align: right;">0.6274</td>
+<td style="text-align: right;">0.6327</td>
+<td style="text-align: right;">0.3438</td>
+<td style="text-align: right;">0.7727</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">rpart</td>
+<td style="text-align: right;">0.6009</td>
+<td style="text-align: right;">0.6939</td>
+<td style="text-align: right;">0.3125</td>
+<td style="text-align: right;">0.8788</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="caso-4-variables-seleccionadas-con-balanceo" class="level2">
+<h2 class="anchored" data-anchor-id="caso-4-variables-seleccionadas-con-balanceo">Caso 4: Variables Seleccionadas / Con Balanceo</h2>
+<p>La combinación de selección de variables y balanceo produjo los mejores resultados para la identificación de estudiantes en riesgo. El modelo GLM alcanzó el mejor AUC del estudio (0.6806), seguido muy de cerca por SVM Radial (0.6802). Además, el balanceo permitió que la Sensibilidad alcanzara niveles significativamente más altos, con el modelo KNN logrando la mayor detección de casos en riesgo (0.6250), lo que confirma que tanto la reducción de dimensionalidad como el balanceo de clases son esenciales para construir modelos que realmente puedan identificar a los estudiantes que necesitan intervención.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Ejecución del Experimento</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Utilizamos 'ctrl_bal' (que incluye sampling="up") y las variables seleccionadas</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>res_c4 <span class="ot">&lt;-</span> <span class="fu">run_experiment_case</span>(<span class="st">"Case 4"</span>, <span class="st">"Resultados_CódigoFinal/Results_Case4_Selected_Balanced"</span>, </span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>                              train_sel, valid_sel, ctrl_bal, models_std)</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. VISUALIZACIÓN DE RESULTADOS</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"--- TABLA DE RENDIMIENTO: CASO 4 (OPTIMIZADO) ---"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "--- TABLA DE RENDIMIENTO: CASO 4 (OPTIMIZADO) ---"</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(res_c4, <span class="at">digits =</span> <span class="dv">4</span>, <span class="at">caption =</span> <span class="st">"Resultados: Variables Seleccionadas / Con Balanceo (Up-Sampling)"</span>,<span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Resultados: Variables Seleccionadas / Con Balanceo (Up-Sampling)</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Model</th>
+<th style="text-align: right;">AUC</th>
+<th style="text-align: right;">Accuracy</th>
+<th style="text-align: right;">Sensitivity</th>
+<th style="text-align: right;">Specificity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">glm</td>
+<td style="text-align: right;">0.6806</td>
+<td style="text-align: right;">0.6327</td>
+<td style="text-align: right;">0.5312</td>
+<td style="text-align: right;">0.6818</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">svmRadial</td>
+<td style="text-align: right;">0.6802</td>
+<td style="text-align: right;">0.6531</td>
+<td style="text-align: right;">0.5938</td>
+<td style="text-align: right;">0.6818</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">knn</td>
+<td style="text-align: right;">0.6683</td>
+<td style="text-align: right;">0.6122</td>
+<td style="text-align: right;">0.6250</td>
+<td style="text-align: right;">0.6061</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">gbm</td>
+<td style="text-align: right;">0.6584</td>
+<td style="text-align: right;">0.6429</td>
+<td style="text-align: right;">0.5000</td>
+<td style="text-align: right;">0.7121</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">rf</td>
+<td style="text-align: right;">0.6546</td>
+<td style="text-align: right;">0.6429</td>
+<td style="text-align: right;">0.4375</td>
+<td style="text-align: right;">0.7424</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">rpart</td>
+<td style="text-align: right;">0.5743</td>
+<td style="text-align: right;">0.5918</td>
+<td style="text-align: right;">0.5000</td>
+<td style="text-align: right;">0.6364</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</section>
+<section id="análisis-comparativo-del-desempeño-de-los-modelos" class="level1">
+<h1>4.Análisis comparativo del desempeño de los modelos</h1>
+<section id="resultados-de-los-modelos" class="level2">
+<h2 class="anchored" data-anchor-id="resultados-de-los-modelos">Resultados de los modelos</h2>
+<p>En esta sección, se combinan las tablas de rendimiento de cada caso (Todas las variables vs.&nbsp;Seleccionadas / Sin Balanceo vs.&nbsp;Con Balanceo) en un único conjunto de datos. Esta integración permitirá realizar una comparación directa y ordenada por AUC para determinar, con evidencia métrica, cuál fue la estrategia más efectiva para predecir el rendimiento estudiantil.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Código para generar la tabla final y gráficos</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="co"># (Se asume que los dataframes res_c1, res_c2, res_c3, res_c4 existen)</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>res_c1<span class="sc">$</span>Case <span class="ot">&lt;-</span> <span class="st">"Case 1: All/NoBal"</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>res_c2<span class="sc">$</span>Case <span class="ot">&lt;-</span> <span class="st">"Case 2: All/Balanced"</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>res_c3<span class="sc">$</span>Case <span class="ot">&lt;-</span> <span class="st">"Case 3: Sel/NoBal"</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>res_c4<span class="sc">$</span>Case <span class="ot">&lt;-</span> <span class="st">"Case 4: Sel/Balanced"</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>all_results <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(res_c1, res_c2, res_c3, res_c4) <span class="sc">%&gt;%</span></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(Case, Model, AUC, Accuracy, Sensitivity, Specificity) <span class="sc">%&gt;%</span></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Case, <span class="fu">desc</span>(AUC))</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Usamos kable para que la tabla se vea profesional en el reporte, sin nombres de fila</span></span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(all_results, <span class="at">digits =</span> <span class="dv">4</span>, <span class="at">caption =</span> <span class="st">"Comparación de los 4 Casos"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Comparación de los 4 Casos</caption>
+<colgroup>
+<col style="width: 28%">
+<col style="width: 16%">
+<col style="width: 9%">
+<col style="width: 12%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Case</th>
+<th style="text-align: left;">Model</th>
+<th style="text-align: right;">AUC</th>
+<th style="text-align: right;">Accuracy</th>
+<th style="text-align: right;">Sensitivity</th>
+<th style="text-align: right;">Specificity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Case 1: All/NoBal</td>
+<td style="text-align: left;">gbm</td>
+<td style="text-align: right;">0.6425</td>
+<td style="text-align: right;">0.6327</td>
+<td style="text-align: right;">0.2500</td>
+<td style="text-align: right;">0.8182</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Case 1: All/NoBal</td>
+<td style="text-align: left;">glm</td>
+<td style="text-align: right;">0.6335</td>
+<td style="text-align: right;">0.6122</td>
+<td style="text-align: right;">0.3125</td>
+<td style="text-align: right;">0.7576</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Case 1: All/NoBal</td>
+<td style="text-align: left;">rf</td>
+<td style="text-align: right;">0.6127</td>
+<td style="text-align: right;">0.7143</td>
+<td style="text-align: right;">0.4062</td>
+<td style="text-align: right;">0.8636</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Case 1: All/NoBal</td>
+<td style="text-align: left;">rpart</td>
+<td style="text-align: right;">0.6125</td>
+<td style="text-align: right;">0.6429</td>
+<td style="text-align: right;">0.3750</td>
+<td style="text-align: right;">0.7727</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Case 1: All/NoBal</td>
+<td style="text-align: left;">svmRadial</td>
+<td style="text-align: right;">0.5909</td>
+<td style="text-align: right;">0.7041</td>
+<td style="text-align: right;">0.3125</td>
+<td style="text-align: right;">0.8939</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Case 1: All/NoBal</td>
+<td style="text-align: left;">naive_bayes</td>
+<td style="text-align: right;">0.5421</td>
+<td style="text-align: right;">0.5918</td>
+<td style="text-align: right;">0.3125</td>
+<td style="text-align: right;">0.7273</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Case 1: All/NoBal</td>
+<td style="text-align: left;">knn</td>
+<td style="text-align: right;">0.5386</td>
+<td style="text-align: right;">0.6327</td>
+<td style="text-align: right;">0.2500</td>
+<td style="text-align: right;">0.8182</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Case 2: All/Balanced</td>
+<td style="text-align: left;">glm</td>
+<td style="text-align: right;">0.6316</td>
+<td style="text-align: right;">0.6122</td>
+<td style="text-align: right;">0.5000</td>
+<td style="text-align: right;">0.6667</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Case 2: All/Balanced</td>
+<td style="text-align: left;">gbm</td>
+<td style="text-align: right;">0.6259</td>
+<td style="text-align: right;">0.6327</td>
+<td style="text-align: right;">0.4062</td>
+<td style="text-align: right;">0.7424</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Case 2: All/Balanced</td>
+<td style="text-align: left;">rf</td>
+<td style="text-align: right;">0.6120</td>
+<td style="text-align: right;">0.6633</td>
+<td style="text-align: right;">0.4062</td>
+<td style="text-align: right;">0.7879</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Case 2: All/Balanced</td>
+<td style="text-align: left;">svmRadial</td>
+<td style="text-align: right;">0.6009</td>
+<td style="text-align: right;">0.5918</td>
+<td style="text-align: right;">0.3750</td>
+<td style="text-align: right;">0.6970</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Case 2: All/Balanced</td>
+<td style="text-align: left;">rpart</td>
+<td style="text-align: right;">0.5881</td>
+<td style="text-align: right;">0.6837</td>
+<td style="text-align: right;">0.3125</td>
+<td style="text-align: right;">0.8636</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Case 2: All/Balanced</td>
+<td style="text-align: left;">knn</td>
+<td style="text-align: right;">0.5573</td>
+<td style="text-align: right;">0.5714</td>
+<td style="text-align: right;">0.5312</td>
+<td style="text-align: right;">0.5909</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Case 3: Sel/NoBal</td>
+<td style="text-align: left;">glm</td>
+<td style="text-align: right;">0.6671</td>
+<td style="text-align: right;">0.6939</td>
+<td style="text-align: right;">0.3750</td>
+<td style="text-align: right;">0.8485</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Case 3: Sel/NoBal</td>
+<td style="text-align: left;">gbm</td>
+<td style="text-align: right;">0.6615</td>
+<td style="text-align: right;">0.6224</td>
+<td style="text-align: right;">0.3125</td>
+<td style="text-align: right;">0.7727</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Case 3: Sel/NoBal</td>
+<td style="text-align: left;">svmRadial</td>
+<td style="text-align: right;">0.6520</td>
+<td style="text-align: right;">0.6633</td>
+<td style="text-align: right;">0.3438</td>
+<td style="text-align: right;">0.8182</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Case 3: Sel/NoBal</td>
+<td style="text-align: left;">knn</td>
+<td style="text-align: right;">0.6302</td>
+<td style="text-align: right;">0.6224</td>
+<td style="text-align: right;">0.2500</td>
+<td style="text-align: right;">0.8030</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Case 3: Sel/NoBal</td>
+<td style="text-align: left;">rf</td>
+<td style="text-align: right;">0.6274</td>
+<td style="text-align: right;">0.6327</td>
+<td style="text-align: right;">0.3438</td>
+<td style="text-align: right;">0.7727</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Case 3: Sel/NoBal</td>
+<td style="text-align: left;">rpart</td>
+<td style="text-align: right;">0.6009</td>
+<td style="text-align: right;">0.6939</td>
+<td style="text-align: right;">0.3125</td>
+<td style="text-align: right;">0.8788</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Case 4: Sel/Balanced</td>
+<td style="text-align: left;">glm</td>
+<td style="text-align: right;">0.6806</td>
+<td style="text-align: right;">0.6327</td>
+<td style="text-align: right;">0.5312</td>
+<td style="text-align: right;">0.6818</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Case 4: Sel/Balanced</td>
+<td style="text-align: left;">svmRadial</td>
+<td style="text-align: right;">0.6802</td>
+<td style="text-align: right;">0.6531</td>
+<td style="text-align: right;">0.5938</td>
+<td style="text-align: right;">0.6818</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Case 4: Sel/Balanced</td>
+<td style="text-align: left;">knn</td>
+<td style="text-align: right;">0.6683</td>
+<td style="text-align: right;">0.6122</td>
+<td style="text-align: right;">0.6250</td>
+<td style="text-align: right;">0.6061</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Case 4: Sel/Balanced</td>
+<td style="text-align: left;">gbm</td>
+<td style="text-align: right;">0.6584</td>
+<td style="text-align: right;">0.6429</td>
+<td style="text-align: right;">0.5000</td>
+<td style="text-align: right;">0.7121</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Case 4: Sel/Balanced</td>
+<td style="text-align: left;">rf</td>
+<td style="text-align: right;">0.6546</td>
+<td style="text-align: right;">0.6429</td>
+<td style="text-align: right;">0.4375</td>
+<td style="text-align: right;">0.7424</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Case 4: Sel/Balanced</td>
+<td style="text-align: left;">rpart</td>
+<td style="text-align: right;">0.5743</td>
+<td style="text-align: right;">0.5918</td>
+<td style="text-align: right;">0.5000</td>
+<td style="text-align: right;">0.6364</td>
+</tr>
+</tbody>
+</table>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write.table</span>(all_results, <span class="st">"Resultados_CódigoFinal/Comparison_All_4_Cases.txt"</span>, </span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">sep =</span> <span class="st">"</span><span class="sc">\t</span><span class="st">"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="ranking-de-los-mejores-modelos" class="level2">
+<h2 class="anchored" data-anchor-id="ranking-de-los-mejores-modelos">Ranking de los mejores modelos</h2>
+<p>El objetivo más importante de este estudio es identificar a los estudiantes en riesgo de reprobación. En este contexto, el costo de no detectar a un estudiante que va a reprobar (Falso Negativo) es mucho mayor que el costo de intervenir innecesariamente con un estudiante que iba a aprobar (Falso Positivo). Por lo tanto, priorizamos la Sensibilidad sobre otras métricas.</p>
+<p>Analizando los resultados del Caso 4 (Selección + Balanceo), presentamos las mejores opciones bajo este criterio:</p>
+<section id="la-opción-de-máxima-seguridad-knn-caso-4" class="level3">
+<h3 class="anchored" data-anchor-id="la-opción-de-máxima-seguridad-knn-caso-4">La Opción de Máxima Seguridad: KNN (Caso 4)</h3>
+<p>Si la política institucional es “ningún estudiante en riesgo debe pasar desapercibido”, el K-Vecinos Más Cercanos (KNN) es la elección correcta.</p>
+<p>Desempeño: Logró la Sensibilidad más alta del estudio (0.6250). Esto significa que es capaz de detectar el 62.5% de los casos de reprobación, superando a todos los demás algoritmos.</p>
+<p>La Contrapartida: Su Especificidad es del 0.6061. Esto implica que habrá más “falsas alarmas” (estudiantes que el modelo marca en riesgo pero que aprobarían), lo cual requerirá más recursos docentes para intervenciones preventivas, pero garantiza la mayor cobertura de seguridad.</p>
+</section>
+<section id="el-balance-óptimo-svm-radial-caso-4" class="level3">
+<h3 class="anchored" data-anchor-id="el-balance-óptimo-svm-radial-caso-4">El Balance Óptimo: SVM Radial (Caso 4)</h3>
+<p>Si se busca un equilibrio donde se mantenga una alta detección de riesgo sin generar excesivas falsas alarmas, el SVM Radial es la mejor alternativa técnica.</p>
+<p>Desempeño: Ofrece una Sensibilidad muy competitiva de 0.5938 (muy cerca del KNN) pero mejora significativamente la Especificidad a 0.6818.</p>
+<p>Ventaja: Detecta casi la misma cantidad de estudiantes en riesgo que el KNN, pero se equivoca menos al clasificar a los estudiantes seguros, ofreciendo una gestión más eficiente de los recursos de tutoría.</p>
+</section>
+<section id="alternativa-destacada-por-auc-glm-caso-4" class="level3">
+<h3 class="anchored" data-anchor-id="alternativa-destacada-por-auc-glm-caso-4">Alternativa Destacada por AUC: GLM (Caso 4)</h3>
+<p>Aunque el Modelo Lineal Generalizado obtuvo el mejor AUC global (0.6806), su Sensibilidad de 0.5312 lo hace menos apto para este objetivo específico. Deja pasar a casi la mitad de los estudiantes en riesgo sin detectarlos, por lo que se descarta frente a la prioridad de seguridad del KNN o el SVM.</p>
+</section>
+</section>
+</section>
+<section id="hallazgos-y-conclusion-del-estudio" class="level1">
+<h1>Hallazgos y conclusion del estudio</h1>
+<section id="hallazgos" class="level2">
+<h2 class="anchored" data-anchor-id="hallazgos">Hallazgos</h2>
+<p>Tras ejecutar el análisis completo, se han identificado los factores que más influyeron en el rendimiento estudiantil y los modelos que mejor logran predecirlo.</p>
+<section id="variables-influyentes-en-el-éxito-o-fracaso-académico-en-matemática" class="level3">
+<h3 class="anchored" data-anchor-id="variables-influyentes-en-el-éxito-o-fracaso-académico-en-matemática">Variables influyentes en el Éxito o Fracaso académico en matemática</h3>
+<p>A través del método de consenso algorítmico (donde Chi-Cuadrado, Boruta y RFE votaron por las variables más fuertes), se determinó que el rendimiento de un estudiante no depende de todas las variables recolectadas, sino fundamentalmente de estas cinco:</p>
+<ol type="a">
+<li><p><strong>failures (Historial de Reprobación):</strong> Es el predictor más fuerte. El historial académico pasado es el mejor indicador del futuro; un estudiante que ya ha reprobado anteriormente tiene un riesgo significativamente mayor.</p></li>
+<li><p><strong>higher (Aspiración Superior):</strong> La motivación intrínseca juega un papel importante. Los estudiantes que desean cursar educación superior muestran un perfil de aprobación mucho más sólido.</p></li>
+<li><p><strong>absences (Ausentismo):</strong> La asistencia regular es fundamental. Un número elevado de faltas correlaciona directamente con la probabilidad de reprobar.</p></li>
+<li><p><strong>goout (Vida Social):</strong> La frecuencia con la que el estudiante sale con amigos impacta su rendimiento, probablemente restando tiempo de estudio si es excesiva.</p></li>
+<li><p><strong>schoolsup (Apoyo Educativo Extra):</strong> Curiosamente, recibir apoyo extra es un indicador de riesgo, ya que generalmente se asigna a estudiantes que ya están teniendo dificultades académicas.</p></li>
+</ol>
+</section>
+<section id="resumen-de-los-modelos-más-eficaces" class="level3">
+<h3 class="anchored" data-anchor-id="resumen-de-los-modelos-más-eficaces">Resumen de los Modelos Más Eficaces</h3>
+<p>Basándose en el escenario optimizado (Caso 4: Variables Seleccionadas + Balanceo), estos son los tres modelos que mostraron el mejor desempeño para la detección de estudiantes en riesgo:</p>
+<ul>
+<li><p><strong>KNN (K-Vecinos Más Cercanos):</strong> Fue el mejor detector de riesgo. Si el objetivo es identificar a la mayor cantidad posible de estudiantes vulnerables (alta Sensibilidad), este es el algoritmo ganador.</p></li>
+<li><p><strong>SVM Radial (Máquina de Vectores de Soporte):</strong> Se destacó como la opción equilibrada. Ofrece un compromiso sólido entre detectar estudiantes en riesgo y no generar demasiadas falsas alarmas.</p></li>
+<li><p><strong>GLM (Regresión Logística):</strong> Sobresalió por su estabilidad global. Obtuvo el puntaje más alto en AUC, lo que significa que es matemáticamente el más robusto para separar las clases de “Pasa” y “Reprueba” en general, aunque es menos agresivo detectando el riesgo puro.</p></li>
+</ul>
+</section>
+</section>
+<section id="conclusión" class="level2">
+<h2 class="anchored" data-anchor-id="conclusión">Conclusión</h2>
+<p>En conclusión, para cumplir con el objetivo de maximizar la detección de estudiantes en riesgo, se recomienda implementar el modelo KNN del Caso 4 (selección de variables y balanceo de clases). Aunque sacrifica precisión global, es la herramienta más efectiva disponible en este análisis para asegurar que la mayor cantidad posible de estudiantes vulnerables reciban atención temprana.</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

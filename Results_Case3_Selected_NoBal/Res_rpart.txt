@@ -1,16 +1,32 @@
 [1] "MODEL: rpart"
 [1] "AUC: 0.5881"
-[1] "Confusion Matrix:"
+Confusion Matrix and Statistics
+
           Reference
 Prediction Fail Pass
       Fail   10    9
       Pass   22   57
-[1] "Detailed Metrics:"
-         Sensitivity          Specificity       Pos Pred Value 
-           0.3125000            0.8636364            0.5263158 
-      Neg Pred Value            Precision               Recall 
-           0.7215190            0.5263158            0.3125000 
-                  F1           Prevalence       Detection Rate 
-           0.3921569            0.3265306            0.1020408 
-Detection Prevalence    Balanced Accuracy 
-           0.1938776            0.5880682 
+                                         
+               Accuracy : 0.6837         
+                 95% CI : (0.582, 0.7739)
+    No Information Rate : 0.6735         
+    P-Value [Acc > NIR] : 0.46207        
+                                         
+                  Kappa : 0.1967         
+                                         
+ Mcnemar's Test P-Value : 0.03114        
+                                         
+            Sensitivity : 0.3125         
+            Specificity : 0.8636         
+         Pos Pred Value : 0.5263         
+         Neg Pred Value : 0.7215         
+              Precision : 0.5263         
+                 Recall : 0.3125         
+                     F1 : 0.3922         
+             Prevalence : 0.3265         
+         Detection Rate : 0.1020         
+   Detection Prevalence : 0.1939         
+      Balanced Accuracy : 0.5881         
+                                         
+       'Positive' Class : Fail           
+                                         

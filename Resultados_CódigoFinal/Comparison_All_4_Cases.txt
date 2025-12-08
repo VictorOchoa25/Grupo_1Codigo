@@ -1,0 +1,26 @@
+"Case"	"Model"	"AUC"	"Accuracy"	"Sensitivity"	"Specificity"
+"Case 1: All/NoBal"	"gbm"	0.6425	0.6327	0.25	0.8182
+"Case 1: All/NoBal"	"glm"	0.6335	0.6122	0.3125	0.7576
+"Case 1: All/NoBal"	"rf"	0.6127	0.7143	0.4062	0.8636
+"Case 1: All/NoBal"	"rpart"	0.6125	0.6429	0.375	0.7727
+"Case 1: All/NoBal"	"svmRadial"	0.5909	0.7041	0.3125	0.8939
+"Case 1: All/NoBal"	"naive_bayes"	0.5421	0.5918	0.3125	0.7273
+"Case 1: All/NoBal"	"knn"	0.5386	0.6327	0.25	0.8182
+"Case 2: All/Balanced"	"glm"	0.6316	0.6122	0.5	0.6667
+"Case 2: All/Balanced"	"gbm"	0.6259	0.6327	0.4062	0.7424
+"Case 2: All/Balanced"	"rf"	0.612	0.6633	0.4062	0.7879
+"Case 2: All/Balanced"	"svmRadial"	0.6009	0.5918	0.375	0.697
+"Case 2: All/Balanced"	"rpart"	0.5881	0.6837	0.3125	0.8636
+"Case 2: All/Balanced"	"knn"	0.5573	0.5714	0.5312	0.5909
+"Case 3: Sel/NoBal"	"glm"	0.6671	0.6939	0.375	0.8485
+"Case 3: Sel/NoBal"	"gbm"	0.6615	0.6224	0.3125	0.7727
+"Case 3: Sel/NoBal"	"svmRadial"	0.652	0.6633	0.3438	0.8182
+"Case 3: Sel/NoBal"	"knn"	0.6302	0.6224	0.25	0.803
+"Case 3: Sel/NoBal"	"rf"	0.6274	0.6327	0.3438	0.7727
+"Case 3: Sel/NoBal"	"rpart"	0.6009	0.6939	0.3125	0.8788
+"Case 4: Sel/Balanced"	"glm"	0.6806	0.6327	0.5312	0.6818
+"Case 4: Sel/Balanced"	"svmRadial"	0.6802	0.6531	0.5938	0.6818
+"Case 4: Sel/Balanced"	"knn"	0.6683	0.6122	0.625	0.6061
+"Case 4: Sel/Balanced"	"gbm"	0.6584	0.6429	0.5	0.7121
+"Case 4: Sel/Balanced"	"rf"	0.6546	0.6429	0.4375	0.7424
+"Case 4: Sel/Balanced"	"rpart"	0.5743	0.5918	0.5	0.6364

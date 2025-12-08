@@ -1,0 +1,193 @@
+[1] "========================================================"
+[1] "STARTING EXECUTION: 2025-12-08 06:42:39.45342"
+[1] "ALL OUTPUTS WILL BE SAVED IN: Resultados_CódigoFinal"
+[1] "========================================================"
+[1] "--- STARTING DATA PREPARATION ---"
+[1] "Data structure:"
+'data.frame':	395 obs. of  31 variables:
+ $ school    : Factor w/ 2 levels "GP","MS": 1 1 1 1 1 1 1 1 1 1 ...
+ $ sex       : Factor w/ 2 levels "F","M": 1 1 1 1 1 2 2 1 2 2 ...
+ $ age       : num  18 17 15 15 16 16 16 17 15 15 ...
+ $ address   : Factor w/ 2 levels "R","U": 2 2 2 2 2 2 2 2 2 2 ...
+ $ famsize   : Factor w/ 2 levels "GT3","LE3": 1 1 2 1 1 2 2 1 2 1 ...
+ $ Pstatus   : Factor w/ 2 levels "A","T": 1 2 2 2 2 2 2 1 1 2 ...
+ $ Medu      : num  4 1 1 4 3 4 2 4 3 3 ...
+ $ Fedu      : num  4 1 1 2 3 3 2 4 2 4 ...
+ $ Mjob      : Factor w/ 5 levels "at_home","health",..: 1 1 1 2 3 4 3 3 4 3 ...
+ $ Fjob      : Factor w/ 5 levels "at_home","health",..: 5 3 3 4 3 3 3 5 3 3 ...
+ $ reason    : Factor w/ 4 levels "course","home",..: 1 1 3 2 2 4 2 2 2 2 ...
+ $ guardian  : Factor w/ 3 levels "father","mother",..: 2 1 2 2 1 2 2 2 2 2 ...
+ $ traveltime: num  2 1 1 1 1 1 1 2 1 1 ...
+ $ studytime : num  2 2 2 3 2 2 2 2 2 2 ...
+ $ failures  : num  0 0 3 0 0 0 0 0 0 0 ...
+ $ schoolsup : Factor w/ 2 levels "no","yes": 2 1 2 1 1 1 1 2 1 1 ...
+ $ famsup    : Factor w/ 2 levels "no","yes": 1 2 1 2 2 2 1 2 2 2 ...
+ $ paid      : Factor w/ 2 levels "no","yes": 1 1 2 2 2 2 1 1 2 2 ...
+ $ activities: Factor w/ 2 levels "no","yes": 1 1 1 2 1 2 1 1 1 2 ...
+ $ nursery   : Factor w/ 2 levels "no","yes": 2 1 2 2 2 2 2 2 2 2 ...
+ $ higher    : Factor w/ 2 levels "no","yes": 2 2 2 2 2 2 2 2 2 2 ...
+ $ internet  : Factor w/ 2 levels "no","yes": 1 2 2 2 1 2 2 1 2 2 ...
+ $ romantic  : Factor w/ 2 levels "no","yes": 1 1 1 2 1 1 1 1 1 1 ...
+ $ famrel    : num  4 5 4 3 4 5 4 4 4 5 ...
+ $ freetime  : num  3 3 3 2 3 4 4 1 2 5 ...
+ $ goout     : num  4 3 2 2 2 2 4 4 2 1 ...
+ $ Dalc      : num  1 1 2 1 1 1 1 1 1 1 ...
+ $ Walc      : num  1 1 3 1 2 2 1 1 1 1 ...
+ $ health    : num  3 3 3 5 5 5 3 1 1 5 ...
+ $ absences  : num  6 4 10 2 4 10 0 6 0 0 ...
+ $ Status    : Factor w/ 2 levels "Fail","Pass": 1 1 2 2 2 2 2 1 2 2 ...
+NULL
+[1] "=== CLASS DISTRIBUTION (COUNTS & PROPORTIONS) ==="
+[1] "Counts:"
+
+Fail Pass 
+ 130  265 
+[1] "Proportions:"
+
+     Fail      Pass 
+0.3291139 0.6708861 
+[1] "================================================"
+[1] "--- STARTING FEATURE SELECTION ---"
+[1] ">> Running Chi-Squared Tests..."
+[1] "Chi-Squared Results (Top 5):"
+    Variable    P_Value
+15    higher 0.00385021
+17  romantic 0.06740352
+10 schoolsup 0.06799817
+9   guardian 0.07000507
+12      paid 0.08287639
+2        sex 0.19488312
+[1] ">> Running Boruta Algorithm..."
+null device 
+          1 
+[1] ">> Running RFE Algorithm..."
+null device 
+          1 
+[1] "RFE Optimal Variables: failures, absences, goout, schoolsup, higher, age, studytime, sex, famsize"
+[1] "Variables Selected for Cases 3 & 4:"
+[1] "failures" "absences" "higher"   "age"      "Medu"     "goout"    "guardian"
+[8] "Status"  
+[1] ">> STARTING: Case 1 (All/NoBal)"
+[1] "   Training: glm"
+[1] "   Training: knn"
+[1] "   Training: svmRadial"
+[1] "   Training: rpart"
+[1] "   Training: rf"
+[1] "   Training: gbm"
+[1] "   Training: naive_bayes"
+Hubo 11 avisos (use warnings() para verlos)
+[1] ">> STARTING: Case 2 (All/Balanced)"
+[1] "   Training: glm"
+[1] "   Training: knn"
+[1] "   Training: svmRadial"
+[1] "   Training: rpart"
+[1] "   Training: rf"
+[1] "   Training: gbm"
+Avisos:
+1: In randomForest.default(x, y, mtry = param$mtry, ...) :
+  invalid mtry: reset to within valid range
+2: In randomForest.default(x, y, mtry = param$mtry, ...) :
+  invalid mtry: reset to within valid range
+3: In randomForest.default(x, y, mtry = param$mtry, ...) :
+  invalid mtry: reset to within valid range
+4: In randomForest.default(x, y, mtry = param$mtry, ...) :
+  invalid mtry: reset to within valid range
+5: In randomForest.default(x, y, mtry = param$mtry, ...) :
+  invalid mtry: reset to within valid range
+6: In randomForest.default(x, y, mtry = param$mtry, ...) :
+  invalid mtry: reset to within valid range
+7: In randomForest.default(x, y, mtry = param$mtry, ...) :
+  invalid mtry: reset to within valid range
+8: In randomForest.default(x, y, mtry = param$mtry, ...) :
+  invalid mtry: reset to within valid range
+9: In randomForest.default(x, y, mtry = param$mtry, ...) :
+  invalid mtry: reset to within valid range
+[1] ">> STARTING: Case 3 (Sel/NoBal)"
+[1] "   Training: glm"
+[1] "   Training: knn"
+[1] "   Training: svmRadial"
+[1] "   Training: rpart"
+[1] "   Training: rf"
+[1] "   Training: gbm"
+Avisos:
+1: In randomForest.default(x, y, mtry = param$mtry, ...) :
+  invalid mtry: reset to within valid range
+2: In randomForest.default(x, y, mtry = param$mtry, ...) :
+  invalid mtry: reset to within valid range
+3: In randomForest.default(x, y, mtry = param$mtry, ...) :
+  invalid mtry: reset to within valid range
+4: In randomForest.default(x, y, mtry = param$mtry, ...) :
+  invalid mtry: reset to within valid range
+5: In randomForest.default(x, y, mtry = param$mtry, ...) :
+  invalid mtry: reset to within valid range
+6: In randomForest.default(x, y, mtry = param$mtry, ...) :
+  invalid mtry: reset to within valid range
+7: In randomForest.default(x, y, mtry = param$mtry, ...) :
+  invalid mtry: reset to within valid range
+8: In randomForest.default(x, y, mtry = param$mtry, ...) :
+  invalid mtry: reset to within valid range
+[1] ">> STARTING: Case 4 (Sel/Balanced)"
+[1] "   Training: glm"
+[1] "   Training: knn"
+[1] "   Training: svmRadial"
+[1] "   Training: rpart"
+[1] "   Training: rf"
+[1] "   Training: gbm"
+Aviso:
+In randomForest.default(x, y, mtry = param$mtry, ...) :
+  invalid mtry: reset to within valid range
+[1] "--- GENERATING FINAL COMPARISON ---"
+[1] "=== OVERALL RESULTS ==="
+                               Case       Model    AUC Accuracy Sensitivity
+Accuracy5...1     Case 1: All/NoBal         gbm 0.6425   0.6327      0.2500
+Accuracy...2      Case 1: All/NoBal         glm 0.6335   0.6122      0.3125
+Accuracy4...3     Case 1: All/NoBal          rf 0.6127   0.7143      0.4062
+Accuracy3...4     Case 1: All/NoBal       rpart 0.6125   0.6429      0.3750
+Accuracy2...5     Case 1: All/NoBal   svmRadial 0.5909   0.7041      0.3125
+Accuracy6         Case 1: All/NoBal naive_bayes 0.5421   0.5918      0.3125
+Accuracy1...7     Case 1: All/NoBal         knn 0.5386   0.6327      0.2500
+Accuracy...8   Case 2: All/Balanced         glm 0.6316   0.6122      0.5000
+Accuracy5...9  Case 2: All/Balanced         gbm 0.6259   0.6327      0.4062
+Accuracy4...10 Case 2: All/Balanced          rf 0.6120   0.6633      0.4062
+Accuracy2...11 Case 2: All/Balanced   svmRadial 0.6009   0.5918      0.3750
+Accuracy3...12 Case 2: All/Balanced       rpart 0.5881   0.6837      0.3125
+Accuracy1...13 Case 2: All/Balanced         knn 0.5573   0.5714      0.5312
+Accuracy...14     Case 3: Sel/NoBal         glm 0.6461   0.6939      0.2812
+Accuracy5...15    Case 3: Sel/NoBal         gbm 0.6409   0.6837      0.2812
+Accuracy4...16    Case 3: Sel/NoBal          rf 0.6274   0.6837      0.3125
+Accuracy1...17    Case 3: Sel/NoBal         knn 0.6054   0.7245      0.3438
+Accuracy2...18    Case 3: Sel/NoBal   svmRadial 0.6016   0.6837      0.3125
+Accuracy3...19    Case 3: Sel/NoBal       rpart 0.5881   0.6837      0.3125
+Accuracy1...20 Case 4: Sel/Balanced         knn 0.6536   0.6327      0.6562
+Accuracy4...21 Case 4: Sel/Balanced          rf 0.6383   0.6531      0.3750
+Accuracy2...22 Case 4: Sel/Balanced   svmRadial 0.6316   0.6939      0.4688
+Accuracy5...23 Case 4: Sel/Balanced         gbm 0.6283   0.6224      0.5312
+Accuracy...24  Case 4: Sel/Balanced         glm 0.6278   0.6122      0.4688
+Accuracy3...25 Case 4: Sel/Balanced       rpart 0.5743   0.6122      0.3125
+               Specificity
+Accuracy5...1       0.8182
+Accuracy...2        0.7576
+Accuracy4...3       0.8636
+Accuracy3...4       0.7727
+Accuracy2...5       0.8939
+Accuracy6           0.7273
+Accuracy1...7       0.8182
+Accuracy...8        0.6667
+Accuracy5...9       0.7424
+Accuracy4...10      0.7879
+Accuracy2...11      0.6970
+Accuracy3...12      0.8636
+Accuracy1...13      0.5909
+Accuracy...14       0.8939
+Accuracy5...15      0.8788
+Accuracy4...16      0.8636
+Accuracy1...17      0.9091
+Accuracy2...18      0.8636
+Accuracy3...19      0.8636
+Accuracy1...20      0.6212
+Accuracy4...21      0.7879
+Accuracy2...22      0.8030
+Accuracy5...23      0.6667
+Accuracy...24       0.6818
+Accuracy3...25      0.7576
+[1] "=== PROCESS COMPLETE: Check folder 'Resultados_CódigoFinal' ==="
