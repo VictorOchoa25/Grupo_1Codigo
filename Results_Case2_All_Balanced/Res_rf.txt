@@ -1,10 +1,12 @@
 [1] "MODEL: rf"
 [1] "AUC: 0.612"
-[1] "Confusion Matrix:"
+Confusion Matrix and Statistics
+
           Reference
 Prediction Fail Pass
       Fail   13   14
       Pass   19   52
+<<<<<<< HEAD
 [1] "Detailed Metrics:"
          Sensitivity          Specificity       Pos Pred Value       Neg Pred Value            Precision 
            0.4062500            0.7878788            0.4814815            0.7323944            0.4814815 
@@ -12,3 +14,29 @@ Prediction Fail Pass
            0.4062500            0.4406780            0.3265306            0.1326531            0.2755102 
    Balanced Accuracy 
            0.5970644 
+=======
+                                          
+               Accuracy : 0.6633          
+                 95% CI : (0.5607, 0.7556)
+    No Information Rate : 0.6735          
+    P-Value [Acc > NIR] : 0.6308          
+                                          
+                  Kappa : 0.2023          
+                                          
+ Mcnemar's Test P-Value : 0.4862          
+                                          
+            Sensitivity : 0.4062          
+            Specificity : 0.7879          
+         Pos Pred Value : 0.4815          
+         Neg Pred Value : 0.7324          
+              Precision : 0.4815          
+                 Recall : 0.4062          
+                     F1 : 0.4407          
+             Prevalence : 0.3265          
+         Detection Rate : 0.1327          
+   Detection Prevalence : 0.2755          
+      Balanced Accuracy : 0.5971          
+                                          
+       'Positive' Class : Fail            
+                                          
+>>>>>>> 83137e0611b6c9a04f32d728cfcd1fe58e24fc62

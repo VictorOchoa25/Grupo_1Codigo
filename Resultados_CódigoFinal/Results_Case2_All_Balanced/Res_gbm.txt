@@ -1,0 +1,32 @@
+[1] "MODEL: gbm"
+[1] "AUC: 0.6259"
+Confusion Matrix and Statistics
+
+          Reference
+Prediction Fail Pass
+      Fail   13   17
+      Pass   19   49
+                                          
+               Accuracy : 0.6327          
+                 95% CI : (0.5293, 0.7278)
+    No Information Rate : 0.6735          
+    P-Value [Acc > NIR] : 0.8340          
+                                          
+                  Kappa : 0.1511          
+                                          
+ Mcnemar's Test P-Value : 0.8676          
+                                          
+            Sensitivity : 0.4062          
+            Specificity : 0.7424          
+         Pos Pred Value : 0.4333          
+         Neg Pred Value : 0.7206          
+              Precision : 0.4333          
+                 Recall : 0.4062          
+                     F1 : 0.4194          
+             Prevalence : 0.3265          
+         Detection Rate : 0.1327          
+   Detection Prevalence : 0.3061          
+      Balanced Accuracy : 0.5743          
+                                          
+       'Positive' Class : Fail            
+                                          

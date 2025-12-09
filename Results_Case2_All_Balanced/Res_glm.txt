@@ -1,10 +1,12 @@
 [1] "MODEL: glm"
 [1] "AUC: 0.6316"
-[1] "Confusion Matrix:"
+Confusion Matrix and Statistics
+
           Reference
 Prediction Fail Pass
       Fail   16   22
       Pass   16   44
+<<<<<<< HEAD
 [1] "Detailed Metrics:"
          Sensitivity          Specificity       Pos Pred Value       Neg Pred Value            Precision 
            0.5000000            0.6666667            0.4210526            0.7333333            0.4210526 
@@ -12,3 +14,29 @@ Prediction Fail Pass
            0.5000000            0.4571429            0.3265306            0.1632653            0.3877551 
    Balanced Accuracy 
            0.5833333 
+=======
+                                         
+               Accuracy : 0.6122         
+                 95% CI : (0.5085, 0.709)
+    No Information Rate : 0.6735         
+    P-Value [Acc > NIR] : 0.9177         
+                                         
+                  Kappa : 0.159          
+                                         
+ Mcnemar's Test P-Value : 0.4173         
+                                         
+            Sensitivity : 0.5000         
+            Specificity : 0.6667         
+         Pos Pred Value : 0.4211         
+         Neg Pred Value : 0.7333         
+              Precision : 0.4211         
+                 Recall : 0.5000         
+                     F1 : 0.4571         
+             Prevalence : 0.3265         
+         Detection Rate : 0.1633         
+   Detection Prevalence : 0.3878         
+      Balanced Accuracy : 0.5833         
+                                         
+       'Positive' Class : Fail           
+                                         
+>>>>>>> 83137e0611b6c9a04f32d728cfcd1fe58e24fc62

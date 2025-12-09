@@ -1,5 +1,0 @@
-Model	AUC
-Random Forest	0.64749053030303
-SVM Radial	0.630208333333333
-Gradient Boosting	0.628314393939394
-Logistic Regression	0.627840909090909

@@ -1,0 +1,32 @@
+[1] "MODEL: svmRadial"
+[1] "AUC: 0.6009"
+Confusion Matrix and Statistics
+
+          Reference
+Prediction Fail Pass
+      Fail   12   20
+      Pass   20   46
+                                          
+               Accuracy : 0.5918          
+                 95% CI : (0.4879, 0.6901)
+    No Information Rate : 0.6735          
+    P-Value [Acc > NIR] : 0.9646          
+                                          
+                  Kappa : 0.072           
+                                          
+ Mcnemar's Test P-Value : 1.0000          
+                                          
+            Sensitivity : 0.3750          
+            Specificity : 0.6970          
+         Pos Pred Value : 0.3750          
+         Neg Pred Value : 0.6970          
+              Precision : 0.3750          
+                 Recall : 0.3750          
+                     F1 : 0.3750          
+             Prevalence : 0.3265          
+         Detection Rate : 0.1224          
+   Detection Prevalence : 0.3265          
+      Balanced Accuracy : 0.5360          
+                                          
+       'Positive' Class : Fail            
+                                          
