@@ -11,6 +11,9 @@ format:
     toc-location: left   # barra lateral
     # opcional:
     # number-sections: true
+editor: 
+  markdown: 
+    wrap: 72
 ---
 
 ```{r setup, include=FALSE}
@@ -33,67 +36,93 @@ library(patchwork)      # Composición de gráficos
 
 # Introducción
 
-El conjunto de datos [*Student Performance*](https://doi.org/10.24432/C5TG7T) contiene información detallada sobre el rendimiento académico de estudiantes de secundaria en la asignatura de Matemáticas, junto con una amplia gama de variables demográficas, sociales, familiares y conductuales. Los datos fueron recopilados mediante encuestas en dos escuelas secundarias públicas de Portugal y están disponibles en el repositorio UCI Machine Learning.
+El conjunto de datos [*Student
+Performance*](https://doi.org/10.24432/C5TG7T) contiene información
+detallada sobre el rendimiento académico de estudiantes de secundaria en
+la asignatura de Matemáticas, junto con una amplia gama de variables
+demográficas, sociales, familiares y conductuales. Los datos fueron
+recopilados mediante encuestas en dos escuelas secundarias públicas de
+Portugal y están disponibles en el repositorio UCI Machine Learning.
 
-Basados en la descripción del respositorio, el rendimiento académico de los estudiantes no depende únicamente de su capacidad cognitiva, sino que está fuertemente influenciado por factores contextuales como el entorno familiar, los hábitos de estudio, el apoyo escolar, las relaciones sociales y las condiciones socioeconómicas. En este contexto, identificar tempranamente a los estudiantes en riesgo de reprobación permite a las instituciones educativas implementar estrategias de intervención oportuna, optimizando recursos y promoviendo la equidad en el aprendizaje. Por ello, es crucial desarrollar modelos predictivos que, a partir de variables observables al inicio del curso, puedan anticipar el resultado académico final.
+Basados en la descripción del respositorio, el rendimiento académico de
+los estudiantes no depende únicamente de su capacidad cognitiva, sino
+que está fuertemente influenciado por factores contextuales como el
+entorno familiar, los hábitos de estudio, el apoyo escolar, las
+relaciones sociales y las condiciones socioeconómicas. En este contexto,
+identificar tempranamente a los estudiantes en riesgo de reprobación
+permite a las instituciones educativas implementar estrategias de
+intervención oportuna, optimizando recursos y promoviendo la equidad en
+el aprendizaje. Por ello, es crucial desarrollar modelos predictivos
+que, a partir de variables observables al inicio del curso, puedan
+anticipar el resultado académico final.
 
-El conjunto de datos incluye 395 observaciones y 33 variables, entre las que se encuentran:
+El conjunto de datos incluye 395 observaciones y 33 variables, entre las
+que se encuentran:
 
 -   **Demográficas**: edad, género, tipo de residencia (urbana o rural).
 
--   **Familiares**: nivel educativo de los padres, ocupación, tipo de tutor, calidad de las relaciones familiares.
+-   **Familiares**: nivel educativo de los padres, ocupación, tipo de
+    tutor, calidad de las relaciones familiares.
 
--   **Académicas**: número de ausencias, fracasos previos, apoyo escolar extra, acceso a internet.
+-   **Académicas**: número de ausencias, fracasos previos, apoyo escolar
+    extra, acceso a internet.
 
--   **De comportamiento**: tiempo de estudio, frecuencia de salidas con amigos, consumo de alcohol, tiempo libre.
+-   **De comportamiento**: tiempo de estudio, frecuencia de salidas con
+    amigos, consumo de alcohol, tiempo libre.
 
--   **De desempeño**: calificaciones en el primer (G1), segundo (G2) y tercer período (G3).
+-   **De desempeño**: calificaciones en el primer (G1), segundo (G2) y
+    tercer período (G3).
 
-En este proyecto de **clasificación binaria**; el objetivo es detectar si un estudiante aprobará o reprobará, transformando la variable objetivo continua (G3) en una variable categórica binaria. Así, en lugar de predecir la calificación exacta, se define la variable respuesta **Pass** como:
+En este proyecto de **clasificación binaria**; el objetivo es detectar
+si un estudiante aprobará o reprobará, transformando la variable
+objetivo continua (G3) en una variable categórica binaria. Así, en lugar
+de predecir la calificación exacta, se define la variable respuesta
+**Pass** como:
 
-$$
-\texttt{Pass} =\begin{cases}\text{yes}, & \text{si } \texttt{G3} \geq 10 \\\text{no}, & \text{si } \texttt{G3} < 10\end{cases}
-$$
+$$ \texttt{Pass} =\begin{cases}\text{yes}, & \text{si } \texttt{G3} \geq 10 \\\text{no}, & \text{si } \texttt{G3} < 10\end{cases} $$
 
-Este umbral (10 sobre 20) corresponde al criterio tradicional de aprobación en el sistema educativo portugués . Es importante destacar que, para preservar la validez de la predicción temprana, las calificaciones intermedias (G1 y G2) se excluyen del conjunto de predictores, evitando así cualquier fuga de información y asegurando que el modelo se base únicamente en factores observables antes del cierre del curso.
+Este umbral (10 sobre 20) corresponde al criterio tradicional de
+aprobación en el sistema educativo portugués . Es importante destacar
+que, para preservar la validez de la predicción temprana, las
+calificaciones intermedias (G1 y G2) se excluyen del conjunto de
+predictores, evitando así cualquier fuga de información y asegurando que
+el modelo se base únicamente en factores observables antes del cierre
+del curso.
 
 # Business understanding
 
 Planteamos algunas preguntas sobre nuestros datos:
 
--   ¿Un mayor nivel educativo de los padres se asocia con una mayor probabilidad de aprobación?
--   ¿El número de fracasos previos es el predictor más fuerte de reprobación?
--   ¿El apoyo escolar extra mejora significativamente las probabilidades de aprobación?
--   ¿Una mayor frecuencia de salidas con amigos se asocia con menor rendimiento?
-
+-   ¿Un mayor nivel educativo de los padres se asocia con una mayor
+    probabilidad de aprobación?
+-   ¿El número de fracasos previos es el predictor más fuerte de
+    reprobación?
+-   ¿El apoyo escolar extra mejora significativamente las probabilidades
+    de aprobación?
+-   ¿Una mayor frecuencia de salidas con amigos se asocia con menor
+    rendimiento?
 
 # Compresión de los datos.
 
-
-
 ## Descripción del Conjunto de Datos
-El análisis utiliza el conjunto de datos de Rendimiento Estudiantil que contiene 395 estudiantes con 33 atributos que describen variable de tipo: demografía, contexto social y registros académicos. 
 
+El proyecto utiliza el conjunto de datos de Rendimiento Estudiantil que
+contiene 395 estudiantes con 33 atributos que describen variable de
+tipo: demografía, contexto social y registros académicos.
 
 ```{r load-data}
-# 2. DATA PREP
-df_raw <- read.csv("Data/studentmat.csv", sep = ";", stringsAsFactors = FALSE)
-df_raw$age <- as.numeric(df_raw$age); df_raw$absences <- as.numeric(df_raw$absences)
-df_raw$G3 <- as.numeric(df_raw$G3)
 
-# Target: Status
-data <- df_raw %>%
-  mutate(Status = ifelse(G3 >= 10, "Aprobado", "Reprobado")) %>%
-  mutate(Status = as.factor(Status)) %>%
-  select(-G1, -G2, -G3) %>%
-  mutate(across(where(is.character), as.factor))
-```
+library(tidyverse)
+library(janitor) # Para limpiar y estandarizar nombres de columnas
+library(knitr)   # Para generar tablas limpias (kable)
+library(skimr)   # Para generar resúmenes estadísticos rápidos
+# 1. Cargar el dataset usando read_csv2 para el delimitador punto y coma (;)
 
+data_raw <- read_csv2("Data/studentmat.csv")
 
-
-```{r head-data}
-head(data, 10) %>% 
-  kable(caption = "Primeras 10 observaciones del dataset")
+# 2. Limpiar los nombres de las columnas (ej: de "G1" a "g1")
+data <- data_raw %>%
+  clean_names() 
 ```
 
 ```{r dict-demographic}
@@ -111,27 +140,6 @@ dict_demographic <- tibble(
 
 dict_demographic %>%
   kable(caption = "Variables Demográficas")
-```
-
-```{r dict-family}
-dict_family <- tibble(
-  Variable = c("famsize", "Pstatus", "Medu", "Fedu", "Mjob", "Fjob", "guardian"),
-  Tipo = c("Categórica", "Categórica", "Ordinal", "Ordinal", "Categórica", "Categórica", "Categórica"),
-  Valores = c("LE3, GT3", "T, A", "0-4", "0-4", "teacher, health, services, at_home, other", 
-              "teacher, health, services, at_home, other", "mother, father, other"),
-  Descripción = c(
-    "Tamaño de la familia (LE3: ≤3 miembros, GT3: >3 miembros)",
-    "Estado de convivencia de los padres (T: Juntos, A: Separados)",
-    "Nivel educativo de la madre (0: ninguna, 1: primaria, 2: 5-9 grado, 3: secundaria, 4: superior)",
-    "Nivel educativo del padre (0: ninguna, 1: primaria, 2: 5-9 grado, 3: secundaria, 4: superior)",
-    "Trabajo de la madre",
-    "Trabajo del padre",
-    "Tutor legal del estudiante"
-  )
-)
-
-dict_family %>%
-  kable(caption = "Variables Familiares")
 ```
 
 ```{r dict-school}
@@ -184,77 +192,306 @@ dict_social %>%
   kable(caption = "Variables Sociales y de Salud")
 ```
 
+```{r head-data}
+head(data_clean, 10) %>% 
+  kable(caption = "Primeras 10 observaciones del dataset")
 
-```{r dict-target}
-dict_target <- tibble(
-  Variable = "G3",
-  Tipo = "Numérica",
-  Valores = "0-20",
-  Descripción = "Calificación final en matemáticas (escala portuguesa). Umbral de aprobación: ≥10"
-)
 
-dict_target %>%
-  kable(caption = "Variable Objetivo")
+data_summary <- data_clean %>% skim()
+data_summary
 ```
 
+Este conjunto de datos contiene información sobre 395 estudiantes, sin
+valores faltantes. Incluye 33 variables que describen aspectos
+personales, familiares, sociales y académicos. Hay 17 variables
+categóricas, como el género, la escuela o el motivo para elegir esta, y
+16 numéricas, como edad, tiempo de estudio, número de ausencias y
+calificaciones en los tres periodos (g1, g2, g3). Todos los datos están
+completos, lo que permite un análisis confiable del rendimiento
+académico y los factores asociados.
 
 # Análisis Exploratorio de Datos (EDA)
 
+## Varibale $G3$ sin ser binaria
 
-```{r numeric-distributions, fig.width=12, fig.height=10}
-# Variables numéricas para análisis
-numeric_vars_eda <- c("age", "Medu", "Fedu", "traveltime", "studytime", 
-                       "failures", "famrel", "freetime", "goout", 
-                       "Dalc", "Walc", "health", "absences")
-
-# Crear histogramas
-data %>%
-  select(all_of(numeric_vars_eda)) %>%
-  pivot_longer(everything(), names_to = "Variable", values_to = "Valor") %>%
-  ggplot(aes(x = Valor)) +
-  geom_histogram(aes(y = after_stat(density)), bins = 20, 
-                 fill = "steelblue", color = "white", alpha = 0.7) +
-  geom_density(color = "red", linewidth = 1, alpha = 0.5) +
-  facet_wrap(~Variable, scales = "free", ncol = 4) +
-  labs(title = "Distribución de Variables Numéricas",
-       subtitle = "Histograma con curva de densidad superpuesta",
-       x = "Valor",
-       y = "Densidad") +
-  theme_minimal() +
-  theme(plot.title = element_text(face = "bold"))
+```{r}
+#| label: setup-eda
+#| include: false
+#| message: false
+library(tidyverse)
+library(knitr)
+library(corrplot) # Para visualizar la matriz de correlación
+library(patchwork) # Para organizar gráficos
 ```
 
-```{r numeric-stats}
-# Estadísticas detalladas
-stats_numeric <- data %>%
-  select(all_of(numeric_vars_eda)) %>%
-  pivot_longer(everything(), names_to = "Variable", values_to = "Valor") %>%
-  group_by(Variable) %>%
+### Análisis Univariado de la Variable Objetivo ($\text{G3}$)
+
+```{r}
+#| label: g3-distribution
+#| echo: false
+#| message: false
+#| fig-width: 8
+#| fig-height: 4
+
+
+
+
+
+
+
+# 3. SPLIT
+set.seed(123)
+trainIndex <- createDataPartition(data$g3, p = 0.75, list = FALSE)
+train_final <- data[trainIndex, ]
+valid_final <- data[-trainIndex, ]
+
+
+g3_stats <- train_final %>%
   summarise(
-    Min = min(Valor),
-    Q1 = quantile(Valor, 0.25),
-    Mediana = median(Valor),
-    Media = round(mean(Valor), 2),
-    Q3 = quantile(Valor, 0.75),
-    Max = max(Valor),
-    SD = round(sd(Valor), 2),
-  ) %>%
-  arrange(Variable)
+    Media = mean(g3),
+    Mediana = median(g3),
+    Min = min(g3),
+    Max = max(g3)
+  )
 
-stats_numeric %>%
-  kable(caption = "Estadísticas descriptivas de variables numéricas")
+# Histograma de G3
+train_final %>%
+  ggplot(aes(x = g3)) +
+  geom_histogram(binwidth = 1, fill = "darkred", color = "white", alpha = 0.8) +
+  geom_vline(aes(xintercept = g3_stats$Media), color = "blue", linetype = "dashed", size = 1) +
+  labs(title = "Distribución de la Nota Final (G3)",
+       x = "Nota Final (G3)",
+       y = "Frecuencia") +
+  theme_minimal()
+
+cat("\n### Estadísticas Descriptivas de G3\n")
+g3_stats %>%
+  kable(caption = "Estadísticas clave de la Nota Final (G3).", digits = 2, format = "html")
 ```
 
+La distribución de la nota final (\$\\text{G3}\$) presenta un sesgo
+negativo (hacia la izquierda), ya que la Mediana (11) es ligeramente
+superior a la Media (10.42), aunque ambos valores son cercanos. El rango
+completo de notas es utilizado, yendo de \$\\text{0}\$ (nota mínima) a
+\$\\text{20}\$ (nota máxima). La presencia de una alta frecuencia de
+notas cero sugiere un número significativo de reprobados o no
+presentados.
+
+### Análisis Bivariado: Factores Numéricos vs. $\text{G3}$
+
+```{r}
+#| label: correlation-matrix
+#| echo: false
+#| message: false
+#| fig-width: 9
+#| fig-height: 9
+
+# Seleccionar solo las variables numéricas que serán predictoras
+num_predictors <- train_final %>% 
+  select(g3, age, medu, fedu, traveltime, studytime, failures, famrel, freetime, goout, dalc, walc, health, absences)
+
+# Calcular la matriz de correlación de Pearson
+cor_matrix <- cor(num_predictors)
+
+cat("### Matriz de Correlación de Factores Numéricos y G3\n")
+
+# Gráfico de la matriz de correlación
+corrplot(cor_matrix, 
+         method = "circle", 
+         type = "lower", 
+         diag = FALSE,
+         title = "Correlación entre G3 y Factores Numéricos",
+         mar=c(0,0,1,0)) # Ajustar márgenes para el título
+```
+
+-   Las correlaciones más fuertes y negativas se encuentran con
+    **`failures`** (-0.37) y **`age`** (-0.23). Los estudiantes con más
+    fallas previas y de mayor edad tienden a tener notas $\text{G3}$ más
+    bajas.
+
+<!-- -->
+
+-   Existe una correlación positiva con la **`medu`** (Educación de la
+    Madre, 0.22) y **`fedu`** (Educación del Padre, 0.17).
+
+### Relaciones Gráficas de Factores Clave vs. $\text{G3}$
+
+```{r}
+#| label: key-numerical-vs-g3
+#| echo: false
+#| message: false
+#| fig-width: 12
+#| fig-height: 4
+
+# Failures vs G3 (Boxplot ya que failures es discreta)
+plot_failures <- train_final %>%
+  mutate(failures_cat = factor(failures, levels = 0:4, labels = c("0", "1", "2", "3", ">3"))) %>%
+  ggplot(aes(x = failures_cat, y = g3)) +
+  geom_boxplot(fill = "lightblue") +
+  labs(title = "G3 vs. Fallas Previas", x = "Número de Fallas", y = "G3") +
+  theme_minimal()
+
+# Studytime vs G3 (Boxplot)
+plot_studytime <- train_final %>%
+  mutate(studytime_cat = factor(studytime)) %>%
+  ggplot(aes(x = studytime_cat, y = g3)) +
+  geom_boxplot(fill = "lightgreen") +
+  labs(title = "G3 vs. Tiempo de Estudio", x = "Tiempo (1 a 4)", y = "G3") +
+  theme_minimal()
+
+# Absences vs G3 (Scatter con línea de tendencia)
+plot_absences <- train_final %>%
+  ggplot(aes(x = absences, y = g3)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "lm", color = "red", se = FALSE) +
+  labs(title = "G3 vs. Ausencias", x = "Número de Ausencias", y = "G3") +
+  theme_minimal()
+
+# Mostrar los tres gráficos
+plot_failures + plot_studytime + plot_absences
+```
+
+-   **Fallas Previas (`failures`):** Existe una **relación negativa muy
+    fuerte**. A medida que el número de fallas previas aumenta (de 0 a
+    $>3$), la **mediana de** $\text{G3}$ cae drásticamente, validando
+    que el historial académico es un predictor que puede ser muy útil.
+
+<!-- -->
+
+-   **Tiempo de Estudio (`studytime`):** La relación es **positiva**.
+    Los estudiantes que dedican más tiempo a estudiar semanalmente
+    (niveles 2, 3 y 4) muestran consistentemente una **mediana de**
+    $\text{G3}$ superior a aquellos que estudian menos de 2 horas (nivel
+    1).
+
+-   **Ausencias (`absences`):** El gráfico de dispersión muestra una
+    **correlación muy débil** con $\text{G3}$, ya que la línea de
+    tendencia es casi plana, lo que sugiere que el número de ausencias
+    por sí solo no es un predictor lineal fuerte de la nota final para
+    la mayoría de los estudiantes.
+
+### Análisis Bivariado: Factores Categóricos vs. $\text{G3}$
+
+```{r}
+#| label: key-categorical-vs-g3
+#| echo: false
+#| message: false
+#| fig-width: 12
+#| fig-height: 4
+
+# Función para crear Boxplots de Categorías vs G3
+plot_category_vs_g3 <- function(train_final, variable, title, x_lab) {
+  data %>%
+    ggplot(aes(x = as.factor(.data[[variable]]), y = g3, fill = as.factor(.data[[variable]]))) +
+    geom_boxplot(show.legend = FALSE) +
+    labs(title = title, x = x_lab, y = "G3 (Nota Final)") +
+    theme_minimal()
+}
+
+# Sexo vs G3
+plot_sex <- plot_category_vs_g3(train_final, "sex", "G3 vs Sexo", "Sexo (F/M)")
+
+# Deseo de Educación Superior (higher) vs G3
+plot_higher <- plot_category_vs_g3(train_final, "higher", "G3 vs Deseo de Ed. Superior", "¿Desea estudiar?")
+
+# Apoyo de la Familia (famsup) vs G3
+plot_famsup <- plot_category_vs_g3(train_final, "famsup", "G3 vs Apoyo Familiar", "¿Apoyo Fam?")
+
+# Mostrar los tres gráficos
+plot_sex + plot_higher + plot_famsup
+```
+
+-   **Deseo de Educación Superior (`higher`):** Esta es la variable
+    categórica **más influyente**. Los estudiantes que expresan un deseo
+    de seguir estudios superiores (**"yes"**) tienen una **mediana de**
+    $\text{G3}$ significativamente más alta (alrededor de 12) que
+    aquellos que no lo desean, lo que puede indicar la importancia de la
+    **motivación** como predictor.
+
+<!-- -->
+
+-   **Sexo (`sex`):** Existe una **diferencia sutil pero verificable**
+    en el rendimiento. Los estudiantes varones (**M**) registran una
+    **mediana de** $\text{G3}$ superior (11.00) a la de las estudiantes
+    mujeres (**F**, 10.00).
+
+-   **Apoyo Familiar (`famsup`):** El impacto de contar con apoyo
+    familiar es **mínimo**. La diferencia en la mediana de $\text{G3}$
+    entre los grupos es **casi nula**, lo que indica que es probable que
+    esta variable sea un predictor débil para el modelado.
+
+### Respuesta preliminar a las preguntas de Business understanding
+
+```{r}
+#| label: conclusion-table-final-clean-v2
+#| echo: false
+#| message: false
+
+library(knitr)
+library(dplyr)
+library(tibble)
+library(kableExtra)
+
+# 1. Crear el data frame con la información (SOLO TEXTO SIMPLE)
+analisis_negocio_df_final <- tribble(
+  ~Pregunta_Negocio, ~Variables_Clave, ~Analisis_Datos, ~Conclusion_Preliminar,
+  "¿Un mayor nivel educativo de los padres se asocia con una mayor probabilidad de aprobación?", 
+  "G3 vs. Medu y Fedu", 
+  "Correlación positiva y moderada con G3 (Medu: 0.22, Fedu: 0.17).", 
+  "Sí. Hay una asociación positiva. El nivel educativo de los padres se correlaciona con un mayor rendimiento.",
+  
+  "¿El número de fracasos previos es el predictor más fuerte de reprobación?", 
+  "G3 vs. failures", 
+  "Correlación más fuerte y negativa de todos los factores (-0.37). Caída drástica de la mediana de G3.", 
+  "Sí. failures es el predictor de bajo rendimiento más potente entre los factores asociados.",
+  
+  "¿El apoyo escolar extra mejora significativamente las probabilidades de aprobación?", 
+  "G3 vs. schoolsup", 
+  "Mediana de G3 para estudiantes con apoyo (9.0) es inferior a la de sin apoyo (11.0).", 
+  "Inconcluso. schoolsup es un indicador de riesgo, lo que sugiere que identifica a estudiantes con bajo rendimiento inicial.",
+  
+  "¿Una mayor frecuencia de salidas con amigos se asocia con menor rendimiento?", 
+  "G3 vs. goout", 
+  "Correlación negativa, pero débil (-0.13). Tendencia a la baja en G3 con más salidas.", 
+  "Sí, existe una asociación negativa, pero su impacto es menor que otros factores, como failures o higher."
+)
+
+# 2. Renderizar la tabla usando kable con un estilo HTML atractivo
+analisis_negocio_df_final %>%
+  knitr::kable(
+    caption = "Resumen de las Conclusiones Preliminares del EDA frente a las Preguntas de Negocio",
+    col.names = c("Pregunta de Negocio", "Variables Clave", "Análisis del EDA", "Conclusión Preliminar"),
+    format = "html"
+  ) %>%
+  # Añadir estilos de tabla generales
+  kable_styling(
+    bootstrap_options = c("striped", "hover", "condensed", "responsive"),
+    full_width = T,
+    font_size = 11
+  ) %>%
+  # Resaltar las filas de conclusión fuerte (1 y 2) con colores suaves
+  row_spec(1, color = "black", background = "#E6F3FF") %>% 
+  row_spec(2, color = "black", background = "#FFE6E6") 
+```
+
+## Varibale $G3$ sin binaria
+
+Para esta sección haremos un análisis exploratorio pero con la variable
+$G3$ categorizada como **Aprobado** cuando $G3\geq 10$ y **Reprobado**
+en otro caso.
 
 # Modelado y Evaluación
 
 ## Caso 1: Todas las Variables sin Balanceo
-2.1 Configuración del Caso 1
-Variables: Todas las 30 variables disponibles
 
-Balanceo: Sin balanceo de clases (distribución natural 67.1% Aprobado / 32.9% Reprobado)
+2.1 Configuración del Caso 1 Variables: Todas las 30 variables
+disponibles
 
-Objetivo: Establecer línea base de rendimiento con todas las características
+Balanceo: Sin balanceo de clases (distribución natural 67.1% Aprobado /
+32.9% Reprobado)
+
+Objetivo: Establecer línea base de rendimiento con todas las
+características
 
 2.2 Resultados del Caso 1
 
@@ -276,34 +513,38 @@ kable(resultados_caso1, caption = "Resultados del Caso 1: Todas las Variables si
 ```
 
 ## Análisis del Caso 1
-Fortalezas Identificadas:
-Gradient Boosting obtuvo el mejor AUC (0.6425)
+
+Fortalezas Identificadas: Gradient Boosting obtuvo el mejor AUC (0.6425)
 
 Random Forest logró la mayor precisión general (71.43%)
 
 SVM Radial alcanzó la mayor especificidad (89.39%)
 
-Debilidades Identificadas:
-Baja sensibilidad general: Todos los modelos detectan menos del 50% de estudiantes reprobados
+Debilidades Identificadas: Baja sensibilidad general: Todos los modelos
+detectan menos del 50% de estudiantes reprobados
 
-Sobreajuste potencial: 30 variables pueden introducir ruido en algunos modelos
+Sobreajuste potencial: 30 variables pueden introducir ruido en algunos
+modelos
 
 KNN y Naive Bayes mostraron rendimiento inferior
 
-Conclusiones del Caso 1:
-Los modelos complejos (Gradient Boosting, Random Forest) funcionan mejor con todas las variables
+Conclusiones del Caso 1: Los modelos complejos (Gradient Boosting,
+Random Forest) funcionan mejor con todas las variables
 
 Existe un claro trade-off entre sensibilidad y especificidad
 
-La baja sensibilidad sugiere necesidad de abordar el desbalance de clases
+La baja sensibilidad sugiere necesidad de abordar el desbalance de
+clases
 
 ## Caso 2: Todas las Variables con Balanceo
-3.1 Configuración del Caso 2
-Variables: Todas las 30 variables disponibles
+
+3.1 Configuración del Caso 2 Variables: Todas las 30 variables
+disponibles
 
 Balanceo: Con sobremuestreo (up-sampling) para balancear clases
 
-Objetivo: Evaluar impacto del balanceo manteniendo todas las características
+Objetivo: Evaluar impacto del balanceo manteniendo todas las
+características
 
 3.2 Resultados del Caso 2
 
@@ -325,33 +566,36 @@ kable(resultados_caso2, caption = "Resultados del Caso 2: Todas las Variables co
 ```
 
 ## Impacto del Balanceo en el Caso 2
-Mejoras Observadas:
-Sensibilidad incrementada significativamente en la mayoría de modelos
+
+Mejoras Observadas: Sensibilidad incrementada significativamente en la
+mayoría de modelos
 
 Regresión Logística mejoró su sensibilidad de 31.25% a 50.00%
 
 KNN duplicó su sensibilidad (de 25.00% a 53.12%)
 
-Compensaciones Observadas:
-Reducción en AUC en la mayoría de modelos
+Compensaciones Observadas: Reducción en AUC en la mayoría de modelos
 
 Disminución en especificidad como trade-off por mayor sensibilidad
 
 Precisión general se mantuvo similar o disminuyó ligeramente
 
-Conclusiones del Caso 2:
-El balanceo mejora significativamente la detección de estudiantes reprobados
+Conclusiones del Caso 2: El balanceo mejora significativamente la
+detección de estudiantes reprobados
 
-Los modelos más simples (Regresión Logística, KNN) se benefician más del balanceo
+Los modelos más simples (Regresión Logística, KNN) se benefician más del
+balanceo
 
 Existe un trade-off claro entre sensibilidad y especificidad
 
 ## Proceso de Selección de Variables
+
 #### Metodología de Selección
-Se emplearon tres métodos complementarios para identificar las variables más predictivas:
+
+Se emplearon tres métodos complementarios para identificar las variables
+más predictivas:
 
 #### Pruebas Chi-Cuadrado (Variables Categóricas)
-
 
 ```{r}
 ranking_chi <- data.frame(
@@ -365,7 +609,6 @@ kable(ranking_chi, caption = "Ranking de Variables Categóricas por Chi-Cuadrado
       align = c('l', 'r', 'c', 'c'), booktabs = TRUE) %>%
   kable_styling(latex_options = c("striped", "hold_position"))
 ```
-
 
 #### Algoritmo Boruta (Importancia de Todas las Variables)
 
@@ -384,8 +627,8 @@ kable(importancia_boruta, caption = "Variables Confirmadas Importantes por Borut
   kable_styling(latex_options = c("striped", "hold_position"))
 ```
 
-
 #### Eliminación Recursiva de Características (RFE)
+
 Método: Random Forest como wrapper
 
 Variables óptimas identificadas: 9 variables
@@ -395,8 +638,9 @@ Top 5 variables: failures, absences, goout, Medu, schoolsup
 Precisión máxima: 72.91% con 9 variables
 
 #### Conjunto Final de Variables Seleccionadas
-Basado en el consenso de los tres métodos, se seleccionaron 7 variables clave:
 
+Basado en el consenso de los tres métodos, se seleccionaron 7 variables
+clave:
 
 ```{r}
 variables_finales <- data.frame(
@@ -428,6 +672,7 @@ kable(variables_finales, caption = "Conjunto Final de 7 Variables Seleccionadas"
 ```
 
 #### Beneficios de la Selección de Variables
+
 Reducción de dimensionalidad: 30 → 7 variables (76.7% reducción)
 
 Mejor interpretabilidad: Variables más comprensibles para stakeholders
@@ -437,12 +682,16 @@ Reducción de sobreajuste: Menor riesgo de modelar ruido
 Eficiencia computacional: Entrenamiento y predicción más rápidos
 
 ## Caso 3: Variables Seleccionadas sin Balanceo
+
 ### Configuración del Caso 3
-Variables: 7 variables seleccionadas (failures, absences, higher, age, Medu, goout, guardian)
+
+Variables: 7 variables seleccionadas (failures, absences, higher, age,
+Medu, goout, guardian)
 
 Balanceo: Sin balanceo de clases
 
-Objetivo: Evaluar rendimiento con variables optimizadas manteniendo distribución natural
+Objetivo: Evaluar rendimiento con variables optimizadas manteniendo
+distribución natural
 
 ### Resultados del Caso 3
 
@@ -465,34 +714,35 @@ kable(resultados_caso3, caption = "Resultados del Caso 3: Variables Seleccionada
 ```
 
 ### Análisis del Caso 3
-Mejoras Observadas vs. Caso 1:
-Regresión Logística mejora su AUC de 0.6335 a 0.6461
+
+Mejoras Observadas vs. Caso 1: Regresión Logística mejora su AUC de
+0.6335 a 0.6461
 
 KNN muestra la mayor mejora en precisión (de 63.27% a 72.45%)
 
 Especificidad general más alta: Promedio de 87.71% vs. 81.07% en Caso 1
 
-Características Persistentes:
-Sensibilidad aún baja: Promedio de 30.56%
+Características Persistentes: Sensibilidad aún baja: Promedio de 30.56%
 
 Trade-off sensibilidad-especificidad sigue presente
 
 Modelos más simples mejoran relativamente más que modelos complejos
 
-Conclusiones del Caso 3:
-La selección de variables mejora el rendimiento de modelos más simples
+Conclusiones del Caso 3: La selección de variables mejora el rendimiento
+de modelos más simples
 
 Se mantiene alta especificidad pero baja sensibilidad
 
 7 variables son suficientes para lograr rendimiento competitivo
 
 ## Caso 4: Variables Seleccionadas con Balanceo
-6.1 Configuración del Caso 4
-Variables: 7 variables seleccionadas
+
+6.1 Configuración del Caso 4 Variables: 7 variables seleccionadas
 
 Balanceo: Con sobremuestreo (up-sampling)
 
-Objetivo: Combinar beneficios de selección de variables y balanceo de clases
+Objetivo: Combinar beneficios de selección de variables y balanceo de
+clases
 
 6.2 Resultados del Caso 4
 
@@ -514,24 +764,25 @@ kable(resultados_caso4, caption = "Resultados del Caso 4: Variables Seleccionada
   row_spec(1, bold = TRUE, background = "#E8F4F8")
 ```
 
-
 ### Análisis del Caso 4
-Mejoras Significativas:
-KNN logra el mejor AUC global (0.6536) y la mayor sensibilidad (65.62%)
+
+Mejoras Significativas: KNN logra el mejor AUC global (0.6536) y la
+mayor sensibilidad (65.62%)
 
 Sensibilidad promedio incrementada de 30.56% (Caso 3) a 48.44%
 
 Balance mejorado entre métricas de rendimiento
 
-Trade-offs Observados:
-Especificidad disminuye como compensación por mayor sensibilidad
+Trade-offs Observados: Especificidad disminuye como compensación por
+mayor sensibilidad
 
 Algunos modelos (GLM, GBM) muestran ligera reducción en AUC
 
 Precisión general se mantiene en niveles similares
 
-Hallazgo Clave:
-KNN emerge como el mejor modelo en esta configuración, demostrando que con las variables correctas y balanceo adecuado, algoritmos simples pueden superar a modelos más complejos
+Hallazgo Clave: KNN emerge como el mejor modelo en esta configuración,
+demostrando que con las variables correctas y balanceo adecuado,
+algoritmos simples pueden superar a modelos más complejos
 
 ### Comparativa Entre los 4 Casos
 
@@ -560,109 +811,83 @@ kable(comparativa_casos, caption = "Comparativa General de los 4 Casos Experimen
 ```
 
 # Conclusiones y Recomendaciones Finales
-7.1 Hallazgos Clave del Estudio
-Selección de Variables es Efectiva: Reducir de 30 a 7 variables mejora la eficiencia sin sacrificar rendimiento
 
-Balanceo Mejora Detección de Riesgo: El sobremuestreo incrementa significativamente la sensibilidad
+7.1 Hallazgos Clave del Estudio Selección de Variables es Efectiva:
+Reducir de 30 a 7 variables mejora la eficiencia sin sacrificar
+rendimiento
 
-No Hay un Modelo Único Óptimo: Diferentes configuraciones optimizan diferentes métricas
+Balanceo Mejora Detección de Riesgo: El sobremuestreo incrementa
+significativamente la sensibilidad
 
-Variables Críticas Identificadas: Fallas previas, ausencias y aspiración educativa son predictores clave
+No Hay un Modelo Único Óptimo: Diferentes configuraciones optimizan
+diferentes métricas
+
+Variables Críticas Identificadas: Fallas previas, ausencias y aspiración
+educativa son predictores clave
 
 ## Recomendaciones de Implementación
-Para Prioridad: Detección Temprana de Riesgo
-Configuración recomendada: Caso 4 con modelo KNN
+
+Para Prioridad: Detección Temprana de Riesgo Configuración recomendada:
+Caso 4 con modelo KNN
 
 Ventaja: 65.62% sensibilidad para detectar estudiantes reprobados
 
 Uso: Sistema de alerta temprana
 
-Para Prioridad: Optimización de Recursos
-Configuración recomendada: Caso 3 con Regresión Logística
+Para Prioridad: Optimización de Recursos Configuración recomendada: Caso
+3 con Regresión Logística
 
 Ventaja: 89.39% especificidad para minimizar falsos positivos
 
 Uso: Asignación dirigida de recursos de apoyo
 
-Para Prioridad: Balance General
-Configuración recomendada: Caso 2 con Random Forest
+Para Prioridad: Balance General Configuración recomendada: Caso 2 con
+Random Forest
 
 Ventaja: Buen balance entre todas las métricas
 
 Uso: Monitoreo general institucional
 
 ## Recomendación Final
-Basado en el análisis completo, recomendamos una implementación por fases:
 
-Fase 1 (Semanas 1-6): Implementar Caso 4 con KNN para maximizar detección temprana de estudiantes en riesgo.
+Basado en el análisis completo, recomendamos una implementación por
+fases:
 
-Fase 2 (Meses 2-6): Añadir Caso 3 con Regresión Logística como verificación secundaria para optimización de recursos.
+Fase 1 (Semanas 1-6): Implementar Caso 4 con KNN para maximizar
+detección temprana de estudiantes en riesgo.
 
-Fase 3 (Meses 6-12): Desarrollar un sistema ensemble que combine ambas configuraciones, ajustando automáticamente según prioridades institucionales.
+Fase 2 (Meses 2-6): Añadir Caso 3 con Regresión Logística como
+verificación secundaria para optimización de recursos.
+
+Fase 3 (Meses 6-12): Desarrollar un sistema ensemble que combine ambas
+configuraciones, ajustando automáticamente según prioridades
+institucionales.
 
 ## Limitaciones y Trabajo Futuro
-Limitaciones Reconocidas:
-Rendimiento Predictivo Moderado: AUC máximo de 0.6536 indica margen de mejora
+
+Limitaciones Reconocidas: Rendimiento Predictivo Moderado: AUC máximo de
+0.6536 indica margen de mejora
 
 Contexto Específico: Datos de sistema educativo portugués
 
 Datos Auto-reportados: Posible sesgo en respuestas
 
-Direcciones Futuras:
-Integración de Datos Temporales: Seguimiento longitudinal de estudiantes
+Direcciones Futuras: Integración de Datos Temporales: Seguimiento
+longitudinal de estudiantes
 
-Validación Cruzada Institucional: Probar en diferentes contextos educativos
+Validación Cruzada Institucional: Probar en diferentes contextos
+educativos
 
-Modelos de Explicabilidad: Mejorar interpretabilidad para stakeholders no técnicos
+Modelos de Explicabilidad: Mejorar interpretabilidad para stakeholders
+no técnicos
 
-Sistemas de Recomendación: Sugerir intervenciones específicas basadas en perfiles de riesgo
+Sistemas de Recomendación: Sugerir intervenciones específicas basadas en
+perfiles de riesgo
 
-Nota Final: Este estudio demuestra que, aunque la predicción perfecta del rendimiento estudiantil sigue siendo un desafío, es posible identificar factores clave y desarrollar herramientas útiles para la toma de decisiones educativas basadas en datos. La combinación de selección inteligente de variables y técnicas apropiadas de balanceo puede proporcionar insights valiosos para mejorar los resultados estudiantiles.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Nota Final: Este estudio demuestra que, aunque la predicción perfecta
+del rendimiento estudiantil sigue siendo un desafío, es posible
+identificar factores clave y desarrollar herramientas útiles para la
+toma de decisiones educativas basadas en datos. La combinación de
+selección inteligente de variables y técnicas apropiadas de balanceo
+puede proporcionar insights valiosos para mejorar los resultados
+estudiantiles.

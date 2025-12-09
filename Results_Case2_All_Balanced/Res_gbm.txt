@@ -6,11 +6,9 @@ Prediction Fail Pass
       Fail   13   17
       Pass   19   49
 [1] "Detailed Metrics:"
-         Sensitivity          Specificity       Pos Pred Value 
-           0.4062500            0.7424242            0.4333333 
-      Neg Pred Value            Precision               Recall 
-           0.7205882            0.4333333            0.4062500 
-                  F1           Prevalence       Detection Rate 
-           0.4193548            0.3265306            0.1326531 
-Detection Prevalence    Balanced Accuracy 
-           0.3061224            0.5743371 
+         Sensitivity          Specificity       Pos Pred Value       Neg Pred Value            Precision 
+           0.4062500            0.7424242            0.4333333            0.7205882            0.4333333 
+              Recall                   F1           Prevalence       Detection Rate Detection Prevalence 
+           0.4062500            0.4193548            0.3265306            0.1326531            0.3061224 
+   Balanced Accuracy 
+           0.5743371 

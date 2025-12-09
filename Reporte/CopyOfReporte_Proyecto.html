@@ -1,0 +1,2536 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Salvador y Víctor">
+<meta name="dcterms.date" content="2025-12-08">
+
+<title>Análisis Predictivo del Rendimiento Académico Estudiantil</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="CopyOfReporte_Proyecto_files/libs/clipboard/clipboard.min.js"></script>
+<script src="CopyOfReporte_Proyecto_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="CopyOfReporte_Proyecto_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="CopyOfReporte_Proyecto_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="CopyOfReporte_Proyecto_files/libs/quarto-html/popper.min.js"></script>
+<script src="CopyOfReporte_Proyecto_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="CopyOfReporte_Proyecto_files/libs/quarto-html/anchor.min.js"></script>
+<link href="CopyOfReporte_Proyecto_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="CopyOfReporte_Proyecto_files/libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="CopyOfReporte_Proyecto_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="CopyOfReporte_Proyecto_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="CopyOfReporte_Proyecto_files/libs/bootstrap/bootstrap-0b716d6fe31096b8dc5b1cb48462c79f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="CopyOfReporte_Proyecto_files/libs/kePrint-0.0.1/kePrint.js"></script>
+
+<link href="CopyOfReporte_Proyecto_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introducción" id="toc-introducción" class="nav-link active" data-scroll-target="#introducción">Introducción</a></li>
+  <li><a href="#business-understanding" id="toc-business-understanding" class="nav-link" data-scroll-target="#business-understanding">Business understanding</a></li>
+  <li><a href="#compresión-de-los-datos." id="toc-compresión-de-los-datos." class="nav-link" data-scroll-target="#compresión-de-los-datos.">Compresión de los datos.</a>
+  <ul class="collapse">
+  <li><a href="#descripción-del-conjunto-de-datos" id="toc-descripción-del-conjunto-de-datos" class="nav-link" data-scroll-target="#descripción-del-conjunto-de-datos">Descripción del Conjunto de Datos</a></li>
+  </ul></li>
+  <li><a href="#análisis-exploratorio-de-datos-eda" id="toc-análisis-exploratorio-de-datos-eda" class="nav-link" data-scroll-target="#análisis-exploratorio-de-datos-eda">Análisis Exploratorio de Datos (EDA)</a>
+  <ul class="collapse">
+  <li><a href="#análisis-univariado-de-la-variable-objetivo-textg3" id="toc-análisis-univariado-de-la-variable-objetivo-textg3" class="nav-link" data-scroll-target="#análisis-univariado-de-la-variable-objetivo-textg3">Análisis Univariado de la Variable Objetivo (<span class="math inline">\(\text{G3}\)</span>)</a></li>
+  <li><a href="#análisis-bivariado-factores-numéricos-vs.-textg3" id="toc-análisis-bivariado-factores-numéricos-vs.-textg3" class="nav-link" data-scroll-target="#análisis-bivariado-factores-numéricos-vs.-textg3">Análisis Bivariado: Factores Numéricos vs.&nbsp;<span class="math inline">\(\text{G3}\)</span></a></li>
+  <li><a href="#relaciones-gráficas-de-factores-clave-vs.-textg3" id="toc-relaciones-gráficas-de-factores-clave-vs.-textg3" class="nav-link" data-scroll-target="#relaciones-gráficas-de-factores-clave-vs.-textg3">Relaciones Gráficas de Factores Clave vs.&nbsp;<span class="math inline">\(\text{G3}\)</span></a></li>
+  <li><a href="#análisis-bivariado-factores-categóricos-vs.-textg3" id="toc-análisis-bivariado-factores-categóricos-vs.-textg3" class="nav-link" data-scroll-target="#análisis-bivariado-factores-categóricos-vs.-textg3">Análisis Bivariado: Factores Categóricos vs.&nbsp;<span class="math inline">\(\text{G3}\)</span></a></li>
+  <li><a href="#respuesta-preliminar-a-las-preguntas-de-business-understanding" id="toc-respuesta-preliminar-a-las-preguntas-de-business-understanding" class="nav-link" data-scroll-target="#respuesta-preliminar-a-las-preguntas-de-business-understanding">Respuesta preliminar a las preguntas de Business understanding</a></li>
+  </ul></li>
+  <li><a href="#modelado-y-evaluación" id="toc-modelado-y-evaluación" class="nav-link" data-scroll-target="#modelado-y-evaluación">Modelado y Evaluación</a>
+  <ul class="collapse">
+  <li><a href="#caso-1-todas-las-variables-sin-balanceo" id="toc-caso-1-todas-las-variables-sin-balanceo" class="nav-link" data-scroll-target="#caso-1-todas-las-variables-sin-balanceo">Caso 1: Todas las Variables sin Balanceo</a></li>
+  <li><a href="#análisis-del-caso-1" id="toc-análisis-del-caso-1" class="nav-link" data-scroll-target="#análisis-del-caso-1">Análisis del Caso 1</a></li>
+  <li><a href="#caso-2-todas-las-variables-con-balanceo" id="toc-caso-2-todas-las-variables-con-balanceo" class="nav-link" data-scroll-target="#caso-2-todas-las-variables-con-balanceo">Caso 2: Todas las Variables con Balanceo</a></li>
+  <li><a href="#impacto-del-balanceo-en-el-caso-2" id="toc-impacto-del-balanceo-en-el-caso-2" class="nav-link" data-scroll-target="#impacto-del-balanceo-en-el-caso-2">Impacto del Balanceo en el Caso 2</a></li>
+  <li><a href="#proceso-de-selección-de-variables" id="toc-proceso-de-selección-de-variables" class="nav-link" data-scroll-target="#proceso-de-selección-de-variables">Proceso de Selección de Variables</a></li>
+  <li><a href="#caso-3-variables-seleccionadas-sin-balanceo" id="toc-caso-3-variables-seleccionadas-sin-balanceo" class="nav-link" data-scroll-target="#caso-3-variables-seleccionadas-sin-balanceo">Caso 3: Variables Seleccionadas sin Balanceo</a>
+  <ul class="collapse">
+  <li><a href="#configuración-del-caso-3" id="toc-configuración-del-caso-3" class="nav-link" data-scroll-target="#configuración-del-caso-3">Configuración del Caso 3</a></li>
+  <li><a href="#resultados-del-caso-3" id="toc-resultados-del-caso-3" class="nav-link" data-scroll-target="#resultados-del-caso-3">Resultados del Caso 3</a></li>
+  <li><a href="#análisis-del-caso-3" id="toc-análisis-del-caso-3" class="nav-link" data-scroll-target="#análisis-del-caso-3">Análisis del Caso 3</a></li>
+  </ul></li>
+  <li><a href="#caso-4-variables-seleccionadas-con-balanceo" id="toc-caso-4-variables-seleccionadas-con-balanceo" class="nav-link" data-scroll-target="#caso-4-variables-seleccionadas-con-balanceo">Caso 4: Variables Seleccionadas con Balanceo</a>
+  <ul class="collapse">
+  <li><a href="#análisis-del-caso-4" id="toc-análisis-del-caso-4" class="nav-link" data-scroll-target="#análisis-del-caso-4">Análisis del Caso 4</a></li>
+  <li><a href="#comparativa-entre-los-4-casos" id="toc-comparativa-entre-los-4-casos" class="nav-link" data-scroll-target="#comparativa-entre-los-4-casos">Comparativa Entre los 4 Casos</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#conclusiones-y-recomendaciones-finales" id="toc-conclusiones-y-recomendaciones-finales" class="nav-link" data-scroll-target="#conclusiones-y-recomendaciones-finales">Conclusiones y Recomendaciones Finales</a>
+  <ul class="collapse">
+  <li><a href="#recomendaciones-de-implementación" id="toc-recomendaciones-de-implementación" class="nav-link" data-scroll-target="#recomendaciones-de-implementación">Recomendaciones de Implementación</a></li>
+  <li><a href="#recomendación-final" id="toc-recomendación-final" class="nav-link" data-scroll-target="#recomendación-final">Recomendación Final</a></li>
+  <li><a href="#limitaciones-y-trabajo-futuro" id="toc-limitaciones-y-trabajo-futuro" class="nav-link" data-scroll-target="#limitaciones-y-trabajo-futuro">Limitaciones y Trabajo Futuro</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Análisis Predictivo del Rendimiento Académico Estudiantil</h1>
+<p class="subtitle lead">Identificación de Factores Clave y Modelos Predictivos para el Éxito Estudiantil</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Salvador y Víctor </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">December 8, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introducción" class="level1">
+<h1>Introducción</h1>
+<p>El conjunto de datos <a href="https://doi.org/10.24432/C5TG7T"><em>Student Performance</em></a> contiene información detallada sobre el rendimiento académico de estudiantes de secundaria en la asignatura de Matemáticas, junto con una amplia gama de variables demográficas, sociales, familiares y conductuales. Los datos fueron recopilados mediante encuestas en dos escuelas secundarias públicas de Portugal y están disponibles en el repositorio UCI Machine Learning.</p>
+<p>Basados en la descripción del respositorio, el rendimiento académico de los estudiantes no depende únicamente de su capacidad cognitiva, sino que está fuertemente influenciado por factores contextuales como el entorno familiar, los hábitos de estudio, el apoyo escolar, las relaciones sociales y las condiciones socioeconómicas. En este contexto, identificar tempranamente a los estudiantes en riesgo de reprobación permite a las instituciones educativas implementar estrategias de intervención oportuna, optimizando recursos y promoviendo la equidad en el aprendizaje. Por ello, es crucial desarrollar modelos predictivos que, a partir de variables observables al inicio del curso, puedan anticipar el resultado académico final.</p>
+<p>El conjunto de datos incluye 395 observaciones y 33 variables, entre las que se encuentran:</p>
+<ul>
+<li><p><strong>Demográficas</strong>: edad, género, tipo de residencia (urbana o rural).</p></li>
+<li><p><strong>Familiares</strong>: nivel educativo de los padres, ocupación, tipo de tutor, calidad de las relaciones familiares.</p></li>
+<li><p><strong>Académicas</strong>: número de ausencias, fracasos previos, apoyo escolar extra, acceso a internet.</p></li>
+<li><p><strong>De comportamiento</strong>: tiempo de estudio, frecuencia de salidas con amigos, consumo de alcohol, tiempo libre.</p></li>
+<li><p><strong>De desempeño</strong>: calificaciones en el primer (G1), segundo (G2) y tercer período (G3).</p></li>
+</ul>
+<p>En este proyecto de <strong>clasificación binaria</strong>; el objetivo es detectar si un estudiante aprobará o reprobará, transformando la variable objetivo continua (G3) en una variable categórica binaria. Así, en lugar de predecir la calificación exacta, se define la variable respuesta <strong>Pass</strong> como:</p>
+<p><span class="math display">\[ \texttt{Pass} =\begin{cases}\text{yes}, &amp; \text{si } \texttt{G3} \geq 10 \\\text{no}, &amp; \text{si } \texttt{G3} &lt; 10\end{cases} \]</span></p>
+<p>Este umbral (10 sobre 20) corresponde al criterio tradicional de aprobación en el sistema educativo portugués . Es importante destacar que, para preservar la validez de la predicción temprana, las calificaciones intermedias (G1 y G2) se excluyen del conjunto de predictores, evitando así cualquier fuga de información y asegurando que el modelo se base únicamente en factores observables antes del cierre del curso.</p>
+</section>
+<section id="business-understanding" class="level1">
+<h1>Business understanding</h1>
+<p>Planteamos algunas preguntas sobre nuestros datos:</p>
+<ul>
+<li>¿Un mayor nivel educativo de los padres se asocia con una mayor probabilidad de aprobación?</li>
+<li>¿El número de fracasos previos es el predictor más fuerte de reprobación?</li>
+<li>¿El apoyo escolar extra mejora significativamente las probabilidades de aprobación?</li>
+<li>¿Una mayor frecuencia de salidas con amigos se asocia con menor rendimiento?</li>
+</ul>
+</section>
+<section id="compresión-de-los-datos." class="level1">
+<h1>Compresión de los datos.</h1>
+<section id="descripción-del-conjunto-de-datos" class="level2">
+<h2 class="anchored" data-anchor-id="descripción-del-conjunto-de-datos">Descripción del Conjunto de Datos</h2>
+<p>El proyecto utiliza el conjunto de datos de Rendimiento Estudiantil que contiene 395 estudiantes con 33 atributos que describen variable de tipo: demografía, contexto social y registros académicos.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Variables Demográficas</caption>
+<colgroup>
+<col style="width: 9%">
+<col style="width: 11%">
+<col style="width: 8%">
+<col style="width: 71%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Variable</th>
+<th style="text-align: left;">Tipo</th>
+<th style="text-align: left;">Valores</th>
+<th style="text-align: left;">Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">school</td>
+<td style="text-align: left;">Categórica</td>
+<td style="text-align: left;">GP, MS</td>
+<td style="text-align: left;">Escuela del estudiante (GP: Gabriel Pereira, MS: Mousinho da Silveira)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sex</td>
+<td style="text-align: left;">Categórica</td>
+<td style="text-align: left;">F, M</td>
+<td style="text-align: left;">Sexo del estudiante (F: Femenino, M: Masculino)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">age</td>
+<td style="text-align: left;">Numérica</td>
+<td style="text-align: left;">15-22</td>
+<td style="text-align: left;">Edad del estudiante en años</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">address</td>
+<td style="text-align: left;">Categórica</td>
+<td style="text-align: left;">U, R</td>
+<td style="text-align: left;">Tipo de domicilio del estudiante (U: Urbano, R: Rural)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Variables Escolares</caption>
+<colgroup>
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 24%">
+<col style="width: 58%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Variable</th>
+<th style="text-align: left;">Tipo</th>
+<th style="text-align: left;">Valores</th>
+<th style="text-align: left;">Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">reason</td>
+<td style="text-align: left;">Categórica</td>
+<td style="text-align: left;">home, reputation, course, other</td>
+<td style="text-align: left;">Razón para elegir esta escuela</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">traveltime</td>
+<td style="text-align: left;">Ordinal</td>
+<td style="text-align: left;">1-4</td>
+<td style="text-align: left;">Tiempo de viaje casa-escuela (1: &lt;15min, 2: 15-30min, 3: 30min-1h, 4: &gt;1h)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">studytime</td>
+<td style="text-align: left;">Ordinal</td>
+<td style="text-align: left;">1-4</td>
+<td style="text-align: left;">Tiempo de estudio semanal (1: &lt;2h, 2: 2-5h, 3: 5-10h, 4: &gt;10h)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">failures</td>
+<td style="text-align: left;">Numérica</td>
+<td style="text-align: left;">0-4</td>
+<td style="text-align: left;">Número de fallos académicos previos</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">schoolsup</td>
+<td style="text-align: left;">Categórica</td>
+<td style="text-align: left;">yes, no</td>
+<td style="text-align: left;">Recibe apoyo educativo extra de la escuela</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">famsup</td>
+<td style="text-align: left;">Categórica</td>
+<td style="text-align: left;">yes, no</td>
+<td style="text-align: left;">Recibe apoyo educativo de la familia</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">paid</td>
+<td style="text-align: left;">Categórica</td>
+<td style="text-align: left;">yes, no</td>
+<td style="text-align: left;">Toma clases extra pagadas en matemáticas</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">activities</td>
+<td style="text-align: left;">Categórica</td>
+<td style="text-align: left;">yes, no</td>
+<td style="text-align: left;">Participa en actividades extracurriculares</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">nursery</td>
+<td style="text-align: left;">Categórica</td>
+<td style="text-align: left;">yes, no</td>
+<td style="text-align: left;">Asistió a guardería</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">higher</td>
+<td style="text-align: left;">Categórica</td>
+<td style="text-align: left;">yes, no</td>
+<td style="text-align: left;">Desea seguir educación superior</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">absences</td>
+<td style="text-align: left;">Numérica</td>
+<td style="text-align: left;">0-93</td>
+<td style="text-align: left;">Número de ausencias escolares</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Variables Sociales y de Salud</caption>
+<colgroup>
+<col style="width: 9%">
+<col style="width: 11%">
+<col style="width: 8%">
+<col style="width: 69%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Variable</th>
+<th style="text-align: left;">Tipo</th>
+<th style="text-align: left;">Valores</th>
+<th style="text-align: left;">Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">internet</td>
+<td style="text-align: left;">Categórica</td>
+<td style="text-align: left;">yes, no</td>
+<td style="text-align: left;">Tiene acceso a internet en casa</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">romantic</td>
+<td style="text-align: left;">Categórica</td>
+<td style="text-align: left;">yes, no</td>
+<td style="text-align: left;">Está en una relación romántica</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">famrel</td>
+<td style="text-align: left;">Ordinal</td>
+<td style="text-align: left;">1-5</td>
+<td style="text-align: left;">Calidad de relaciones familiares (1: muy mala - 5: excelente)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">freetime</td>
+<td style="text-align: left;">Ordinal</td>
+<td style="text-align: left;">1-5</td>
+<td style="text-align: left;">Tiempo libre después de la escuela (1: muy bajo - 5: muy alto)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">goout</td>
+<td style="text-align: left;">Ordinal</td>
+<td style="text-align: left;">1-5</td>
+<td style="text-align: left;">Frecuencia de salidas con amigos (1: muy baja - 5: muy alta)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Dalc</td>
+<td style="text-align: left;">Ordinal</td>
+<td style="text-align: left;">1-5</td>
+<td style="text-align: left;">Consumo de alcohol entre semana (1: muy bajo - 5: muy alto)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Walc</td>
+<td style="text-align: left;">Ordinal</td>
+<td style="text-align: left;">1-5</td>
+<td style="text-align: left;">Consumo de alcohol en fin de semana (1: muy bajo - 5: muy alto)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">health</td>
+<td style="text-align: left;">Ordinal</td>
+<td style="text-align: left;">1-5</td>
+<td style="text-align: left;">Estado de salud actual (1: muy malo - 5: muy bueno)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Primeras 10 observaciones del dataset</caption>
+<colgroup>
+<col style="width: 2%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 4%">
+<col style="width: 3%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 3%">
+<col style="width: 4%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 4%">
+<col style="width: 3%">
+<col style="width: 2%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 2%">
+<col style="width: 3%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 3%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 1%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">school</th>
+<th style="text-align: left;">sex</th>
+<th style="text-align: right;">age</th>
+<th style="text-align: left;">address</th>
+<th style="text-align: left;">famsize</th>
+<th style="text-align: left;">pstatus</th>
+<th style="text-align: right;">medu</th>
+<th style="text-align: right;">fedu</th>
+<th style="text-align: left;">mjob</th>
+<th style="text-align: left;">fjob</th>
+<th style="text-align: left;">reason</th>
+<th style="text-align: left;">guardian</th>
+<th style="text-align: right;">traveltime</th>
+<th style="text-align: right;">studytime</th>
+<th style="text-align: right;">failures</th>
+<th style="text-align: left;">schoolsup</th>
+<th style="text-align: left;">famsup</th>
+<th style="text-align: left;">paid</th>
+<th style="text-align: left;">activities</th>
+<th style="text-align: left;">nursery</th>
+<th style="text-align: left;">higher</th>
+<th style="text-align: left;">internet</th>
+<th style="text-align: left;">romantic</th>
+<th style="text-align: right;">famrel</th>
+<th style="text-align: right;">freetime</th>
+<th style="text-align: right;">goout</th>
+<th style="text-align: right;">dalc</th>
+<th style="text-align: right;">walc</th>
+<th style="text-align: right;">health</th>
+<th style="text-align: right;">absences</th>
+<th style="text-align: right;">g1</th>
+<th style="text-align: right;">g2</th>
+<th style="text-align: right;">g3</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">GP</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: left;">U</td>
+<td style="text-align: left;">GT3</td>
+<td style="text-align: left;">A</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">at_home</td>
+<td style="text-align: left;">teacher</td>
+<td style="text-align: left;">course</td>
+<td style="text-align: left;">mother</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">6</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GP</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: left;">U</td>
+<td style="text-align: left;">GT3</td>
+<td style="text-align: left;">T</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">at_home</td>
+<td style="text-align: left;">other</td>
+<td style="text-align: left;">course</td>
+<td style="text-align: left;">father</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GP</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: left;">U</td>
+<td style="text-align: left;">LE3</td>
+<td style="text-align: left;">T</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">at_home</td>
+<td style="text-align: left;">other</td>
+<td style="text-align: left;">other</td>
+<td style="text-align: left;">mother</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GP</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: left;">U</td>
+<td style="text-align: left;">GT3</td>
+<td style="text-align: left;">T</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">health</td>
+<td style="text-align: left;">services</td>
+<td style="text-align: left;">home</td>
+<td style="text-align: left;">mother</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GP</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: left;">U</td>
+<td style="text-align: left;">GT3</td>
+<td style="text-align: left;">T</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">other</td>
+<td style="text-align: left;">other</td>
+<td style="text-align: left;">home</td>
+<td style="text-align: left;">father</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GP</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: left;">U</td>
+<td style="text-align: left;">LE3</td>
+<td style="text-align: left;">T</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">services</td>
+<td style="text-align: left;">other</td>
+<td style="text-align: left;">reputation</td>
+<td style="text-align: left;">mother</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GP</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: left;">U</td>
+<td style="text-align: left;">LE3</td>
+<td style="text-align: left;">T</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">other</td>
+<td style="text-align: left;">other</td>
+<td style="text-align: left;">home</td>
+<td style="text-align: left;">mother</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">11</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GP</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: left;">U</td>
+<td style="text-align: left;">GT3</td>
+<td style="text-align: left;">A</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">other</td>
+<td style="text-align: left;">teacher</td>
+<td style="text-align: left;">home</td>
+<td style="text-align: left;">mother</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GP</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: left;">U</td>
+<td style="text-align: left;">LE3</td>
+<td style="text-align: left;">A</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">services</td>
+<td style="text-align: left;">other</td>
+<td style="text-align: left;">home</td>
+<td style="text-align: left;">mother</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">19</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GP</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: left;">U</td>
+<td style="text-align: left;">GT3</td>
+<td style="text-align: left;">T</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">other</td>
+<td style="text-align: left;">other</td>
+<td style="text-align: left;">home</td>
+<td style="text-align: left;">mother</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">no</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">15</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Name</td>
+<td style="text-align: left;">Piped data</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Number of rows</td>
+<td style="text-align: left;">395</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Number of columns</td>
+<td style="text-align: left;">33</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">_______________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Column type frequency:</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">character</td>
+<td style="text-align: left;">17</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">16</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">________________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Group variables</td>
+<td style="text-align: left;">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 13%">
+<col style="width: 19%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 8%">
+<col style="width: 12%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">min</th>
+<th style="text-align: right;">max</th>
+<th style="text-align: right;">empty</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: right;">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">school</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sex</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">address</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">famsize</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">pstatus</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">mjob</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">fjob</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">reason</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">guardian</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">schoolsup</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">famsup</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">paid</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">activities</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">nursery</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">higher</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">internet</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">romantic</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 13%">
+<col style="width: 18%">
+<col style="width: 8%">
+<col style="width: 6%">
+<col style="width: 4%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 6%">
+<col style="width: 8%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">sd</th>
+<th style="text-align: right;">p0</th>
+<th style="text-align: right;">p25</th>
+<th style="text-align: right;">p50</th>
+<th style="text-align: right;">p75</th>
+<th style="text-align: right;">p100</th>
+<th style="text-align: left;">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">age</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">16.70</td>
+<td style="text-align: right;">1.28</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: left;">▇▅▅▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">medu</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2.75</td>
+<td style="text-align: right;">1.09</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">▁▃▆▆▇</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">fedu</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2.52</td>
+<td style="text-align: right;">1.09</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">▁▆▇▇▇</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">traveltime</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.45</td>
+<td style="text-align: right;">0.70</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">▇▃▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">studytime</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2.04</td>
+<td style="text-align: right;">0.84</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">▅▇▁▂▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">failures</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.33</td>
+<td style="text-align: right;">0.74</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">famrel</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3.94</td>
+<td style="text-align: right;">0.90</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">▁▁▃▇▅</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">freetime</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3.24</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">▁▃▇▆▂</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">goout</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3.11</td>
+<td style="text-align: right;">1.11</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">▂▆▇▅▃</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dalc</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.48</td>
+<td style="text-align: right;">0.89</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">▇▂▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">walc</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2.29</td>
+<td style="text-align: right;">1.29</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">▇▅▅▃▂</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">health</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3.55</td>
+<td style="text-align: right;">1.39</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">▂▂▅▃▇</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">absences</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5.71</td>
+<td style="text-align: right;">8.00</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">g1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">10.91</td>
+<td style="text-align: right;">3.32</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">19</td>
+<td style="text-align: left;">▂▇▇▆▂</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">g2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">10.71</td>
+<td style="text-align: right;">3.76</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">19</td>
+<td style="text-align: left;">▁▂▇▆▂</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">g3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">10.42</td>
+<td style="text-align: right;">4.58</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: left;">▂▃▇▅▁</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Este conjunto de datos contiene información sobre 395 estudiantes, sin valores faltantes. Incluye 33 variables que describen aspectos personales, familiares, sociales y académicos. Hay 17 variables categóricas, como el género, la escuela o el motivo para elegir esta, y 16 numéricas, como edad, tiempo de estudio, número de ausencias y calificaciones en los tres periodos (g1, g2, g3). Todos los datos están completos, lo que permite un análisis confiable del rendimiento académico y los factores asociados.</p>
+</section>
+</section>
+<section id="análisis-exploratorio-de-datos-eda" class="level1">
+<h1>Análisis Exploratorio de Datos (EDA)</h1>
+<section id="análisis-univariado-de-la-variable-objetivo-textg3" class="level3">
+<h3 class="anchored" data-anchor-id="análisis-univariado-de-la-variable-objetivo-textg3">Análisis Univariado de la Variable Objetivo (<span class="math inline">\(\text{G3}\)</span>)</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="CopyOfReporte_Proyecto_files/figure-html/g3-distribution-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%" data-fig-pos="H"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+### Estadísticas Descriptivas de G3</code></pre>
+</div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Estadísticas clave de la Nota Final (G3).</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;" data-quarto-table-cell-role="th">Media</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Mediana</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Min</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Max</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">10.42</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">20</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>La distribución de la nota final ($\text{G3}$) presenta un sesgo negativo (hacia la izquierda), ya que la Mediana (11) es ligeramente superior a la Media (10.42), aunque ambos valores son cercanos. El rango completo de notas es utilizado, yendo de $\text{0}$ (nota mínima) a $\text{20}$ (nota máxima). La presencia de una alta frecuencia de notas cero sugiere un número significativo de reprobados o no presentados.</p>
+</section>
+<section id="análisis-bivariado-factores-numéricos-vs.-textg3" class="level3">
+<h3 class="anchored" data-anchor-id="análisis-bivariado-factores-numéricos-vs.-textg3">Análisis Bivariado: Factores Numéricos vs.&nbsp;<span class="math inline">\(\text{G3}\)</span></h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<pre><code>### Matriz de Correlación de Factores Numéricos y G3</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="CopyOfReporte_Proyecto_files/figure-html/correlation-matrix-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%" data-fig-pos="H"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>Las correlaciones más fuertes y negativas se encuentran con <strong><code>failures</code></strong> (-0.37) y <strong><code>age</code></strong> (-0.23). Los estudiantes con más fallas previas y de mayor edad tienden a tener notas <span class="math inline">\(\text{G3}\)</span> más bajas.</li>
+</ul>
+<!-- -->
+<ul>
+<li>Existe una correlación positiva con la <strong><code>medu</code></strong> (Educación de la Madre, 0.22) y <strong><code>fedu</code></strong> (Educación del Padre, 0.17).</li>
+</ul>
+</section>
+<section id="relaciones-gráficas-de-factores-clave-vs.-textg3" class="level3">
+<h3 class="anchored" data-anchor-id="relaciones-gráficas-de-factores-clave-vs.-textg3">Relaciones Gráficas de Factores Clave vs.&nbsp;<span class="math inline">\(\text{G3}\)</span></h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="CopyOfReporte_Proyecto_files/figure-html/key-numerical-vs-g3-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%" data-fig-pos="H"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li><strong>Fallas Previas (<code>failures</code>):</strong> Existe una <strong>relación negativa muy fuerte</strong>. A medida que el número de fallas previas aumenta (de 0 a <span class="math inline">\(&gt;3\)</span>), la <strong>mediana de</strong> <span class="math inline">\(\text{G3}\)</span> cae drásticamente, validando que el historial académico es un predictor que puede ser muy útil.</li>
+</ul>
+<!-- -->
+<ul>
+<li><p><strong>Tiempo de Estudio (<code>studytime</code>):</strong> La relación es <strong>positiva</strong>. Los estudiantes que dedican más tiempo a estudiar semanalmente (niveles 2, 3 y 4) muestran consistentemente una <strong>mediana de</strong> <span class="math inline">\(\text{G3}\)</span> superior a aquellos que estudian menos de 2 horas (nivel 1).</p></li>
+<li><p><strong>Ausencias (<code>absences</code>):</strong> El gráfico de dispersión muestra una <strong>correlación muy débil</strong> con <span class="math inline">\(\text{G3}\)</span>, ya que la línea de tendencia es casi plana, lo que sugiere que el número de ausencias por sí solo no es un predictor lineal fuerte de la nota final para la mayoría de los estudiantes.</p></li>
+</ul>
+</section>
+<section id="análisis-bivariado-factores-categóricos-vs.-textg3" class="level3">
+<h3 class="anchored" data-anchor-id="análisis-bivariado-factores-categóricos-vs.-textg3">Análisis Bivariado: Factores Categóricos vs.&nbsp;<span class="math inline">\(\text{G3}\)</span></h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="CopyOfReporte_Proyecto_files/figure-html/key-categorical-vs-g3-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%" data-fig-pos="H"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li><strong>Deseo de Educación Superior (<code>higher</code>):</strong> Esta es la variable categórica <strong>más influyente</strong>. Los estudiantes que expresan un deseo de seguir estudios superiores (<strong>“yes”</strong>) tienen una <strong>mediana de</strong> <span class="math inline">\(\text{G3}\)</span> significativamente más alta (alrededor de 12) que aquellos que no lo desean, lo que puede indicar la importancia de la <strong>motivación</strong> como predictor.</li>
+</ul>
+<!-- -->
+<ul>
+<li><p><strong>Sexo (<code>sex</code>):</strong> Existe una <strong>diferencia sutil pero verificable</strong> en el rendimiento. Los estudiantes varones (<strong>M</strong>) registran una <strong>mediana de</strong> <span class="math inline">\(\text{G3}\)</span> superior (11.00) a la de las estudiantes mujeres (<strong>F</strong>, 10.00).</p></li>
+<li><p><strong>Apoyo Familiar (<code>famsup</code>):</strong> El impacto de contar con apoyo familiar es <strong>mínimo</strong>. La diferencia en la mediana de <span class="math inline">\(\text{G3}\)</span> entre los grupos es <strong>casi nula</strong>, lo que indica que es probable que esta variable sea un predictor débil para el modelado.</p></li>
+</ul>
+</section>
+<section id="respuesta-preliminar-a-las-preguntas-de-business-understanding" class="level3">
+<h3 class="anchored" data-anchor-id="respuesta-preliminar-a-las-preguntas-de-business-understanding">Respuesta preliminar a las preguntas de Business understanding</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="table-responsive">
+<table class="table table-striped table-hover table-condensed caption-top table-sm small">
+<caption>Resumen de las Conclusiones Preliminares del EDA frente a las Preguntas de Negocio</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Pregunta de Negocio</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Variables Clave</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Análisis del EDA</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Conclusión Preliminar</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; color: black !important; background-color: rgba(230, 243, 255, 255) !important;">¿Un mayor nivel educativo de los padres se asocia con una mayor probabilidad de aprobación?</td>
+<td style="text-align: left; color: black !important; background-color: rgba(230, 243, 255, 255) !important;">G3 vs. Medu y Fedu</td>
+<td style="text-align: left; color: black !important; background-color: rgba(230, 243, 255, 255) !important;">Correlación positiva y moderada con G3 (Medu: 0.22, Fedu: 0.17).</td>
+<td style="text-align: left; color: black !important; background-color: rgba(230, 243, 255, 255) !important;">Sí. Hay una asociación positiva. El nivel educativo de los padres se correlaciona con un mayor rendimiento.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 230, 230, 255) !important;">¿El número de fracasos previos es el predictor más fuerte de reprobación?</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 230, 230, 255) !important;">G3 vs. failures</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 230, 230, 255) !important;">Correlación más fuerte y negativa de todos los factores (-0.37). Caída drástica de la mediana de G3.</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 230, 230, 255) !important;">Sí. failures es el predictor de bajo rendimiento más potente entre los factores asociados.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">¿El apoyo escolar extra mejora significativamente las probabilidades de aprobación?</td>
+<td style="text-align: left;">G3 vs. schoolsup</td>
+<td style="text-align: left;">Mediana de G3 para estudiantes con apoyo (9.0) es inferior a la de sin apoyo (11.0).</td>
+<td style="text-align: left;">Inconcluso. schoolsup es un indicador de riesgo, lo que sugiere que identifica a estudiantes con bajo rendimiento inicial.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">¿Una mayor frecuencia de salidas con amigos se asocia con menor rendimiento?</td>
+<td style="text-align: left;">G3 vs. goout</td>
+<td style="text-align: left;">Correlación negativa, pero débil (-0.13). Tendencia a la baja en G3 con más salidas.</td>
+<td style="text-align: left;">Sí, existe una asociación negativa, pero su impacto es menor que otros factores, como failures o higher.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="modelado-y-evaluación" class="level1">
+<h1>Modelado y Evaluación</h1>
+<section id="caso-1-todas-las-variables-sin-balanceo" class="level2">
+<h2 class="anchored" data-anchor-id="caso-1-todas-las-variables-sin-balanceo">Caso 1: Todas las Variables sin Balanceo</h2>
+<p>2.1 Configuración del Caso 1 Variables: Todas las 30 variables disponibles</p>
+<p>Balanceo: Sin balanceo de clases (distribución natural 67.1% Aprobado / 32.9% Reprobado)</p>
+<p>Objetivo: Establecer línea base de rendimiento con todas las características</p>
+<p>2.2 Resultados del Caso 1</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small">
+<caption>Resultados del Caso 1: Todas las Variables sin Balanceo</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Modelo</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">AUC</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Precision</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Sensibilidad</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Especificidad</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Posicion</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">Gradient Boosting</td>
+<td style="text-align: right; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">0.6425</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">63.27%</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">25.00%</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">81.82%</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Regresión Logística</td>
+<td style="text-align: right;">0.6335</td>
+<td style="text-align: center;">61.22%</td>
+<td style="text-align: center;">31.25%</td>
+<td style="text-align: center;">75.76%</td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Random Forest</td>
+<td style="text-align: right;">0.6127</td>
+<td style="text-align: center;">71.43%</td>
+<td style="text-align: center;">40.62%</td>
+<td style="text-align: center;">86.36%</td>
+<td style="text-align: center;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Árbol de Decisión</td>
+<td style="text-align: right;">0.6125</td>
+<td style="text-align: center;">64.29%</td>
+<td style="text-align: center;">37.50%</td>
+<td style="text-align: center;">77.27%</td>
+<td style="text-align: center;">4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SVM Radial</td>
+<td style="text-align: right;">0.5909</td>
+<td style="text-align: center;">70.41%</td>
+<td style="text-align: center;">31.25%</td>
+<td style="text-align: center;">89.39%</td>
+<td style="text-align: center;">5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">KNN</td>
+<td style="text-align: right;">0.5386</td>
+<td style="text-align: center;">63.27%</td>
+<td style="text-align: center;">25.00%</td>
+<td style="text-align: center;">81.82%</td>
+<td style="text-align: center;">6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Naive Bayes</td>
+<td style="text-align: right;">0.5421</td>
+<td style="text-align: center;">59.18%</td>
+<td style="text-align: center;">31.25%</td>
+<td style="text-align: center;">72.73%</td>
+<td style="text-align: center;">7</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="análisis-del-caso-1" class="level2">
+<h2 class="anchored" data-anchor-id="análisis-del-caso-1">Análisis del Caso 1</h2>
+<p>Fortalezas Identificadas: Gradient Boosting obtuvo el mejor AUC (0.6425)</p>
+<p>Random Forest logró la mayor precisión general (71.43%)</p>
+<p>SVM Radial alcanzó la mayor especificidad (89.39%)</p>
+<p>Debilidades Identificadas: Baja sensibilidad general: Todos los modelos detectan menos del 50% de estudiantes reprobados</p>
+<p>Sobreajuste potencial: 30 variables pueden introducir ruido en algunos modelos</p>
+<p>KNN y Naive Bayes mostraron rendimiento inferior</p>
+<p>Conclusiones del Caso 1: Los modelos complejos (Gradient Boosting, Random Forest) funcionan mejor con todas las variables</p>
+<p>Existe un claro trade-off entre sensibilidad y especificidad</p>
+<p>La baja sensibilidad sugiere necesidad de abordar el desbalance de clases</p>
+</section>
+<section id="caso-2-todas-las-variables-con-balanceo" class="level2">
+<h2 class="anchored" data-anchor-id="caso-2-todas-las-variables-con-balanceo">Caso 2: Todas las Variables con Balanceo</h2>
+<p>3.1 Configuración del Caso 2 Variables: Todas las 30 variables disponibles</p>
+<p>Balanceo: Con sobremuestreo (up-sampling) para balancear clases</p>
+<p>Objetivo: Evaluar impacto del balanceo manteniendo todas las características</p>
+<p>3.2 Resultados del Caso 2</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small">
+<caption>Resultados del Caso 2: Todas las Variables con Balanceo</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Modelo</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">AUC</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Precision</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Sensibilidad</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Especificidad</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Cambio_Sensibilidad</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">Regresión Logística</td>
+<td style="text-align: right; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">0.6316</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">61.22%</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">50.00%</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">66.67%</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">+60.0%</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Gradient Boosting</td>
+<td style="text-align: right;">0.6259</td>
+<td style="text-align: center;">63.27%</td>
+<td style="text-align: center;">40.62%</td>
+<td style="text-align: center;">74.24%</td>
+<td style="text-align: center;">+62.5%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Random Forest</td>
+<td style="text-align: right;">0.6120</td>
+<td style="text-align: center;">66.33%</td>
+<td style="text-align: center;">40.62%</td>
+<td style="text-align: center;">78.79%</td>
+<td style="text-align: center;">0.0%</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SVM Radial</td>
+<td style="text-align: right;">0.6009</td>
+<td style="text-align: center;">59.18%</td>
+<td style="text-align: center;">37.50%</td>
+<td style="text-align: center;">69.70%</td>
+<td style="text-align: center;">+20.0%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Árbol de Decisión</td>
+<td style="text-align: right;">0.5881</td>
+<td style="text-align: center;">68.37%</td>
+<td style="text-align: center;">31.25%</td>
+<td style="text-align: center;">86.36%</td>
+<td style="text-align: center;">-16.7%</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">KNN</td>
+<td style="text-align: right;">0.5573</td>
+<td style="text-align: center;">57.14%</td>
+<td style="text-align: center;">53.12%</td>
+<td style="text-align: center;">59.09%</td>
+<td style="text-align: center;">+112.5%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="impacto-del-balanceo-en-el-caso-2" class="level2">
+<h2 class="anchored" data-anchor-id="impacto-del-balanceo-en-el-caso-2">Impacto del Balanceo en el Caso 2</h2>
+<p>Mejoras Observadas: Sensibilidad incrementada significativamente en la mayoría de modelos</p>
+<p>Regresión Logística mejoró su sensibilidad de 31.25% a 50.00%</p>
+<p>KNN duplicó su sensibilidad (de 25.00% a 53.12%)</p>
+<p>Compensaciones Observadas: Reducción en AUC en la mayoría de modelos</p>
+<p>Disminución en especificidad como trade-off por mayor sensibilidad</p>
+<p>Precisión general se mantuvo similar o disminuyó ligeramente</p>
+<p>Conclusiones del Caso 2: El balanceo mejora significativamente la detección de estudiantes reprobados</p>
+<p>Los modelos más simples (Regresión Logística, KNN) se benefician más del balanceo</p>
+<p>Existe un trade-off claro entre sensibilidad y especificidad</p>
+</section>
+<section id="proceso-de-selección-de-variables" class="level2">
+<h2 class="anchored" data-anchor-id="proceso-de-selección-de-variables">Proceso de Selección de Variables</h2>
+<section id="metodología-de-selección" class="level4">
+<h4 class="anchored" data-anchor-id="metodología-de-selección">Metodología de Selección</h4>
+<p>Se emplearon tres métodos complementarios para identificar las variables más predictivas:</p>
+</section>
+<section id="pruebas-chi-cuadrado-variables-categóricas" class="level4">
+<h4 class="anchored" data-anchor-id="pruebas-chi-cuadrado-variables-categóricas">Pruebas Chi-Cuadrado (Variables Categóricas)</h4>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small">
+<caption>Ranking de Variables Categóricas por Chi-Cuadrado</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Variable</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Valor_P</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Significancia</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Decision</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">higher</td>
+<td style="text-align: right;">0.02385</td>
+<td style="text-align: center;">Muy alta</td>
+<td style="text-align: center;">Seleccionada</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">guardian</td>
+<td style="text-align: right;">0.03277</td>
+<td style="text-align: center;">Alta</td>
+<td style="text-align: center;">Seleccionada</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">paid</td>
+<td style="text-align: right;">0.05645</td>
+<td style="text-align: center;">Moderada</td>
+<td style="text-align: center;">Considerada</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">romantic</td>
+<td style="text-align: right;">0.09125</td>
+<td style="text-align: center;">Marginal</td>
+<td style="text-align: center;">Considerada</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Mjob</td>
+<td style="text-align: right;">0.09994</td>
+<td style="text-align: center;">Marginal</td>
+<td style="text-align: center;">Considerada</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">internet</td>
+<td style="text-align: right;">0.10624</td>
+<td style="text-align: center;">Baja</td>
+<td style="text-align: center;">No seleccionada</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="algoritmo-boruta-importancia-de-todas-las-variables" class="level4">
+<h4 class="anchored" data-anchor-id="algoritmo-boruta-importancia-de-todas-las-variables">Algoritmo Boruta (Importancia de Todas las Variables)</h4>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small">
+<caption>Variables Confirmadas Importantes por Boruta</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Variable</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Importancia_Media</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Decision</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Categoria</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">failures</td>
+<td style="text-align: right;">22.90</td>
+<td style="text-align: center;">Confirmada</td>
+<td style="text-align: center;">Académica</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">absences</td>
+<td style="text-align: right;">11.23</td>
+<td style="text-align: center;">Confirmada</td>
+<td style="text-align: center;">Asistencia</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">goout</td>
+<td style="text-align: right;">8.09</td>
+<td style="text-align: center;">Confirmada</td>
+<td style="text-align: center;">Conductual</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">schoolsup</td>
+<td style="text-align: right;">7.04</td>
+<td style="text-align: center;">Confirmada</td>
+<td style="text-align: center;">Apoyo</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">guardian</td>
+<td style="text-align: right;">6.34</td>
+<td style="text-align: center;">Confirmada</td>
+<td style="text-align: center;">Familiar</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Medu</td>
+<td style="text-align: right;">4.22</td>
+<td style="text-align: center;">Confirmada</td>
+<td style="text-align: center;">Familiar</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">age</td>
+<td style="text-align: right;">4.01</td>
+<td style="text-align: center;">Confirmada</td>
+<td style="text-align: center;">Demográfica</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="eliminación-recursiva-de-características-rfe" class="level4">
+<h4 class="anchored" data-anchor-id="eliminación-recursiva-de-características-rfe">Eliminación Recursiva de Características (RFE)</h4>
+<p>Método: Random Forest como wrapper</p>
+<p>Variables óptimas identificadas: 9 variables</p>
+<p>Top 5 variables: failures, absences, goout, Medu, schoolsup</p>
+<p>Precisión máxima: 72.91% con 9 variables</p>
+</section>
+<section id="conjunto-final-de-variables-seleccionadas" class="level4">
+<h4 class="anchored" data-anchor-id="conjunto-final-de-variables-seleccionadas">Conjunto Final de Variables Seleccionadas</h4>
+<p>Basado en el consenso de los tres métodos, se seleccionaron 7 variables clave:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small">
+<caption>Conjunto Final de 7 Variables Seleccionadas</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Variable</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Descripcion</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Metodos_Que_La_Seleccionan</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Justificacion</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">failures</td>
+<td style="text-align: left;">Número de fallas académicas previas</td>
+<td style="text-align: center;">3/3</td>
+<td style="text-align: left;">Predictor más fuerte en todos los análisis</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">absences</td>
+<td style="text-align: left;">Número total de ausencias</td>
+<td style="text-align: center;">3/3</td>
+<td style="text-align: left;">Alta correlación con rendimiento académico</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">higher</td>
+<td style="text-align: left;">Intención de cursar educación superior</td>
+<td style="text-align: center;">2/3</td>
+<td style="text-align: left;">Fuertemente relacionada con motivación estudiantil</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">age</td>
+<td style="text-align: left;">Edad del estudiante</td>
+<td style="text-align: center;">2/3</td>
+<td style="text-align: left;">Indicador potencial de repetición de grado</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Medu</td>
+<td style="text-align: left;">Nivel educativo de la madre</td>
+<td style="text-align: center;">2/3</td>
+<td style="text-align: left;">Factor socioeconómico importante</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">goout</td>
+<td style="text-align: left;">Frecuencia de salidas sociales</td>
+<td style="text-align: center;">2/3</td>
+<td style="text-align: left;">Indicador de balance vida-estudio</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">guardian</td>
+<td style="text-align: left;">Persona responsable del estudiante</td>
+<td style="text-align: center;">2/3</td>
+<td style="text-align: left;">Indicador de estructura de apoyo familiar</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="beneficios-de-la-selección-de-variables" class="level4">
+<h4 class="anchored" data-anchor-id="beneficios-de-la-selección-de-variables">Beneficios de la Selección de Variables</h4>
+<p>Reducción de dimensionalidad: 30 → 7 variables (76.7% reducción)</p>
+<p>Mejor interpretabilidad: Variables más comprensibles para stakeholders</p>
+<p>Reducción de sobreajuste: Menor riesgo de modelar ruido</p>
+<p>Eficiencia computacional: Entrenamiento y predicción más rápidos</p>
+</section>
+</section>
+<section id="caso-3-variables-seleccionadas-sin-balanceo" class="level2">
+<h2 class="anchored" data-anchor-id="caso-3-variables-seleccionadas-sin-balanceo">Caso 3: Variables Seleccionadas sin Balanceo</h2>
+<section id="configuración-del-caso-3" class="level3">
+<h3 class="anchored" data-anchor-id="configuración-del-caso-3">Configuración del Caso 3</h3>
+<p>Variables: 7 variables seleccionadas (failures, absences, higher, age, Medu, goout, guardian)</p>
+<p>Balanceo: Sin balanceo de clases</p>
+<p>Objetivo: Evaluar rendimiento con variables optimizadas manteniendo distribución natural</p>
+</section>
+<section id="resultados-del-caso-3" class="level3">
+<h3 class="anchored" data-anchor-id="resultados-del-caso-3">Resultados del Caso 3</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small">
+<caption>Resultados del Caso 3: Variables Seleccionadas sin Balanceo</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Modelo</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">AUC</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Precision</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Sensibilidad</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Especificidad</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Comparacion_Caso1</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">Regresión Logística</td>
+<td style="text-align: right; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">0.6461</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">69.39%</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">28.12%</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">89.39%</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">+2.0% AUC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Gradient Boosting</td>
+<td style="text-align: right;">0.6409</td>
+<td style="text-align: center;">68.37%</td>
+<td style="text-align: center;">28.12%</td>
+<td style="text-align: center;">87.88%</td>
+<td style="text-align: center;">-0.2% AUC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Random Forest</td>
+<td style="text-align: right;">0.6274</td>
+<td style="text-align: center;">68.37%</td>
+<td style="text-align: center;">31.25%</td>
+<td style="text-align: center;">86.36%</td>
+<td style="text-align: center;">+2.4% AUC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">KNN</td>
+<td style="text-align: right;">0.6054</td>
+<td style="text-align: center;">72.45%</td>
+<td style="text-align: center;">34.38%</td>
+<td style="text-align: center;">90.91%</td>
+<td style="text-align: center;">+12.4% AUC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SVM Radial</td>
+<td style="text-align: right;">0.6016</td>
+<td style="text-align: center;">68.37%</td>
+<td style="text-align: center;">31.25%</td>
+<td style="text-align: center;">86.36%</td>
+<td style="text-align: center;">+1.8% AUC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Árbol de Decisión</td>
+<td style="text-align: right;">0.5881</td>
+<td style="text-align: center;">68.37%</td>
+<td style="text-align: center;">31.25%</td>
+<td style="text-align: center;">86.36%</td>
+<td style="text-align: center;">-4.0% AUC</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="análisis-del-caso-3" class="level3">
+<h3 class="anchored" data-anchor-id="análisis-del-caso-3">Análisis del Caso 3</h3>
+<p>Mejoras Observadas vs.&nbsp;Caso 1: Regresión Logística mejora su AUC de 0.6335 a 0.6461</p>
+<p>KNN muestra la mayor mejora en precisión (de 63.27% a 72.45%)</p>
+<p>Especificidad general más alta: Promedio de 87.71% vs.&nbsp;81.07% en Caso 1</p>
+<p>Características Persistentes: Sensibilidad aún baja: Promedio de 30.56%</p>
+<p>Trade-off sensibilidad-especificidad sigue presente</p>
+<p>Modelos más simples mejoran relativamente más que modelos complejos</p>
+<p>Conclusiones del Caso 3: La selección de variables mejora el rendimiento de modelos más simples</p>
+<p>Se mantiene alta especificidad pero baja sensibilidad</p>
+<p>7 variables son suficientes para lograr rendimiento competitivo</p>
+</section>
+</section>
+<section id="caso-4-variables-seleccionadas-con-balanceo" class="level2">
+<h2 class="anchored" data-anchor-id="caso-4-variables-seleccionadas-con-balanceo">Caso 4: Variables Seleccionadas con Balanceo</h2>
+<p>6.1 Configuración del Caso 4 Variables: 7 variables seleccionadas</p>
+<p>Balanceo: Con sobremuestreo (up-sampling)</p>
+<p>Objetivo: Combinar beneficios de selección de variables y balanceo de clases</p>
+<p>6.2 Resultados del Caso 4</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small">
+<caption>Resultados del Caso 4: Variables Seleccionadas con Balanceo</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Modelo</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">AUC</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Precision</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Sensibilidad</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Especificidad</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">AUC_vs_Caso3</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Sensibilidad_vs_Caso3</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">KNN</td>
+<td style="text-align: right; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">0.6536</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">63.27%</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">65.62%</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">62.12%</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">+4.82%</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">+91.2%</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Random Forest</td>
+<td style="text-align: right;">0.6383</td>
+<td style="text-align: center;">65.31%</td>
+<td style="text-align: center;">37.50%</td>
+<td style="text-align: center;">78.79%</td>
+<td style="text-align: center;">+1.09%</td>
+<td style="text-align: left;">+20.0%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SVM Radial</td>
+<td style="text-align: right;">0.6316</td>
+<td style="text-align: center;">69.39%</td>
+<td style="text-align: center;">46.88%</td>
+<td style="text-align: center;">80.30%</td>
+<td style="text-align: center;">+3.00%</td>
+<td style="text-align: left;">+50.0%</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Gradient Boosting</td>
+<td style="text-align: right;">0.6283</td>
+<td style="text-align: center;">62.24%</td>
+<td style="text-align: center;">53.12%</td>
+<td style="text-align: center;">66.67%</td>
+<td style="text-align: center;">-1.26%</td>
+<td style="text-align: left;">+88.9%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Regresión Logística</td>
+<td style="text-align: right;">0.6278</td>
+<td style="text-align: center;">61.22%</td>
+<td style="text-align: center;">46.88%</td>
+<td style="text-align: center;">68.18%</td>
+<td style="text-align: center;">-1.83%</td>
+<td style="text-align: left;">+66.7%</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Árbol de Decisión</td>
+<td style="text-align: right;">0.5743</td>
+<td style="text-align: center;">61.22%</td>
+<td style="text-align: center;">31.25%</td>
+<td style="text-align: center;">75.76%</td>
+<td style="text-align: center;">-1.38%</td>
+<td style="text-align: left;">0.0%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<section id="análisis-del-caso-4" class="level3">
+<h3 class="anchored" data-anchor-id="análisis-del-caso-4">Análisis del Caso 4</h3>
+<p>Mejoras Significativas: KNN logra el mejor AUC global (0.6536) y la mayor sensibilidad (65.62%)</p>
+<p>Sensibilidad promedio incrementada de 30.56% (Caso 3) a 48.44%</p>
+<p>Balance mejorado entre métricas de rendimiento</p>
+<p>Trade-offs Observados: Especificidad disminuye como compensación por mayor sensibilidad</p>
+<p>Algunos modelos (GLM, GBM) muestran ligera reducción en AUC</p>
+<p>Precisión general se mantiene en niveles similares</p>
+<p>Hallazgo Clave: KNN emerge como el mejor modelo en esta configuración, demostrando que con las variables correctas y balanceo adecuado, algoritmos simples pueden superar a modelos más complejos</p>
+</section>
+<section id="comparativa-entre-los-4-casos" class="level3">
+<h3 class="anchored" data-anchor-id="comparativa-entre-los-4-casos">Comparativa Entre los 4 Casos</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small">
+<caption>Comparativa General de los 4 Casos Experimentales</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Caso</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Descripcion</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Mejor_Modelo</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Mejor_AUC</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Sensibilidad_Promedio</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Especificidad_Promedio</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Fortaleza_Principal</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Caso 1</td>
+<td style="text-align: left;">30 vars, sin balanceo</td>
+<td style="text-align: left;">Gradient Boosting</td>
+<td style="text-align: right;">0.6425</td>
+<td style="text-align: center;">31.25%</td>
+<td style="text-align: center;">81.07%</td>
+<td style="text-align: left;">Mayor especificidad</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Caso 2</td>
+<td style="text-align: left;">30 vars, con balanceo</td>
+<td style="text-align: left;">Regresión Logística</td>
+<td style="text-align: right;">0.6316</td>
+<td style="text-align: center;">42.19%</td>
+<td style="text-align: center;">72.53%</td>
+<td style="text-align: left;">Mejor balance general</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Caso 3</td>
+<td style="text-align: left;">7 vars, sin balanceo</td>
+<td style="text-align: left;">Regresión Logística</td>
+<td style="text-align: right;">0.6461</td>
+<td style="text-align: center;">30.56%</td>
+<td style="text-align: center;">87.71%</td>
+<td style="text-align: left;">Alta especificidad con pocas variables</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">Caso 4</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">7 vars, con balanceo</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">KNN</td>
+<td style="text-align: right; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">0.6536</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">48.44%</td>
+<td style="text-align: center; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">71.97%</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(232, 244, 248, 255) !important;">Mejor sensibilidad y AUC global</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="conclusiones-y-recomendaciones-finales" class="level1">
+<h1>Conclusiones y Recomendaciones Finales</h1>
+<p>7.1 Hallazgos Clave del Estudio Selección de Variables es Efectiva: Reducir de 30 a 7 variables mejora la eficiencia sin sacrificar rendimiento</p>
+<p>Balanceo Mejora Detección de Riesgo: El sobremuestreo incrementa significativamente la sensibilidad</p>
+<p>No Hay un Modelo Único Óptimo: Diferentes configuraciones optimizan diferentes métricas</p>
+<p>Variables Críticas Identificadas: Fallas previas, ausencias y aspiración educativa son predictores clave</p>
+<section id="recomendaciones-de-implementación" class="level2">
+<h2 class="anchored" data-anchor-id="recomendaciones-de-implementación">Recomendaciones de Implementación</h2>
+<p>Para Prioridad: Detección Temprana de Riesgo Configuración recomendada: Caso 4 con modelo KNN</p>
+<p>Ventaja: 65.62% sensibilidad para detectar estudiantes reprobados</p>
+<p>Uso: Sistema de alerta temprana</p>
+<p>Para Prioridad: Optimización de Recursos Configuración recomendada: Caso 3 con Regresión Logística</p>
+<p>Ventaja: 89.39% especificidad para minimizar falsos positivos</p>
+<p>Uso: Asignación dirigida de recursos de apoyo</p>
+<p>Para Prioridad: Balance General Configuración recomendada: Caso 2 con Random Forest</p>
+<p>Ventaja: Buen balance entre todas las métricas</p>
+<p>Uso: Monitoreo general institucional</p>
+</section>
+<section id="recomendación-final" class="level2">
+<h2 class="anchored" data-anchor-id="recomendación-final">Recomendación Final</h2>
+<p>Basado en el análisis completo, recomendamos una implementación por fases:</p>
+<p>Fase 1 (Semanas 1-6): Implementar Caso 4 con KNN para maximizar detección temprana de estudiantes en riesgo.</p>
+<p>Fase 2 (Meses 2-6): Añadir Caso 3 con Regresión Logística como verificación secundaria para optimización de recursos.</p>
+<p>Fase 3 (Meses 6-12): Desarrollar un sistema ensemble que combine ambas configuraciones, ajustando automáticamente según prioridades institucionales.</p>
+</section>
+<section id="limitaciones-y-trabajo-futuro" class="level2">
+<h2 class="anchored" data-anchor-id="limitaciones-y-trabajo-futuro">Limitaciones y Trabajo Futuro</h2>
+<p>Limitaciones Reconocidas: Rendimiento Predictivo Moderado: AUC máximo de 0.6536 indica margen de mejora</p>
+<p>Contexto Específico: Datos de sistema educativo portugués</p>
+<p>Datos Auto-reportados: Posible sesgo en respuestas</p>
+<p>Direcciones Futuras: Integración de Datos Temporales: Seguimiento longitudinal de estudiantes</p>
+<p>Validación Cruzada Institucional: Probar en diferentes contextos educativos</p>
+<p>Modelos de Explicabilidad: Mejorar interpretabilidad para stakeholders no técnicos</p>
+<p>Sistemas de Recomendación: Sugerir intervenciones específicas basadas en perfiles de riesgo</p>
+<p>Nota Final: Este estudio demuestra que, aunque la predicción perfecta del rendimiento estudiantil sigue siendo un desafío, es posible identificar factores clave y desarrollar herramientas útiles para la toma de decisiones educativas basadas en datos. La combinación de selección inteligente de variables y técnicas apropiadas de balanceo puede proporcionar insights valiosos para mejorar los resultados estudiantiles.</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
