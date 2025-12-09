@@ -118,7 +118,8 @@ library(knitr)   # Para generar tablas limpias (kable)
 library(skimr)   # Para generar resúmenes estadísticos rápidos
 # 1. Cargar el dataset usando read_csv2 para el delimitador punto y coma (;)
 
-data_raw <- read_csv2("Data/studentmat.csv")
+data_raw <- read_delim("Data/studentmat.csv", 
+    delim = ";", escape_double = FALSE, trim_ws = TRUE)
 
 # 2. Limpiar los nombres de las columnas (ej: de "G1" a "g1")
 data <- data_raw %>%
@@ -193,11 +194,11 @@ dict_social %>%
 ```
 
 ```{r head-data}
-head(data_clean, 10) %>% 
+head(data, 10) %>% 
   kable(caption = "Primeras 10 observaciones del dataset")
 
 
-data_summary <- data_clean %>% skim()
+data_summary <- data %>% skim()
 data_summary
 ```
 
@@ -222,6 +223,7 @@ library(tidyverse)
 library(knitr)
 library(corrplot) # Para visualizar la matriz de correlación
 library(patchwork) # Para organizar gráficos
+library(dplyr)
 ```
 
 ### Análisis Univariado de la Variable Objetivo ($\text{G3}$)
@@ -232,12 +234,6 @@ library(patchwork) # Para organizar gráficos
 #| message: false
 #| fig-width: 8
 #| fig-height: 4
-
-
-
-
-
-
 
 # 3. SPLIT
 set.seed(123)
@@ -288,12 +284,10 @@ presentados.
 
 # Seleccionar solo las variables numéricas que serán predictoras
 num_predictors <- train_final %>% 
-  select(g3, age, medu, fedu, traveltime, studytime, failures, famrel, freetime, goout, dalc, walc, health, absences)
+  dplyr::select(g3, age, medu, fedu, traveltime, studytime, failures, famrel, freetime, goout, dalc, walc, health, absences)
 
 # Calcular la matriz de correlación de Pearson
 cor_matrix <- cor(num_predictors)
-
-cat("### Matriz de Correlación de Factores Numéricos y G3\n")
 
 # Gráfico de la matriz de correlación
 corrplot(cor_matrix, 
@@ -308,9 +302,6 @@ corrplot(cor_matrix,
     **`failures`** (-0.37) y **`age`** (-0.23). Los estudiantes con más
     fallas previas y de mayor edad tienden a tener notas $\text{G3}$ más
     bajas.
-
-<!-- -->
-
 -   Existe una correlación positiva con la **`medu`** (Educación de la
     Madre, 0.22) y **`fedu`** (Educación del Padre, 0.17).
 
@@ -355,15 +346,11 @@ plot_failures + plot_studytime + plot_absences
     fuerte**. A medida que el número de fallas previas aumenta (de 0 a
     $>3$), la **mediana de** $\text{G3}$ cae drásticamente, validando
     que el historial académico es un predictor que puede ser muy útil.
-
-<!-- -->
-
 -   **Tiempo de Estudio (`studytime`):** La relación es **positiva**.
     Los estudiantes que dedican más tiempo a estudiar semanalmente
     (niveles 2, 3 y 4) muestran consistentemente una **mediana de**
     $\text{G3}$ superior a aquellos que estudian menos de 2 horas (nivel
     1).
-
 -   **Ausencias (`absences`):** El gráfico de dispersión muestra una
     **correlación muy débil** con $\text{G3}$, ya que la línea de
     tendencia es casi plana, lo que sugiere que el número de ausencias
@@ -407,14 +394,10 @@ plot_sex + plot_higher + plot_famsup
     $\text{G3}$ significativamente más alta (alrededor de 12) que
     aquellos que no lo desean, lo que puede indicar la importancia de la
     **motivación** como predictor.
-
-<!-- -->
-
 -   **Sexo (`sex`):** Existe una **diferencia sutil pero verificable**
     en el rendimiento. Los estudiantes varones (**M**) registran una
     **mediana de** $\text{G3}$ superior (11.00) a la de las estudiantes
     mujeres (**F**, 10.00).
-
 -   **Apoyo Familiar (`famsup`):** El impacto de contar con apoyo
     familiar es **mínimo**. La diferencia en la mediana de $\text{G3}$
     entre los grupos es **casi nula**, lo que indica que es probable que

@@ -4,19 +4,529 @@ author: "Equipo 1: Víctor Ochoa y Salvador Rodríguez"
 format: 
   html:
     toc: true
+    echo: false
     code-fold: show
     theme: cosmo
+    warning: false
 ---
 
 # Introducción
 
-En este documento presentamos un flujo de trabajo completo para predecir el rendimiento estudiantil (Status: Pass/Fail). El análisis se divide en preparación de datos, selección de características y la comparación de cuatro escenarios experimentales combinando selección de variables y balanceo de clases.
+El conjunto de datos [*Student Performance*](https://doi.org/10.24432/C5TG7T) contiene información detallada sobre el rendimiento académico de estudiantes de secundaria en la asignatura de Matemáticas, junto con una amplia gama de variables demográficas, sociales, familiares y conductuales. Los datos fueron recopilados mediante encuestas en dos escuelas secundarias públicas de Portugal y están disponibles en el repositorio UCI Machine Learning.
 
-# 1. Preparación de la base de datos para el modelaje
+Basados en la descripción del respositorio, el rendimiento académico de los estudiantes no depende únicamente de su capacidad cognitiva, sino que está fuertemente influenciado por factores contextuales como el entorno familiar, los hábitos de estudio, el apoyo escolar, las relaciones sociales y las condiciones socioeconómicas. En este contexto, identificar tempranamente a los estudiantes en riesgo de reprobación permite a las instituciones educativas implementar estrategias de intervención oportuna, optimizando recursos y promoviendo la equidad en el aprendizaje. Por ello, es crucial desarrollar modelos predictivos que, a partir de variables observables al inicio del curso, puedan anticipar el resultado académico final.
+
+El conjunto de datos incluye 395 observaciones y 33 variables, entre las que se encuentran:
+
+-   **Demográficas**: edad, género, tipo de residencia (urbana o rural).
+
+-   **Familiares**: nivel educativo de los padres, ocupación, tipo de tutor, calidad de las relaciones familiares.
+
+-   **Académicas**: número de ausencias, fracasos previos, apoyo escolar extra, acceso a internet.
+
+-   **De comportamiento**: tiempo de estudio, frecuencia de salidas con amigos, consumo de alcohol, tiempo libre.
+
+-   **De desempeño**: calificaciones en el primer (G1), segundo (G2) y tercer período (G3).
+
+En este proyecto de **clasificación binaria**; el objetivo es detectar si un estudiante aprobará o reprobará, transformando la variable objetivo continua (G3) en una variable categórica binaria. Así, en lugar de predecir la calificación exacta, se define la variable respuesta **Pass** como:
+
+$$ \texttt{Pass} =\begin{cases}\text{yes}, & \text{si } \texttt{G3} \geq 10 \\\text{no}, & \text{si } \texttt{G3} < 10\end{cases} $$
+
+Este umbral (10 sobre 20) corresponde al criterio tradicional de aprobación en el sistema educativo portugués . Es importante destacar que, para preservar la validez de la predicción temprana, las calificaciones intermedias (G1 y G2) se excluyen del conjunto de predictores, evitando así cualquier fuga de información y asegurando que el modelo se base únicamente en factores observables antes del cierre del curso.
+
+# Business understanding
+
+Planteamos algunas preguntas sobre nuestros datos:
+
+-   ¿Un mayor nivel educativo de los padres se asocia con una mayor probabilidad de aprobación?
+-   ¿El número de fracasos previos es el predictor más fuerte de reprobación?
+-   ¿El apoyo escolar extra mejora significativamente las probabilidades de aprobación?
+-   ¿Una mayor frecuencia de salidas con amigos se asocia con menor rendimiento?
+
+# Data understanding
+
+## Descripción del Conjunto de Datos
+
+El proyecto utiliza el conjunto de datos de Rendimiento Estudiantil que contiene 395 estudiantes con 33 atributos que describen variable de tipo: demografía, contexto social y registros académicos.
+
+```{r load-data}
+
+library(tidyverse)
+library(janitor) # Para limpiar y estandarizar nombres de columnas
+library(knitr)   # Para generar tablas limpias (kable)
+library(skimr)   # Para generar resúmenes estadísticos rápidos
+
+data_raw <- read.csv("Data/studentmat.csv", sep = ";", stringsAsFactors = FALSE)
+
+# 2. Limpiar los nombres de las columnas (ej: de "G1" a "g1")
+data <- data_raw %>%
+  clean_names()
+```
+
+```{r dict-demographic}
+dict_demographic <- tibble(
+  Variable = c("school", "sex", "age", "address"),
+  Tipo = c("Categórica", "Categórica", "Numérica", "Categórica"),
+  Valores = c("GP, MS", "F, M", "15-22", "U, R"),
+  Descripción = c(
+    "Escuela del estudiante (GP: Gabriel Pereira, MS: Mousinho da Silveira)",
+    "Sexo del estudiante (F: Femenino, M: Masculino)",
+    "Edad del estudiante en años",
+    "Tipo de domicilio del estudiante (U: Urbano, R: Rural)"
+  )
+)
+
+dict_demographic %>%
+  kable(caption = "Variables Demográficas")
+```
+
+```{r dict-school}
+dict_school <- tibble(
+  Variable = c("reason", "traveltime", "studytime", "failures", "schoolsup", 
+               "famsup", "paid", "activities", "nursery", "higher", "absences"),
+  Tipo = c("Categórica", "Ordinal", "Ordinal", "Numérica", "Categórica", 
+           "Categórica", "Categórica", "Categórica", "Categórica", "Categórica", "Numérica"),
+  Valores = c("home, reputation, course, other", "1-4", "1-4", "0-4", "yes, no", 
+              "yes, no", "yes, no", "yes, no", "yes, no", "yes, no", "0-93"),
+  Descripción = c(
+    "Razón para elegir esta escuela",
+    "Tiempo de viaje casa-escuela (1: <15min, 2: 15-30min, 3: 30min-1h, 4: >1h)",
+    "Tiempo de estudio semanal (1: <2h, 2: 2-5h, 3: 5-10h, 4: >10h)",
+    "Número de fallos académicos previos",
+    "Recibe apoyo educativo extra de la escuela",
+    "Recibe apoyo educativo de la familia",
+    "Toma clases extra pagadas en matemáticas",
+    "Participa en actividades extracurriculares",
+    "Asistió a guardería",
+    "Desea seguir educación superior",
+    "Número de ausencias escolares"
+  )
+)
+
+dict_school %>%
+  kable(caption = "Variables Escolares")
+```
+
+```{r dict-social}
+dict_social <- tibble(
+  Variable = c("internet", "romantic", "famrel", "freetime", "goout", 
+               "Dalc", "Walc", "health"),
+  Tipo = c("Categórica", "Categórica", "Ordinal", "Ordinal", "Ordinal", 
+           "Ordinal", "Ordinal", "Ordinal"),
+  Valores = c("yes, no", "yes, no", "1-5", "1-5", "1-5", "1-5", "1-5", "1-5"),
+  Descripción = c(
+    "Tiene acceso a internet en casa",
+    "Está en una relación romántica",
+    "Calidad de relaciones familiares (1: muy mala - 5: excelente)",
+    "Tiempo libre después de la escuela (1: muy bajo - 5: muy alto)",
+    "Frecuencia de salidas con amigos (1: muy baja - 5: muy alta)",
+    "Consumo de alcohol entre semana (1: muy bajo - 5: muy alto)",
+    "Consumo de alcohol en fin de semana (1: muy bajo - 5: muy alto)",
+    "Estado de salud actual (1: muy malo - 5: muy bueno)"
+  )
+)
+
+dict_social %>%
+  kable(caption = "Variables Sociales y de Salud")
+```
+
+```{r head-data}
+head(data, 10) %>% 
+  kable(caption = "Primeras 10 observaciones del dataset")
+
+
+data_summary <- data %>% skim()
+data_summary
+```
+
+Este conjunto de datos contiene información sobre 395 estudiantes, sin valores faltantes. Incluye 33 variables que describen aspectos personales, familiares, sociales y académicos. Hay 17 variables categóricas, como el género, la escuela o el motivo para elegir esta, y 16 numéricas, como edad, tiempo de estudio, número de ausencias y calificaciones en los tres periodos (g1, g2, g3). Todos los datos están completos, lo que permite un análisis confiable del rendimiento académico y los factores asociados.
+
+# Análisis Exploratorio de Datos (EDA)
+
+## Varibale $G3$ sin ser binaria
+
+```{r}
+#| label: setup-eda
+#| include: false
+#| message: false
+#| warning: false
+library(tidyverse)
+library(knitr)
+library(corrplot) # Para visualizar la matriz de correlación
+library(patchwork) # Para organizar gráficos
+library(caret)
+library(dplyr)
+```
+
+### Análisis Univariado de la Variable Objetivo ($\text{G3}$)
+
+```{r}
+#| label: g3-distribution
+#| echo: false
+#| message: false
+#| fig-width: 8
+#| fig-height: 4
+#| warning: false
+
+# 3. SPLIT
+set.seed(123)
+trainIndex <- createDataPartition(data$g3, p = 0.75, list = FALSE)
+train_final <- data[trainIndex, ]
+valid_final <- data[-trainIndex, ]
+
+
+g3_stats <- train_final %>%
+  summarise(
+    Media = mean(g3),
+    Mediana = median(g3),
+    Min = min(g3),
+    Max = max(g3)
+  )
+
+# Histograma de G3
+train_final %>%
+  ggplot(aes(x = g3)) +
+  geom_histogram(binwidth = 1, fill = "darkred", color = "white", alpha = 0.8) +
+  geom_vline(aes(xintercept = g3_stats$Media), color = "blue", linetype = "dashed", size = 1) +
+  labs(title = "Distribución de la Nota Final (G3)",
+       x = "Nota Final (G3)",
+       y = "Frecuencia") +
+  theme_minimal()
+
+cat("\n### Estadísticas Descriptivas de G3\n")
+g3_stats %>%
+  kable(caption = "Estadísticas clave de la Nota Final (G3).", digits = 2, format = "html")
+```
+
+La distribución de la nota final (\$\\text{G3}\$) presenta un sesgo negativo (hacia la izquierda), ya que la Mediana (11) es ligeramente superior a la Media (10.42), aunque ambos valores son cercanos. El rango completo de notas es utilizado, yendo de \$\\text{0}\$ (nota mínima) a \$\\text{20}\$ (nota máxima). La presencia de una alta frecuencia de notas cero sugiere un número significativo de reprobados o no presentados.
+
+### Análisis Bivariado: Factores Numéricos vs. $\text{G3}$
+
+```{r}
+#| label: correlation-matrix
+#| echo: false
+#| message: false
+#| fig-width: 9
+#| fig-height: 9
+
+# Seleccionar solo las variables numéricas que serán predictoras
+num_predictors <- train_final %>% 
+  dplyr::select(g3, age, medu, fedu, traveltime, studytime, failures, famrel, freetime, goout, dalc, walc, health, absences)
+
+# Calcular la matriz de correlación de Pearson
+cor_matrix <- cor(num_predictors)
+# Gráfico de la matriz de correlación
+corrplot(cor_matrix, 
+         method = "circle", 
+         type = "lower", 
+         diag = FALSE,
+         title = "Correlación entre G3 y Factores Numéricos",
+         mar=c(0,0,1,0)) # Ajustar márgenes para el título
+```
+
+-   Las correlaciones más fuertes y negativas se encuentran con **`failures`** (-0.37) y **`age`** (-0.23). Los estudiantes con más fallas previas y de mayor edad tienden a tener notas $\text{G3}$ más bajas.
+
+-   Existe una correlación positiva con la **`medu`** (Educación de la Madre, 0.22) y **`fedu`** (Educación del Padre, 0.17).
+
+### Relaciones Gráficas de Factores Clave vs. $\text{G3}$
+
+```{r}
+#| label: key-numerical-vs-g3
+#| echo: false
+#| message: false
+#| fig-width: 12
+#| fig-height: 4
+
+# Failures vs G3 (Boxplot ya que failures es discreta)
+plot_failures <- train_final %>%
+  mutate(failures_cat = factor(failures, levels = 0:4, labels = c("0", "1", "2", "3", ">3"))) %>%
+  ggplot(aes(x = failures_cat, y = g3)) +
+  geom_boxplot(fill = "lightblue") +
+  labs(title = "G3 vs. Fallas Previas", x = "Número de Fallas", y = "G3") +
+  theme_minimal()
+
+# Studytime vs G3 (Boxplot)
+plot_studytime <- train_final %>%
+  mutate(studytime_cat = factor(studytime)) %>%
+  ggplot(aes(x = studytime_cat, y = g3)) +
+  geom_boxplot(fill = "lightgreen") +
+  labs(title = "G3 vs. Tiempo de Estudio", x = "Tiempo (1 a 4)", y = "G3") +
+  theme_minimal()
+
+# Absences vs G3 (Scatter con línea de tendencia)
+plot_absences <- train_final %>%
+  ggplot(aes(x = absences, y = g3)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "lm", color = "red", se = FALSE) +
+  labs(title = "G3 vs. Ausencias", x = "Número de Ausencias", y = "G3") +
+  theme_minimal()
+
+# Mostrar los tres gráficos
+plot_failures + plot_studytime + plot_absences
+```
+
+-   **Fallas Previas (`failures`):** Existe una **relación negativa muy fuerte**. A medida que el número de fallas previas aumenta (de 0 a $>3$), la **mediana de** $\text{G3}$ cae drásticamente, validando que el historial académico es un predictor que puede ser muy útil.
+
+<!-- -->
+
+-   **Tiempo de Estudio (`studytime`):** La relación es **positiva**. Los estudiantes que dedican más tiempo a estudiar semanalmente (niveles 2, 3 y 4) muestran consistentemente una **mediana de** $\text{G3}$ superior a aquellos que estudian menos de 2 horas (nivel 1).
+
+-   **Ausencias (`absences`):** El gráfico de dispersión muestra una **correlación muy débil** con $\text{G3}$, ya que la línea de tendencia es casi plana, lo que sugiere que el número de ausencias por sí solo no es un predictor lineal fuerte de la nota final para la mayoría de los estudiantes.
+
+### Análisis Bivariado: Factores Categóricos vs. $\text{G3}$
+
+```{r}
+#| label: key-categorical-vs-g3
+#| echo: false
+#| message: false
+#| fig-width: 12
+#| fig-height: 4
+
+# Función para crear Boxplots de Categorías vs G3
+plot_category_vs_g3 <- function(train_final, variable, title, x_lab) {
+  data %>%
+    ggplot(aes(x = as.factor(.data[[variable]]), y = g3, fill = as.factor(.data[[variable]]))) +
+    geom_boxplot(show.legend = FALSE) +
+    labs(title = title, x = x_lab, y = "G3 (Nota Final)") +
+    theme_minimal()
+}
+
+# Sexo vs G3
+plot_sex <- plot_category_vs_g3(train_final, "sex", "G3 vs Sexo", "Sexo (F/M)")
+
+# Deseo de Educación Superior (higher) vs G3
+plot_higher <- plot_category_vs_g3(train_final, "higher", "G3 vs Deseo de Ed. Superior", "¿Desea estudiar?")
+
+# Apoyo de la Familia (famsup) vs G3
+plot_famsup <- plot_category_vs_g3(train_final, "famsup", "G3 vs Apoyo Familiar", "¿Apoyo Fam?")
+
+# Mostrar los tres gráficos
+plot_sex + plot_higher + plot_famsup
+```
+
+-   **Deseo de Educación Superior (`higher`):** Esta es la variable categórica **más influyente**. Los estudiantes que expresan un deseo de seguir estudios superiores (**"yes"**) tienen una **mediana de** $\text{G3}$ significativamente más alta (alrededor de 12) que aquellos que no lo desean, lo que puede indicar la importancia de la **motivación** como predictor.
+
+<!-- -->
+
+-   **Sexo (`sex`):** Existe una **diferencia sutil pero verificable** en el rendimiento. Los estudiantes varones (**M**) registran una **mediana de** $\text{G3}$ superior (11.00) a la de las estudiantes mujeres (**F**, 10.00).
+
+-   **Apoyo Familiar (`famsup`):** El impacto de contar con apoyo familiar es **mínimo**. La diferencia en la mediana de $\text{G3}$ entre los grupos es **casi nula**, lo que indica que es probable que esta variable sea un predictor débil para el modelado.
+
+### Respuesta preliminar a las preguntas de Business understanding
+
+```{r}
+#| label: conclusion-table-final-clean-v2
+#| echo: false
+#| message: false
+
+library(knitr)
+library(dplyr)
+library(tibble)
+library(kableExtra)
+
+# 1. Crear el data frame con la información (SOLO TEXTO SIMPLE)
+analisis_negocio_df_final <- tribble(
+  ~Pregunta_Negocio, ~Variables_Clave, ~Analisis_Datos, ~Conclusion_Preliminar,
+  "¿Un mayor nivel educativo de los padres se asocia con una mayor probabilidad de aprobación?", 
+  "G3 vs. Medu y Fedu", 
+  "Correlación positiva y moderada con G3 (Medu: 0.22, Fedu: 0.17).", 
+  "Sí. Hay una asociación positiva. El nivel educativo de los padres se correlaciona con un mayor rendimiento.",
+  
+  "¿El número de fracasos previos es el predictor más fuerte de reprobación?", 
+  "G3 vs. failures", 
+  "Correlación más fuerte y negativa de todos los factores (-0.37). Caída drástica de la mediana de G3.", 
+  "Sí. failures es el predictor de bajo rendimiento más potente entre los factores asociados.",
+  
+  "¿El apoyo escolar extra mejora significativamente las probabilidades de aprobación?", 
+  "G3 vs. schoolsup", 
+  "Mediana de G3 para estudiantes con apoyo (9.0) es inferior a la de sin apoyo (11.0).", 
+  "Inconcluso. schoolsup es un indicador de riesgo, lo que sugiere que identifica a estudiantes con bajo rendimiento inicial.",
+  
+  "¿Una mayor frecuencia de salidas con amigos se asocia con menor rendimiento?", 
+  "G3 vs. goout", 
+  "Correlación negativa, pero débil (-0.13). Tendencia a la baja en G3 con más salidas.", 
+  "Sí, existe una asociación negativa, pero su impacto es menor que otros factores, como failures o higher."
+)
+
+# 2. Renderizar la tabla usando kable con un estilo HTML atractivo
+analisis_negocio_df_final %>%
+  knitr::kable(
+    caption = "Resumen de las Conclusiones Preliminares del EDA frente a las Preguntas de Negocio",
+    col.names = c("Pregunta de Negocio", "Variables Clave", "Análisis del EDA", "Conclusión Preliminar"),
+    format = "html"
+  ) %>%
+  # Añadir estilos de tabla generales
+  kable_styling(
+    bootstrap_options = c("striped", "hover", "condensed", "responsive"),
+    full_width = T,
+    font_size = 11
+  ) %>%
+  # Resaltar las filas de conclusión fuerte (1 y 2) con colores suaves
+  row_spec(1, color = "black", background = "#E6F3FF") %>% 
+  row_spec(2, color = "black", background = "#FFE6E6") 
+```
+
+## Analisis EDA para varibale $G3$ binaria.
+
+```{r}
+library(caret)
+data_bin <- data_raw %>%
+  mutate(Status = ifelse(G3 >= 10, "Aprobado", "Reprobado")) %>%
+  mutate(Status = as.factor(Status)) %>%
+  dplyr::select(-G1, -G2, -G3) %>% 
+  mutate(across(where(is.character), as.factor))
+
+# 3. SPLIT
+set.seed(123)
+trainIndex <- caret::createDataPartition(data_bin$Status, p = 0.75, list = FALSE)
+train_final_bin <- data_bin[trainIndex, ]
+valid_final_bin <- data_bin[-trainIndex, ]
+```
+
+```{r}
+
+#| echo: true
+#| message: false
+#| fig-width: 8
+#| fig-height: 5
+
+train_final_bin %>%
+  dplyr::group_by(higher, Status) %>%
+  dplyr::summarise(Conteo = n(), .groups = 'drop') %>%
+  dplyr::mutate(Proporcion = Conteo / sum(Conteo)) %>%
+  dplyr::filter(Status == "Aprobado") %>% # Solo graficamos la proporción de Aprobados
+  
+  ggplot(aes(x = higher, y = Proporcion, fill = higher)) +
+  geom_bar(stat = "identity", show.legend = FALSE) +
+  scale_y_continuous(labels = scales::percent) +
+  geom_text(aes(label = scales::percent(Proporcion)), vjust = -0.5, size = 4) +
+  labs(title = "Probabilidad de Aprobación vs. Deseo de Ed. Superior",
+       x = "¿Desea estudiar Educación Superior?",
+       y = "Tasa de Aprobación") +
+  theme_minimal()
+```
+
+El deseo de estudiar educación superior es el predictor más fuerte. Los estudiantes que responden **'yes'** presentan una tasa de aprobación notablemente superior, exactamente del **65%**, mientras que aquellos que responden **'no'** tienen una tasa de aprobación de apenas **2%**.
+
+```{r}
+
+#| echo: true
+#| message: false
+#| fig-width: 8
+#| fig-height: 5
+
+train_final_bin %>%
+  dplyr::group_by(failures, Status) %>%
+  dplyr::summarise(Conteo = n(), .groups = 'drop') %>%
+  dplyr::mutate(Proporcion = Conteo / sum(Conteo)) %>%
+  dplyr::filter(Status == "Aprobado") %>%
+  
+  ggplot(aes(x = factor(failures), y = Proporcion, fill = factor(failures))) +
+  geom_bar(stat = "identity", show.legend = FALSE) +
+  scale_y_continuous(labels = scales::percent) +
+  geom_text(aes(label = scales::percent(Proporcion)), vjust = -0.5, size = 4) +
+  labs(title = "Probabilidad de Aprobación vs. Fracasos Previos",
+       x = "Número de Fracasos Previos",
+       y = "Tasa de Aprobación") +
+  theme_minimal()
+```
+
+Existe una relación inversa crítica. Los estudiantes sin fracasos previos (**0**) tienen una tasa de aprobación de casi **60%**. La tasa cae drásticamente a menos del **6%** para aquellos con solo **un** fracaso previo, y la aprobación es casi nula para 2 o más fracasos. El impacto de los **`failures`** es importante.
+
+```{r}
+#| label: train-density-absences-approval-v2
+#| echo: true
+#| message: false
+#| fig-width: 8
+#| fig-height: 5
+
+train_final_bin %>%
+  ggplot(aes(x = absences, fill = Status)) +
+  geom_density(alpha = 0.6) + 
+  labs(title = "Distribución de Ausencias según Estado de Aprobación",
+       x = "Número de Ausencias",
+       y = "Densidad") +
+  guides(fill = guide_legend(title = "Estado")) +
+  theme_minimal()
+```
+
+La curva de densidad para los estudiantes **'Reprobado'** está ligeramente desplazada a la **derecha**, lo que indica que tienen un número de ausencias marginalmente mayor que los **'Aprobado'**. Ambas curvas se superponen fuertemente, sugiriendo que las **`absences`** no son un predictor tan fuerte para la clasificación como los factores categóricos.
+
+```{r}
+#| label: correlation-numeric-target
+#| echo: true
+#| message: false
+
+# Convertir el target binario a numérico (0/1)
+train_corr <- train_final_bin %>%
+  mutate(Status_num = as.numeric(Status == "Aprobado")) %>%
+  dplyr::select(Status_num, age, traveltime, studytime, failures, 
+         famrel, freetime, goout, Dalc, Walc, health, absences,
+         Medu, Fedu) # Incluyendo Medu/Fedu que son ordinales
+
+# Calcular la correlación de Pearson
+corr_results <- cor(train_corr, use = "complete.obs")
+
+# Extraer solo la fila de correlación con Status_num y ordenar
+corr_status <- tibble(
+  Variable = colnames(corr_results),
+  Correlacion = corr_results["Status_num", ]
+) %>%
+  filter(Variable != "Status_num") %>%
+  arrange(desc(abs(Correlacion)))
+
+corr_status %>%
+  head(10) %>% # Mostrar los 10 predictores más fuertes
+  knitr::kable(caption = "Top 10 Predictores Numéricos/Ordinales asociados a Status", digits = 3)
+```
+
+Los **10 principales predictores** numéricos/ordinales de **StatusVariable** muestran que la variable **failures** (fracasos) tiene la correlación negativa más fuerte $(-0.351)$, lo que sugiere que **menos fracasos** se asocian con un mejor estatus. Otros factores con correlación negativa incluyen **age** $(-0.195)$, **goout** $(-0.179)$, **Dalc** (consumo de alcohol diario, $-0.097$), **absences** $(-0.095)$, **traveltime** $(-0.077)$ y **health** $(-0.074)$. Por otro lado, la **educación de la madre (`Medu`,** $0.174$) y la **educación del padre (`Fedu`,** $0.131$) tienen correlaciones positivas, indicando que **mayor nivel educativo de los padres** se relaciona con un mejor estatus. Finalmente, **studytime** $(0.107)$ también muestra una correlación positiva.
+
+```{r}
+#| label: cramer-v-categorical
+#| echo: true
+#| message: false
+
+library(vcd)
+
+# Seleccionar todas las variables categóricas que quedan en el dataset
+categorical_vars <- names(train_final_bin)[sapply(train_final_bin, is.factor) | sapply(train_final_bin, is.character)]
+
+# Lista para almacenar los resultados
+cramer_v_results <- list()
+
+for (var in categorical_vars) {
+  if (var != "Status") {
+    tabla_contingencia <- table(train_final_bin$Status, train_final_bin[[var]])
+    
+    # Calcular Chi-cuadrado y V de Cramer
+    test_results <- assocstats(tabla_contingencia)
+    cramer_v_results[[var]] <- test_results$cramer
+  }
+}
+
+# Convertir resultados a dataframe y ordenar
+cramer_v_df <- data.frame(
+  Variable = names(cramer_v_results),
+  Cramer_V = unlist(cramer_v_results)
+) %>%
+  arrange(desc(Cramer_V))
+
+cat("### Fuerza de Asociación (V de Cramer) con Status\n")
+cramer_v_df %>%
+  head(10) %>%
+  knitr::kable(caption = "Top 10 Predictores Categóricos/Nominales asociados a Status", digits = 3)
+```
+
+Los **10 principales predictores categóricos** de **StatusVariable** se evaluaron usando $V$ de Cramer. La **ocupación de la madre** (`Mjob`, $0.162$), la **ocupación del padre** (`Fjob`, $0.152$) y el **tutor** (`guardian`, $0.152$) son los más fuertemente asociados. Otros predictores importantes incluyen la intención de tomar **estudios superiores** (`higher`, $0.148$), si la persona **paga clases extra** (`paid`, $0.118$), la **razón** para elegir la escuela (`reason`, $0.115$) y la existencia de una relación **romántica** (`romantic`, $0.106$). Además, tener acceso a **internet** (`internet`, $0.103$), el **apoyo escolar** (`schoolsup`, $0.099$) y el **tamaño familiar** (`famsize`, $0.075$) también muestran asociaciones relevantes con la variable de estatus.
+
+# Modelado y evaluacion.
+
+## 1. Preparación de la base de datos para el modelaje.
+
 Primero, se cargan las librerías necesarias y la base de datos. Luego se realiza una conversión de variables numéricas y se define a la variable objetivo `Status` basada en la nota final (G3).
 
-**Análisis de la Distribución de Clases:**
-Al observar la estructura de los datos, se observó un pequeño desbalance de clases. Según los registros se tiene **130 casos de "Fail"** y **265 casos de "Pass"**. En términos proporcionales, esto representa aproximadamente un **32.9% de reprobados** frente a un **67.1% de aprobados**. Este pequeño desequilibrio sugiere que los modelos sin balanceo podrían tener dificultades para detectar la clase minoritaria ("Fail").
+**Análisis de la Distribución de Clases:** Al observar la estructura de los datos, se observó un pequeño desbalance de clases. Según los registros se tiene **130 casos de "Fail"** y **265 casos de "Pass"**. En términos proporcionales, esto representa aproximadamente un **32.9% de reprobados** frente a un **67.1% de aprobados**. Este pequeño desequilibrio sugiere que los modelos sin balanceo podrían tener dificultades para detectar la clase minoritaria ("Fail").
 
 ```{r setup, message=FALSE, warning=FALSE}
 # 1. SETUP & LIBRARIES
@@ -74,11 +584,11 @@ if (!file.exists(filename)) {
 }
 ```
 
-# 2. Selección de Variables Relevantes para el Status de un Estudiante
+## 2. Selección de Variables Relevantes para el Status de un Estudiante
 
 El conjunto de datos original contiene numerosas variables, pero posiblemente no todas contribuyan a la detección de un estudiante en riesgo de reprobar. Incluir información irrelevante o redundante introduce "ruido" que puede llevar al sobreajuste (overfitting), haciendo que el modelo memorice los datos de entrenamiento en lugar de aprender patrones reales. Por tanto, filtrar las variables puede resultar ser una buena medida para simplificar la complejidad del modelo y mejorar su capacidad de generalización ante nuevos estudiantes.
 
-## Métodos de selección
+### Métodos de selección
 
 Para lograr este proceso de selección de manera objetiva y evitar el sesgo inherente a un único algoritmo, se aplicó una estrategia de consenso utilizando tres técnicas distintas de selección:
 
@@ -88,7 +598,7 @@ Para lograr este proceso de selección de manera objetiva y evitar el sesgo inhe
 
 (c) RFE (Eliminación Recursiva de Características): Para encontrar el subconjunto óptimo de variables que maximiza la precisión del modelo mediante validación cruzada.
 
-## Resultados del Análisis de Importancia
+### Resultados del Análisis de Importancia
 
 Chi-Cuadrado: Destacó a higher (intención de cursar educación superior) como la variable más significativa, siendo la única validada por los tres métodos (3 votos).
 
@@ -202,8 +712,8 @@ Variables como guardian, age, studytime, sex y famsize obtuvieron solo 1 voto, p
 
 El subconjunto final seleccionado para los modelos optimizados (Casos 3 y 4) consta de las 5 variables que alcanzaron 2 o más votos, más la variable objetivo: higher, failures, schoolsup, goout, absences y Status (Variable Objetivo).
 
+## 3. Modelado: Evaluación de 4 Casos
 
-# 3. Modelado: Evaluación de 4 Casos
 Se define una función auxiliar para entrenar y evaluar múltiples modelos (GLM, GBM, RF, SVM, KNN y Rpart) bajo diferentes configuraciones o condiciones.
 
 ```{r  message=FALSE, warning=FALSE}
@@ -256,11 +766,11 @@ if(exists("train_full")) {
 }
 ```
 
-## Caso 1: Todas las Variables / Sin Balanceo
+### Caso 1: Todas las Variables / Sin Balanceo
+
 En este primer escenario base, se utilizan todas las variables disponibles sin corregir el leve desbalance de clases.
 
 Al ejecutar este caso, se observa que el modelo GBM obtuvo el mejor AUC con 0.6425. Sin embargo, el problema del desbalance es evidente en la métrica de Sensibilidad (capacidad de detectar "Fail"), la cual fue muy baja para la mayoría de los modelos (ej. GBM con 0.25 y Random Forest con 0.4062). Esto indica que los modelos tienden a predecir la clase mayoritaria ("Pass").
-
 
 ```{r  message=FALSE, warning=FALSE}
 # 1. Configuración del Control (Cross-Validation)
@@ -283,8 +793,8 @@ print("--- TABLA DE RENDIMIENTO: CASO 1 ---")
 knitr::kable(res_c1, digits = 4, caption = "Resultados: Todas las Variables / Sin Balanceo",row.names = FALSE)
 ```
 
+### Caso 2: Todas las Variables / Con Balanceo (Up-Sampling)
 
-## Caso 2: Todas las Variables / Con Balanceo (Up-Sampling)
 Aquí se aplica la técnica de Up-Sampling para equilibrar las clases durante el entrenamiento.
 
 Análisis de Resultados: Con el balanceo, el modelo GLM lideró la tabla con un AUC de 0.6316. Lo más destacable es la mejora drástica en la Sensibilidad: el GLM subió a 0.50 y el KNN a 0.5312. Aunque la Exactitud (Accuracy) general cae ligeramente respecto al Caso 1, el modelo es mucho más útil para identificar a los estudiantes en riesgo.
@@ -307,7 +817,8 @@ print("--- TABLA DE RENDIMIENTO: CASO 2 ---")
 knitr::kable(res_c2, digits = 4, caption = "Resultados: Todas las Variables / Con Balanceo (Up-Sampling)",row.names = FALSE)
 ```
 
-## Caso 3: Variables Seleccionadas / Sin Balanceo
+### Caso 3: Variables Seleccionadas / Sin Balanceo
+
 En el Caso 3 (Variables Seleccionadas / Sin Balanceo), el modelo GLM obtuvo el mayor AUC (0.6671), seguido por GBM (0.6615). A pesar de la selección de variables, la sensibilidad (capacidad para detectar la clase positiva, que en este caso son los estudiantes que reprueban) sigue siendo baja, con un valor de 0.3750 para GLM y 0.3125 para GBM, lo que indica que el modelo no está capturando bien a los estudiantes en riesgo. La especificidad, en cambio, es alta (0.8485 para GLM), lo que significa que el modelo es bueno para identificar a los estudiantes que pasarán.
 
 ```{r  message=FALSE, warning=FALSE}
@@ -323,7 +834,8 @@ print("--- TABLA DE RENDIMIENTO: CASO 3 ---")
 knitr::kable(res_c3, digits = 4, caption = "Resultados: Variables Seleccionadas / Sin Balanceo",row.names = FALSE)
 ```
 
-## Caso 4: Variables Seleccionadas / Con Balanceo
+### Caso 4: Variables Seleccionadas / Con Balanceo
+
 La combinación de selección de variables y balanceo produjo los mejores resultados para la identificación de estudiantes en riesgo. El modelo GLM alcanzó el mejor AUC del estudio (0.6806), seguido muy de cerca por SVM Radial (0.6802). Además, el balanceo permitió que la Sensibilidad alcanzara niveles significativamente más altos, con el modelo KNN logrando la mayor detección de casos en riesgo (0.6250), lo que confirma que tanto la reducción de dimensionalidad como el balanceo de clases son esenciales para construir modelos que realmente puedan identificar a los estudiantes que necesitan intervención.
 
 ```{r  message=FALSE, warning=FALSE}
@@ -338,9 +850,9 @@ print("--- TABLA DE RENDIMIENTO: CASO 4 (OPTIMIZADO) ---")
 knitr::kable(res_c4, digits = 4, caption = "Resultados: Variables Seleccionadas / Con Balanceo (Up-Sampling)",row.names = FALSE)
 ```
 
-# 4.Análisis comparativo del desempeño de los modelos
+## 4.Análisis comparativo del desempeño de los modelos
 
-## Resultados de los modelos
+### Resultados de los modelos
 
 En esta sección, se combinan las tablas de rendimiento de cada caso (Todas las variables vs. Seleccionadas / Sin Balanceo vs. Con Balanceo) en un único conjunto de datos. Esta integración permitirá realizar una comparación directa y ordenada por AUC para determinar, con evidencia métrica, cuál fue la estrategia más efectiva para predecir el rendimiento estudiantil.
 
@@ -362,56 +874,62 @@ write.table(all_results, "Resultados_CódigoFinal/Comparison_All_4_Cases.txt",
             sep = "\t", row.names = FALSE)
 ```
 
-## Ranking de los mejores modelos 
+### Ranking de los mejores modelos
+
 El objetivo más importante de este estudio es identificar a los estudiantes en riesgo de reprobación. En este contexto, el costo de no detectar a un estudiante que va a reprobar (Falso Negativo) es mucho mayor que el costo de intervenir innecesariamente con un estudiante que iba a aprobar (Falso Positivo). Por lo tanto, priorizamos la Sensibilidad sobre otras métricas.
 
 Analizando los resultados del Caso 4 (Selección + Balanceo), presentamos las mejores opciones bajo este criterio:
 
-### La Opción de Máxima Seguridad: KNN (Caso 4)
+#### La Opción de Máxima Seguridad: KNN (Caso 4)
+
 Si la política institucional es "ningún estudiante en riesgo debe pasar desapercibido", el K-Vecinos Más Cercanos (KNN) es la elección correcta.
 
 Desempeño: Logró la Sensibilidad más alta del estudio (0.6250). Esto significa que es capaz de detectar el 62.5% de los casos de reprobación, superando a todos los demás algoritmos.
 
 La Contrapartida: Su Especificidad es del 0.6061. Esto implica que habrá 39.4% de "falsas alarmas" (estudiantes que el modelo marca en riesgo pero que aprobarían), lo cual requerirá un monto significativo de recursos docentes para intervenciones preventivas o no necesarias, pero garantiza la mayor cobertura de seguridad.
 
-### El Balance Óptimo: SVM Radial (Caso 4)
+#### El Balance Óptimo: SVM Radial (Caso 4)
+
 Si se busca un equilibrio donde se mantenga una alta detección de riesgo sin generar excesivas falsas alarmas, el SVM Radial es la mejor alternativa técnica.
 
 Desempeño: Ofrece una Sensibilidad muy competitiva de 0.5938 (muy cerca del KNN) pero mejora significativamente la Especificidad a 0.6818.
 
 Ventaja: Detecta casi la misma cantidad de estudiantes en riesgo que el KNN, pero se equivoca menos al clasificar a los estudiantes seguros, ofreciendo una gestión más eficiente de los recursos de tutoría.
 
-### Alternativa Destacada por AUC: GLM (Caso 4)
+#### Alternativa Destacada por AUC: GLM (Caso 4)
+
 Aunque el Modelo Lineal Generalizado obtuvo el mejor AUC global (0.6806), su Sensibilidad de 0.5312 lo hace menos apto para este objetivo específico. Deja pasar a casi la mitad de los estudiantes en riesgo sin detectarlos, por lo que se descarta frente a la prioridad de seguridad del KNN o el SVM.
 
-
-
-# Hallazgos y conclusion del estudio
+# Hallazgos y conclusion del proyecto
 
 ## Hallazgos
+
 Tras ejecutar el análisis completo, se han identificado los factores que más influyeron en el rendimiento estudiantil y los modelos que mejor logran predecirlo.
 
 ### Variables influyentes en el Éxito o Fracaso académico en matemática
+
 A través del método de consenso algorítmico (donde Chi-Cuadrado, Boruta y RFE votaron por las variables más fuertes), se determinó que el rendimiento de un estudiante no depende de todas las variables recolectadas, sino fundamentalmente de estas cinco:
 
-a. **failures (Historial de Reprobación):** Es el predictor más fuerte. El historial académico pasado es el mejor indicador del futuro; un estudiante que ya ha reprobado anteriormente tiene un riesgo significativamente mayor.
+a.  **failures (Historial de Reprobación):** Es el predictor más fuerte. El historial académico pasado es el mejor indicador del futuro; un estudiante que ya ha reprobado anteriormente tiene un riesgo significativamente mayor.
 
-b. **higher (Aspiración Superior):** La motivación intrínseca juega un papel importante. Los estudiantes que desean cursar educación superior muestran un perfil de aprobación mucho más sólido.
+b.  **higher (Aspiración Superior):** La motivación intrínseca juega un papel importante. Los estudiantes que desean cursar educación superior muestran un perfil de aprobación mucho más sólido.
 
-c. **absences (Ausentismo):** La asistencia regular es fundamental. Un número elevado de faltas correlaciona directamente con la probabilidad de reprobar.
+c.  **absences (Ausentismo):** La asistencia regular es fundamental. Un número elevado de faltas correlaciona directamente con la probabilidad de reprobar.
 
-d. **goout (Vida Social):** La frecuencia con la que el estudiante sale con amigos impacta su rendimiento, probablemente restando tiempo de estudio si es excesiva.
+d.  **goout (Vida Social):** La frecuencia con la que el estudiante sale con amigos impacta su rendimiento, probablemente restando tiempo de estudio si es excesiva.
 
-e. **schoolsup (Apoyo Educativo Extra):** Curiosamente, recibir apoyo extra es un indicador de riesgo, ya que generalmente se asigna a estudiantes que ya están teniendo dificultades académicas.
+e.  **schoolsup (Apoyo Educativo Extra):** Curiosamente, recibir apoyo extra es un indicador de riesgo, ya que generalmente se asigna a estudiantes que ya están teniendo dificultades académicas.
 
 ### Resumen de los Modelos Más Eficaces
+
 Basándose en el escenario optimizado (Caso 4: Variables Seleccionadas + Balanceo), estos son los tres modelos que mostraron el mejor desempeño para la detección de estudiantes en riesgo:
 
-* **KNN (K-Vecinos Más Cercanos):** Fue el mejor detector de riesgo. Si el objetivo es identificar a la mayor cantidad posible de estudiantes vulnerables (alta Sensibilidad), este es el algoritmo ganador.
+-   **KNN (K-Vecinos Más Cercanos):** Fue el mejor detector de riesgo. Si el objetivo es identificar a la mayor cantidad posible de estudiantes vulnerables (alta Sensibilidad), este es el algoritmo ganador.
 
-* **SVM Radial (Máquina de Vectores de Soporte):** Se destacó como la opción equilibrada. Ofrece un compromiso sólido entre detectar estudiantes en riesgo y no generar demasiadas falsas alarmas.
+-   **SVM Radial (Máquina de Vectores de Soporte):** Se destacó como la opción equilibrada. Ofrece un compromiso sólido entre detectar estudiantes en riesgo y no generar demasiadas falsas alarmas.
 
-* **GLM (Regresión Logística):** Sobresalió por su estabilidad global. Obtuvo el puntaje más alto en AUC, lo que significa que es matemáticamente el más robusto para separar las clases de "Pasa" y "Reprueba" en general, aunque es menos agresivo detectando el riesgo puro.
+-   **GLM (Regresión Logística):** Sobresalió por su estabilidad global. Obtuvo el puntaje más alto en AUC, lo que significa que es matemáticamente el más robusto para separar las clases de "Pasa" y "Reprueba" en general, aunque es menos agresivo detectando el riesgo puro.
 
 ## Conclusión
+
 En conclusión, para cumplir con el objetivo de maximizar la detección de estudiantes en riesgo, se recomienda implementar el modelo KNN del Caso 4 (selección de variables y balanceo de clases). Aunque sacrifica precisión global, es la herramienta más efectiva disponible en este análisis para asegurar que la mayor cantidad posible de estudiantes vulnerables reciban atención temprana.
